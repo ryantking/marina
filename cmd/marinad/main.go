@@ -17,9 +17,10 @@ import (
 
 func main() {
 	logging.Init()
+	// migrate.Start()
 	cfg := config.Get()
 	log.Infof("starting HTTP server at %s", cfg.RootURL)
-	http.Handle("/v2", v2.NewRouter())
+	http.Handle("/", v2.NewRouter())
 	srv := &http.Server{
 		Addr:         cfg.Server.Address,
 		Handler:      http.DefaultServeMux,
