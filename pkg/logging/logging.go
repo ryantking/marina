@@ -3,7 +3,7 @@ package logging
 import (
 	"os"
 
-	"git.cogolo.net/rking/marina/pkg/config"
+	"github.com/ryantking/marina/pkg/config"
 	log "github.com/sirupsen/logrus"
 )
 

@@ -1,0 +1,11 @@
+version: '3'
+services:
+  mysql:
+    ports:
+      - "3306:3306"
+  swaggerui:
+    ports:
+      - "8082:8080"
+  minio:
+    ports:
+      - "9000:9000"

@@ -1,0 +1,12 @@
+{
+	"configs": [
+		{
+			"address": "tcp://localhost:3306",
+			"timeout": 30
+		},
+		{
+			"address": "tcp://localhost:9000",
+			"timeout": 10
+		}
+	]
+}

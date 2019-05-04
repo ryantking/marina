@@ -1,0 +1,23 @@
+
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7.12
+    environment:
+      MYSQL_DATABASE: marinatest
+      MYSQL_USER: marina
+      MYSQL_PASSWORD: marina
+      MYSQL_ROOT_PASSWORD: marina
+    command: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"
+  swaggerui:
+    image: swaggerapi/swagger-ui:v3.0.5
+    environment:
+      API_URL: http://localhost:8081/api/docs.json
+  minio:
+    image: minio/minio:RELEASE.2019-05-02T19-07-09Z
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    ports:
+      - "9000:9000"
+    command: server /results

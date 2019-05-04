@@ -22,7 +22,6 @@
 # End of https://www.gitignore.io/api/go
 
 # Local binary
-marinad
-gin-bin
+marina
 
-coverage.txt
+coverprofile.txt

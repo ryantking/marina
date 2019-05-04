@@ -74,8 +74,8 @@ func Get() *Config {
 
 	// S3 configuration
 	v.SetDefault(s3Endpoint, "localhost:9000")
-	v.SetDefault(s3AccessKeyID, "")
-	v.SetDefault(s3SecretAccessKey, "")
+	v.SetDefault(s3AccessKeyID, "minio")
+	v.SetDefault(s3SecretAccessKey, "minio123")
 	v.AutomaticEnv()
 
 	c := Config{}
