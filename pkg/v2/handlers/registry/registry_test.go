@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/ryantking/marina/pkg/docker"
 	"github.com/ryantking/marina/pkg/v2/routes"
 	"github.com/stretchr/testify/suite"
 
@@ -37,6 +38,7 @@ func (suite *RegistryTestSuite) TestAPIVersion() {
 	b, err := ioutil.ReadAll(rr.Body)
 	require.NoError(err)
 	assert.EqualValues("true", b)
+	assert.Equal(docker.APIVersion, rr.Header().Get(docker.HeaderAPIVersion))
 }
 
 func TestRegistryTestSuite(t *testing.T) {

@@ -70,8 +70,8 @@ func (suite *ConfigTestSuite) TestGetDefaults() {
 	assert.Equal("https://swagger.cogolo.net", cfg.Swagger.URL)
 	assert.Equal("/api/docs", cfg.Swagger.DocsPath)
 	assert.Equal("localhost:9000", cfg.S3.Endpoint)
-	assert.Equal("", cfg.S3.AccessKeyID)
-	assert.Equal("", cfg.S3.SecretAccessKey)
+	assert.Equal("minio", cfg.S3.AccessKeyID)
+	assert.Equal("minio123", cfg.S3.SecretAccessKey)
 }
 
 func (suite *ConfigTestSuite) TestGetEnvironment() {
