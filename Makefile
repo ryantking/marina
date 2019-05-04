@@ -9,7 +9,7 @@ deps:
 	@gobin github.com/maxcnunes/waitforit@v2.4.1
 	@gobin github.com/golangci/golangci-lint/cmd/golangci-lint@v1.16.0
 
-.PHONY: vendor
+.PHONY: vendor run
 vendor:
 	@GO111MODULE=on go mod tidy
 	@GO111MODULE=on go mod download
