@@ -10,6 +10,9 @@ import (
 
 	"github.com/facebookgo/grace/gracehttp"
 	log "github.com/sirupsen/logrus"
+
+	// MySQL database driver
+	_ "upper.io/db.v3/mysql"
 )
 
 func main() {
