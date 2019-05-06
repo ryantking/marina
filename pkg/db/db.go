@@ -7,6 +7,8 @@ import (
 	"sync"
 
 	"github.com/ryantking/marina/pkg/config"
+
+	udb "upper.io/db.v3"
 	"upper.io/db.v3/lib/sqlbuilder"
 )
 
@@ -15,8 +17,10 @@ const (
 )
 
 var (
-	db  sqlbuilder.Database
-	dbL sync.Mutex
+	db           sqlbuilder.Database
+	dbL          sync.Mutex
+	collections  = map[string]udb.Collection{}
+	collectionsL sync.Mutex
 )
 
 // Get returns the connection to the database
@@ -50,6 +54,27 @@ func Get() (sqlbuilder.Database, error) {
 
 	db = sess
 	return db, nil
+}
+
+func GetCollection(name string) (udb.Collection, error) {
+	collectionsL.Lock()
+	defer collectionsL.Unlock()
+
+	col, ok := collections[name]
+	if ok {
+		return col, nil
+	}
+
+	db, err := Get()
+	if err != nil {
+		return nil, err
+	}
+	col = db.Collection(name)
+	if !col.Exists() {
+		return nil, &ErrCollectionNotFound{name}
+	}
+	collections[name] = col
+	return col, nil
 }
 
 // Close closes the connection to the database

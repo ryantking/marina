@@ -50,6 +50,7 @@ func (suite *MigrateTestSuite) TestGetLatest() {
 func (suite *MigrateTestSuite) TestMigrations() {
 	require := suite.Require()
 
+	config.Set("db.migrations_dir", "../../../migrations")
 	latest, err := GetLatest()
 	require.NoError(err)
 
