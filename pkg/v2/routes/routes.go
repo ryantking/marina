@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 
+	"github.com/ryantking/marina/pkg/docker"
 	"github.com/ryantking/marina/pkg/v2/handlers/registry"
 	"github.com/ryantking/marina/pkg/v2/handlers/repository"
 
@@ -14,8 +15,11 @@ func Registry() *restful.WebService {
 	tags := []string{"registry"}
 	ws := new(restful.WebService)
 	ws.Path("/v2").
-		Consumes(restful.MIME_OCTET, restful.MIME_JSON, "application/vnd.docker.distribution.manifest.v1+prettyjws").
-		Produces(restful.MIME_OCTET, restful.MIME_JSON)
+		Consumes(restful.MIME_OCTET, docker.MIMEManifestV2).
+		Produces(
+			restful.MIME_OCTET, restful.MIME_JSON, docker.MIMEManifestV1, docker.MIMEManifestV2,
+			docker.MIMEManifestListV2, docker.MIMEImageManifestV1, docker.MIMEImageIndexV1,
+		)
 
 	ws.Route(ws.GET("").To(registry.APIVersion).
 		Doc("Find API version").
@@ -23,12 +27,18 @@ func Registry() *restful.WebService {
 		Returns(http.StatusOK, "Version supported", "true").
 		Returns(http.StatusUnauthorized, "Unauthorized", nil))
 
-	ws.Route(ws.POST("/{name}/blobs/uploads").To(repository.StartUpload))
-	ws.Route(ws.PUT("/{name}/blobs/uploads/{uuid}").To(repository.FinishUpload))
-	ws.Route(ws.GET("/{name}/manifests/{reference}").To(repository.GetManifest))
-	ws.Route(ws.PUT("/{name}/manifests/{reference}").To(repository.UpdateManifest))
-	ws.Route(ws.PATCH("/{name}/blobs/uploads/{uuid}").To(repository.DoUpload))
-	ws.Route(ws.HEAD("/{name}/blobs/{digest}").To(repository.CheckDigest))
+	ws.Route(ws.HEAD("/{org}/{repo}/blobs/{digest}").To(repository.LayerExists))
+	ws.Route(ws.HEAD("/{repo}/blobs/{digest}").To(repository.LayerExists))
+
+	ws.Route(ws.POST("/{org}/{repo}/blobs/uploads").To(repository.StartUpload))
+	ws.Route(ws.POST("/{repo}/blobs/uploads").To(repository.StartUpload))
+	ws.Route(ws.PATCH("/{org}/{repo}/blobs/uploads/{uuid}").To(repository.UploadChunk))
+	ws.Route(ws.PUT("/{org}/{repo}/blobs/uploads/{uuid}").To(repository.FinishUpload))
+
+	ws.Route(ws.GET("/{repo}/manifests/{ref}").To(repository.GetManifest))
+	ws.Route(ws.GET("/{org}/{repo}/manifests/{ref}").To(repository.GetManifest))
+	ws.Route(ws.PUT("/{repo}/manifests/{ref}").To(repository.UpdateManifest))
+	ws.Route(ws.PUT("/{org}/{repo}/manifests/{ref}").To(repository.UpdateManifest))
 
 	return ws
 }

@@ -20,3 +20,8 @@ func SendServerError(resp *restful.Response, err error, msg string) {
 	WriteError(resp, http.StatusInternalServerError, err)
 	log.WithError(err).Error(msg)
 }
+
+// SendBadRequest sends a server error with a bad request to the client
+func SendBadRequest(resp *restful.Response, err error) {
+	WriteError(resp, http.StatusBadRequest, err)
+}
