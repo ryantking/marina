@@ -14,6 +14,7 @@ CREATE TABLE `tag` (
 	`repo_name` VARCHAR(255) NOT NULL,
 	`org_name` VARCHAR(255) NOT NULL,
 	`manifest` JSON NOT NULL,
+	`manifest_type` VARCHAR(255) NOT NULL,
 	FOREIGN KEY (`repo_name`) REFERENCES `repository` (`name`),
 	FOREIGN KEY (`org_name`) REFERENCES `organization` (`name`)
 );

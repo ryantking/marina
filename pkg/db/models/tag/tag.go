@@ -17,34 +17,35 @@ var (
 	ErrManifestNotFound = errors.New("no manifest for the given repo, org, and tag could be found")
 )
 
-// GetManifest returns the manifest for a given tag
-func GetManifest(name, repoName, orgName string) ([]byte, error) {
+// GetManifest returns the manifest with its type for a given tag
+func GetManifest(name, repoName, orgName string) ([]byte, string, error) {
 	col, err := db.GetCollection(colName)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	t := Model{}
 	err = col.Find("name", name).And("repo_name", repoName).And("org_name", orgName).One(&t)
 	if err == udb.ErrNoMoreRows {
-		return nil, ErrManifestNotFound
+		return nil, "", ErrManifestNotFound
 	}
 
-	return t.Manifest, nil
+	return t.Manifest, t.ManifestType, nil
 }
 
 // UpdateManifest updates the manifest for a given tag, creating it if it does not exist
-func UpdateManifest(name, repoName, orgName string, manifest []byte) error {
+func UpdateManifest(name, repoName, orgName string, manifest []byte, manifestType string) error {
 	col, err := db.GetCollection(colName)
 	if err != nil {
 		return err
 	}
 
 	t := Model{
-		Name:     name,
-		RepoName: repoName,
-		OrgName:  orgName,
-		Manifest: manifest,
+		Name:         name,
+		RepoName:     repoName,
+		OrgName:      orgName,
+		Manifest:     manifest,
+		ManifestType: manifestType,
 	}
 	res := col.Find("name", name).And("repo_name", repoName).And("org_name", orgName)
 	exists, err := res.Exists()

@@ -29,12 +29,16 @@ func Registry() *restful.WebService {
 
 	ws.Route(ws.HEAD("/{org}/{repo}/blobs/{digest}").To(repository.LayerExists))
 	ws.Route(ws.HEAD("/{repo}/blobs/{digest}").To(repository.LayerExists))
+	ws.Route(ws.GET("/{org}/{repo}/blobs/{digest}").To(repository.GetLayer))
+	ws.Route(ws.GET("/{repo}/blobs/{digest}").To(repository.GetLayer))
 
 	ws.Route(ws.POST("/{org}/{repo}/blobs/uploads").To(repository.StartUpload))
 	ws.Route(ws.POST("/{repo}/blobs/uploads").To(repository.StartUpload))
 	ws.Route(ws.PATCH("/{org}/{repo}/blobs/uploads/{uuid}").To(repository.UploadChunk))
 	ws.Route(ws.PUT("/{org}/{repo}/blobs/uploads/{uuid}").To(repository.FinishUpload))
 
+	ws.Route(ws.HEAD("/{repo}/manifests/{ref}").To(repository.ManifestExists))
+	ws.Route(ws.HEAD("/{org}/{repo}/manifests/{ref}").To(repository.ManifestExists))
 	ws.Route(ws.GET("/{repo}/manifests/{ref}").To(repository.GetManifest))
 	ws.Route(ws.GET("/{org}/{repo}/manifests/{ref}").To(repository.GetManifest))
 	ws.Route(ws.PUT("/{repo}/manifests/{ref}").To(repository.UpdateManifest))

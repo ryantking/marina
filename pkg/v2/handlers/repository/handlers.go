@@ -13,7 +13,6 @@ import (
 	"github.com/ryantking/marina/pkg/db/models/repo"
 	"github.com/ryantking/marina/pkg/db/models/tag"
 	"github.com/ryantking/marina/pkg/db/models/upload"
-	"github.com/ryantking/marina/pkg/docker"
 	"github.com/ryantking/marina/pkg/web/response"
 
 	"github.com/emicklei/go-restful"
@@ -22,6 +21,36 @@ import (
 const (
 	defaultOrg = "library"
 )
+
+func GetLayer(req *restful.Request, resp *restful.Response) {
+	repoName, orgName := getOrgAndRepo(req)
+	digest := req.PathParameter("digest")
+	exists, err := layer.Exists(digest, repoName, orgName)
+	if err != nil {
+		response.SendServerError(resp, err, "error checking if layer exists")
+		return
+	}
+	if !exists {
+		resp.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	f, err := os.Open(fmt.Sprintf("%s_%s_%s.tar.gz", orgName, repoName, digest))
+	if err != nil {
+		response.SendServerError(resp, err, "error opening layer file")
+		return
+	}
+	n, err := io.Copy(resp, f)
+	if err != nil {
+		response.SendServerError(resp, err, "error copying layer file to response body")
+		return
+	}
+
+	resp.AddHeader("Content-Length", fmt.Sprint(n))
+	resp.AddHeader("Content-Range", fmt.Sprintf("0-%d", n))
+	resp.AddHeader("Content-Type", restful.MIME_JSON)
+	resp.WriteHeader(http.StatusOK)
+}
 
 func StartUpload(req *restful.Request, resp *restful.Response) {
 	repoName, orgName := getOrgAndRepo(req)
@@ -46,8 +75,7 @@ func StartUpload(req *restful.Request, resp *restful.Response) {
 func UploadChunk(req *restful.Request, resp *restful.Response) {
 	repoName, orgName := getOrgAndRepo(req)
 	uuid := req.PathParameter("uuid")
-
-	f, err := os.Create(fmt.Sprintf("%s_%s_%s.tar.gz", orgName, repoName, uuid))
+	f, err := os.Create(fmt.Sprintf("upload_%s.tar.gz", uuid))
 	if err != nil {
 		response.SendServerError(resp, err, "error creating file")
 		return
@@ -74,6 +102,7 @@ func FinishUpload(req *restful.Request, resp *restful.Response) {
 		return
 	}
 
+	os.Rename(fmt.Sprintf("upload_%d.tar.gz", uuid), fmt.Sprintf("%s_%s_%s.tar.gz", orgName, repoName, digest))
 	upl := &upload.Model{UUID: uuid, Done: true}
 	err = upl.Save()
 	if err != nil {
@@ -111,10 +140,28 @@ func LayerExists(req *restful.Request, resp *restful.Response) {
 	resp.WriteHeader(http.StatusOK)
 }
 
+func ManifestExists(req *restful.Request, resp *restful.Response) {
+	repoName, orgName := getOrgAndRepo(req)
+	ref := req.PathParameter("ref")
+	manifest, _, err := tag.GetManifest(ref, repoName, orgName)
+	if err == tag.ErrManifestNotFound {
+		resp.WriteHeader(http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		response.SendServerError(resp, err, "error getting manifest from database")
+		return
+	}
+	digest := fmt.Sprintf("sha256:%x", sha256.Sum256(manifest))
+	resp.AddHeader("Content-Length", fmt.Sprint(len(manifest)))
+	resp.AddHeader("Docker-Content-Digest", digest)
+	resp.WriteHeader(http.StatusOK)
+}
+
 func GetManifest(req *restful.Request, resp *restful.Response) {
 	repoName, orgName := getOrgAndRepo(req)
 	ref := req.PathParameter("ref")
-	manifest, err := tag.GetManifest(ref, repoName, orgName)
+	manifest, manifestType, err := tag.GetManifest(ref, repoName, orgName)
 	if err == tag.ErrManifestNotFound {
 		resp.WriteHeader(http.StatusNotFound)
 		return
@@ -126,7 +173,7 @@ func GetManifest(req *restful.Request, resp *restful.Response) {
 
 	digest := fmt.Sprintf("sha256:%x", sha256.Sum256(manifest))
 	resp.AddHeader("Docker-Content-Digest", digest)
-	resp.AddHeader("Content-Type", docker.MIMEManifestV2)
+	resp.AddHeader("Content-Type", manifestType)
 	resp.WriteHeader(http.StatusOK)
 	_, err = resp.Write(manifest)
 	if err != nil {
@@ -140,12 +187,13 @@ func UpdateManifest(req *restful.Request, resp *restful.Response) {
 	repoName, orgName := getOrgAndRepo(req)
 	manifest, err := ioutil.ReadAll(req.Request.Body)
 	digest := fmt.Sprintf("sha256:%x", sha256.Sum256(manifest))
+	manifestType := req.HeaderParameter("Content-Type")
 	if err != nil {
 		response.SendBadRequest(resp, err)
 		return
 	}
 
-	err = tag.UpdateManifest(ref, repoName, orgName, manifest)
+	err = tag.UpdateManifest(ref, repoName, orgName, manifest, manifestType)
 	if err != nil {
 		response.SendServerError(resp, err, "error updating manifest")
 		return
