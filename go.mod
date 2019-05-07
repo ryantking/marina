@@ -23,7 +23,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/myitcv/gobin v0.0.9 // indirect
-	github.com/prometheus/common v0.3.0 // indirect
+	github.com/prometheus/common v0.3.0
 	github.com/rogpeppe/go-internal v1.3.0 // indirect
 	github.com/sirupsen/logrus v1.4.1
 	github.com/spf13/viper v1.3.2

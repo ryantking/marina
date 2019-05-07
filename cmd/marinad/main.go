@@ -5,6 +5,7 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/ryantking/marina/pkg/config"
+	"github.com/ryantking/marina/pkg/db/migrate"
 	"github.com/ryantking/marina/pkg/logging"
 	v2 "github.com/ryantking/marina/pkg/v2"
 
@@ -13,11 +14,13 @@ import (
 
 	// MySQL database driver
 	_ "upper.io/db.v3/mysql"
+	// MySQL migrations driver
+	_ "github.com/golang-migrate/migrate/database/mysql"
 )
 
 func main() {
 	logging.Init()
-	// migrate.Start()
+	migrate.Start()
 	cfg := config.Get()
 	log.Infof("starting HTTP server at %s", cfg.RootURL)
 	http.Handle("/", v2.NewRouter())

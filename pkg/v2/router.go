@@ -12,7 +12,7 @@ import (
 // NewRouter creates a router for the v2 API with all routes
 func NewRouter() http.Handler {
 	container := restful.NewContainer()
-	container.Add(routes.Registry())
+	container.Add(routes.WebService())
 	container.Filter(filters.RequestLogger)
 	container.Filter(filters.PanicRecovery)
 	container.Filter(container.OPTIONSFilter)
