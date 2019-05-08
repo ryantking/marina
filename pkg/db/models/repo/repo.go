@@ -1,36 +1,48 @@
 package repo
 
 import (
+	"fmt"
+
 	"github.com/ryantking/marina/pkg/db"
-	"github.com/ryantking/marina/pkg/db/models/org"
+	udb "upper.io/db.v3"
 )
 
 const (
-	colName = "repository"
+	// CollectionName is the name of the table in the database
+	CollectionName = "repository"
 )
 
-// CreateIfNotExists creates a repository if not currently present
-func CreateIfNotExists(repoName, orgName string) error {
-	err := org.CreateIfNotExists(orgName)
-	if err != nil {
-		return err
+var col udb.Collection
+
+// Collection returns the collection for the repository type
+func Collection() (udb.Collection, error) {
+	if col != nil {
+		return col, nil
 	}
 
-	col, err := db.GetCollection(colName)
+	db, err := db.Get()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	exists, err := col.Find("name", repoName).And("org_name", orgName).Exists()
+	col := db.Collection(CollectionName)
+	if !col.Exists() {
+		panic(fmt.Sprintf("collection '%s' does not exist", CollectionName))
+	}
+
+	return col, nil
+}
+
+// Exists checks whether or not a given organization exists
+func Exists(name, orgName string) (bool, error) {
+	col, err := Collection()
 	if err != nil {
-		return err
+		return false, err
 	}
-	if exists {
-		return nil
+
+	exists, err := col.Find("name", name).And("org_name", orgName).Exists()
+	if err != nil {
+		return false, err
 	}
-	repo := Model{
-		Name:    repoName,
-		OrgName: orgName,
-	}
-	_, err = col.Insert(repo)
-	return err
+
+	return exists, nil
 }

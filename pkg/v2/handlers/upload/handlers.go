@@ -5,93 +5,99 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 
+	"github.com/labstack/echo"
+	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/db/models/layer"
 	"github.com/ryantking/marina/pkg/db/models/repo"
 	"github.com/ryantking/marina/pkg/db/models/upload"
 	"github.com/ryantking/marina/pkg/docker"
-	"github.com/ryantking/marina/pkg/web/request"
-	"github.com/ryantking/marina/pkg/web/response"
-
-	"github.com/emicklei/go-restful"
-	log "github.com/sirupsen/logrus"
 )
 
 // Start starts the process of uploading a new layer
-func Start(req *restful.Request, resp *restful.Response) {
-	log.Debug("start upload")
-	repoName, orgName := request.GetRepoAndOrg(req)
-	err := repo.CreateIfNotExists(repoName, orgName)
+func Start(c echo.Context) error {
+	repoName, orgName := parsePath(c)
+	exists, err := repo.Exists(repoName, orgName)
 	if err != nil {
-		response.SendServerError(resp, err, "error checking if organization and repo exist")
-		return
+		return errors.Wrap(err, "error checking if repo exists")
+	}
+	if !exists {
+		c.Set("docker_err_code", "NAME_UNKNOWN")
+		return echo.NewHTTPError(http.StatusNotFound, "repository not found")
 	}
 
 	upl, err := upload.New()
 	if err != nil {
-		response.SendServerError(resp, err, "error creating new upload")
-		return
+		return errors.Wrap(err, "error creating new upload")
 	}
 
-	resp.AddHeader(response.Location, fmt.Sprintf("/v2/%s/%s/blobs/uploads/%d", orgName, repoName, upl.UUID))
-	resp.AddHeader(response.ContentRange, "0-0")
-	resp.AddHeader(response.ContentLength, "0")
-	resp.WriteHeader(http.StatusAccepted)
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%d", orgName, repoName, upl.UUID)
+	c.Response().Header().Set(echo.HeaderLocation, loc)
+	c.Response().Header().Set("Content-Range", "0-0")
+	c.Response().Header().Set(echo.HeaderContentLength, "0")
+	return c.NoContent(http.StatusAccepted)
 }
 
 // Chunk is used to save a chunk of data to a layer
-func Chunk(req *restful.Request, resp *restful.Response) {
-	repoName, orgName := request.GetRepoAndOrg(req)
-	uuid, err := request.GetUUID(req)
+func Chunk(c echo.Context) error {
+	repoName, orgName := parsePath(c)
+	uuid, err := parseUUID(c)
 	if err != nil {
-		response.SendBadRequest(resp, err)
-		fmt.Println(err.Error())
-		return
+		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	f, err := os.Create(fmt.Sprintf("upload_%d.tar.gz", uuid))
 	if err != nil {
-		response.SendServerError(resp, err, "error creating file")
-		return
+		return err
 	}
-	n, err := io.Copy(f, req.Request.Body)
+	n, err := io.Copy(f, c.Request().Body)
 	if err != nil {
-		response.SendServerError(resp, err, "error writing to file")
-		return
+		return err
 	}
 
-	resp.AddHeader(response.Location, fmt.Sprintf("/v2/%s/%s/blobs/uploads/%d", orgName, repoName, uuid))
-	resp.AddHeader(request.Range, fmt.Sprintf("0-%d", n))
-	resp.AddHeader(response.ContentLength, "0")
-	resp.AddHeader(docker.HeaderUploadUUID, fmt.Sprint(uuid))
-	resp.WriteHeader(http.StatusAccepted)
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%d", orgName, repoName, uuid)
+	c.Response().Header().Set(echo.HeaderLocation, loc)
+	c.Response().Header().Set("Range", fmt.Sprintf("0-%d", n))
+	c.Response().Header().Set(echo.HeaderContentLength, "0")
+	c.Response().Header().Set(docker.HeaderUploadUUID, fmt.Sprint(uuid))
+	return c.NoContent(http.StatusAccepted)
 }
 
 // Finish is used to signal when the upload has completed
-func Finish(req *restful.Request, resp *restful.Response) {
-	digest := req.QueryParameter("digest")
-	repoName, orgName := request.GetRepoAndOrg(req)
-	uuid, err := request.GetUUID(req)
+func Finish(c echo.Context) error {
+	repoName, orgName := parsePath(c)
+	uuid, err := parseUUID(c)
 	if err != nil {
-		response.SendBadRequest(resp, err)
-		return
+		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+	digest := c.QueryParam("digest")
 
 	os.Rename(fmt.Sprintf("upload_%d.tar.gz", uuid), fmt.Sprintf("%s_%s_%s.tar.gz", orgName, repoName, digest))
 	upl := &upload.Model{UUID: uuid, Done: true}
 	err = upl.Save()
 	if err != nil {
-		response.SendServerError(resp, err, "error updating upload status")
-		return
+		return errors.Wrap(err, "error updating upload status")
 	}
 
 	_, err = layer.New(digest, repoName, orgName)
 	if err != nil {
-		response.SendServerError(resp, err, "error creating new layer")
-		return
+		return errors.Wrap(err, "error creating new layer in database")
 	}
 
-	resp.AddHeader(response.Location, fmt.Sprintf("/v2/%s/%s/blobs/%s", orgName, repoName, digest))
-	resp.AddHeader(response.ContentLength, "0")
-	resp.AddHeader(docker.HeaderContentDigest, digest)
-	resp.WriteHeader(http.StatusCreated)
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/%s", orgName, repoName, digest)
+	c.Response().Header().Set(echo.HeaderLocation, loc)
+	c.Response().Header().Set(echo.HeaderContentLength, "0")
+	c.Response().Header().Set(docker.HeaderContentDigest, digest)
+	return c.NoContent(http.StatusCreated)
+}
+
+func parsePath(c echo.Context) (string, string) {
+	return c.Param("repo"), c.Param("org")
+}
+
+func parseUUID(c echo.Context) (uint64, error) {
+	s := c.Param("uuid")
+	return strconv.ParseUint(s, 10, 64)
 }

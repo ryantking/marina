@@ -4,12 +4,11 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
+	"github.com/facebookgo/grace/gracehttp"
 	"github.com/ryantking/marina/pkg/config"
 	"github.com/ryantking/marina/pkg/db/migrate"
 	"github.com/ryantking/marina/pkg/logging"
-	v2 "github.com/ryantking/marina/pkg/v2"
-
-	"github.com/facebookgo/grace/gracehttp"
+	"github.com/ryantking/marina/pkg/web/router"
 	log "github.com/sirupsen/logrus"
 
 	// MySQL database driver
@@ -23,10 +22,9 @@ func main() {
 	migrate.Start()
 	cfg := config.Get()
 	log.Infof("starting HTTP server at %s", cfg.RootURL)
-	http.Handle("/", v2.NewRouter())
 	srv := &http.Server{
 		Addr:         cfg.Server.Address,
-		Handler:      http.DefaultServeMux,
+		Handler:      router.New(),
 		WriteTimeout: cfg.Server.WriteTimeout,
 		ReadTimeout:  cfg.Server.ReadTimeout,
 	}
