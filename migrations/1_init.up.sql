@@ -15,6 +15,7 @@ CREATE TABLE `tag` (
 	`org_name` VARCHAR(255) NOT NULL,
 	`manifest` JSON NOT NULL,
 	`manifest_type` VARCHAR(255) NOT NULL,
+	`_last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
 	FOREIGN KEY (`repo_name`) REFERENCES `repository` (`name`),
 	FOREIGN KEY (`org_name`) REFERENCES `organization` (`name`)
 );

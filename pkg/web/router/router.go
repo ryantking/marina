@@ -8,6 +8,7 @@ import (
 	echolog "github.com/onrik/logrus/echo"
 	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/config"
+	"github.com/ryantking/marina/pkg/docker"
 	v2 "github.com/ryantking/marina/pkg/v2"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
@@ -20,6 +21,7 @@ func New() *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.Recover())
 	e.Logger = echolog.NewLogger(logrus.StandardLogger(), "")
+	e.Binder = new(docker.Binder)
 	if config.Get().Environment == "DEVELOPMENT" {
 		e.Use(middleware.LoggerWithConfig(logConfig))
 	}
@@ -27,22 +29,6 @@ func New() *echo.Echo {
 	v2.RegisterRoutes(e)
 
 	return e
-	// container := restful.NewContainer()
-	// container.Add(routes.WebService())
-	// container.Filter(filters.RequestLogger)
-	// container.Filter(filters.PanicRecovery)
-	// container.Filter(container.OPTIONSFilter)
-	//
-	// cors := restful.CrossOriginResourceSharing{
-	// 	ExposeHeaders:  []string{"Location", "Docker-Upload-UUID", "Content-Length", "Range"},
-	// 	AllowedHeaders: []string{"Content-Type", "Content-Length", "Content-Range", "Accept"},
-	// 	AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"},
-	// 	CookiesAllowed: false,
-	// 	Container:      container,
-	// }
-	// container.Filter(cors.Filter)
-
-	// return container
 }
 
 func errHandler(err error, c echo.Context) {

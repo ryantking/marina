@@ -1,9 +1,8 @@
 package manifest
 
 import (
-	"crypto/sha256"
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -24,9 +23,12 @@ func Exists(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	digest := fmt.Sprintf("sha256:%x", sha256.Sum256(manifest))
-	c.Response().Header().Set(echo.HeaderContentLength, fmt.Sprint(len(manifest)))
-	c.Response().Header().Set(docker.HeaderContentDigest, digest)
+	b, err := json.Marshal(manifest)
+	if err != nil {
+		return err
+	}
+	c.Response().Header().Set(echo.HeaderContentLength, fmt.Sprint(len(b)))
+	c.Response().Header().Set(docker.HeaderContentDigest, manifest.Digest())
 	return c.NoContent(http.StatusOK)
 }
 
@@ -42,9 +44,12 @@ func Get(c echo.Context) error {
 		return err
 	}
 
-	digest := fmt.Sprintf("sha256:%x", sha256.Sum256(manifest))
-	c.Response().Header().Set(docker.HeaderContentDigest, digest)
-	return c.Blob(http.StatusOK, manifestType, manifest)
+	b, err := json.Marshal(manifest)
+	if err != nil {
+		return err
+	}
+	c.Response().Header().Set(docker.HeaderContentDigest, manifest.Digest())
+	return c.Blob(http.StatusOK, manifestType, b)
 }
 
 // Update updates a manifest in the database, creating if it does not currently exist
@@ -58,13 +63,13 @@ func Update(c echo.Context) error {
 		c.Set("docker_err_code", "NAME_UNKNOWN")
 		return echo.NewHTTPError(http.StatusNotFound, "could not find the given repository")
 	}
+
+	var manifest docker.Manifest
 	manifestType := c.Request().Header.Get(echo.HeaderContentType)
-	manifest, err := ioutil.ReadAll(c.Request().Body)
+	err = c.Bind(&manifest)
 	if err != nil {
-		c.Set("docker_err_code", "MANIFEST_INVALID")
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return err
 	}
-	digest := fmt.Sprintf("sha256:%x", sha256.Sum256(manifest))
 	err = tag.UpdateManifest(ref, repoName, orgName, manifest, manifestType)
 	if err != nil {
 		return errors.Wrap(err, "error updating manifest in database")
@@ -72,7 +77,7 @@ func Update(c echo.Context) error {
 	loc := fmt.Sprintf("/v2/%s/%s/manifests/%s", orgName, repoName, ref)
 	c.Response().Header().Set(echo.HeaderLocation, loc)
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
-	c.Response().Header().Set(docker.HeaderContentDigest, digest)
+	c.Response().Header().Set(docker.HeaderContentDigest, manifest.Digest())
 	return c.NoContent(http.StatusCreated)
 }
 
