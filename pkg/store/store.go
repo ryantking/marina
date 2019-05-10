@@ -68,3 +68,30 @@ func FinishUpload(digest, uuid, repoName, orgName string) error {
 
 	return client.RemoveObject(bucket, srcPath)
 }
+
+// GetLayer returns the layer object as a reader interface
+func GetLayer(digest, repoName, orgName string) (io.ReadCloser, error) {
+	client, err := getClient()
+	if err != nil {
+		return nil, err
+	}
+
+	path := fmt.Sprintf("layers/%s/%s/%s.tar.gz", orgName, repoName, digest)
+	obj, err := client.GetObject(config.Get().S3.Bucket, path, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, errors.Wrap(err, "error retrieving object")
+	}
+
+	return obj, nil
+}
+
+// DeleteLayer deletes a layer
+func DeleteLayer(digest, repoName, orgName string) error {
+	client, err := getClient()
+	if err != nil {
+		return err
+	}
+
+	path := fmt.Sprintf("layers/%s/%s/%s.tar.gz", orgName, repoName, digest)
+	return client.RemoveObject(config.Get().S3.Bucket, path)
+}
