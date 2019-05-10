@@ -45,6 +45,9 @@ destroydb:
 	@migrate -path "./migrations" -database "mysql://marina:marina@tcp(localhost:3306)/marinatest" force 1
 	@migrate -path "./migrations" -database "mysql://marina:marina@tcp(localhost:3306)/marinatest" down
 
+bucket:
+	@docker-compose run minio_bucket
+
 gin:
 	@echo "Starting local development server with gin"
 	@waitforit -file=$(PWD)/waitforit.json

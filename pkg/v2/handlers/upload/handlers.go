@@ -2,9 +2,8 @@ package upload
 
 import (
 	"fmt"
-	"io"
 	"net/http"
-	"os"
+	"strconv"
 
 	"github.com/labstack/echo"
 	"github.com/pkg/errors"
@@ -12,6 +11,7 @@ import (
 	"github.com/ryantking/marina/pkg/db/models/repo"
 	"github.com/ryantking/marina/pkg/db/models/upload"
 	"github.com/ryantking/marina/pkg/docker"
+	"github.com/ryantking/marina/pkg/store"
 )
 
 // Start starts the process of uploading a new layer
@@ -40,11 +40,15 @@ func Chunk(c echo.Context) error {
 		return err
 	}
 
-	f, err := os.Create(fmt.Sprintf("%s.tar.gz", uuid))
-	if err != nil {
-		return err
+	var sz int64 = -1
+	s := c.Request().Header.Get(echo.HeaderContentLength)
+	if s != "" {
+		sz, err = strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "error parsing Content-Length header")
+		}
 	}
-	n, err := io.Copy(f, c.Request().Body)
+	n, err := store.CreateUpload(uuid, repoName, orgName, c.Request().Body, sz)
 	if err != nil {
 		return err
 	}
@@ -65,7 +69,11 @@ func Finish(c echo.Context) error {
 	}
 	digest := c.QueryParam("digest")
 
-	os.Rename(fmt.Sprintf("%s.tar.gz", uuid), fmt.Sprintf("%s.tar.gz", digest))
+	err = store.FinishUpload(digest, uuid, repoName, orgName)
+	if err != nil {
+		return errors.Wrap(err, "error finishing upload")
+	}
+
 	upl := &upload.Model{UUID: uuid, Done: true}
 	err = upl.Save()
 	if err != nil {

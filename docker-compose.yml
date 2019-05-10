@@ -20,4 +20,16 @@ services:
       MINIO_SECRET_KEY: minio123
     ports:
       - "9000:9000"
-    command: server /results
+    volumes:
+      - "./minio-data:/data"
+    command: server /data
+  minio_bucket:
+    image: minio/mc:RELEASE.2019-05-01T23-27-44Z
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add myminio http://minio:9000 minio minio123;
+      /usr/bin/mc rm -r --force myminio/marina;
+      /usr/bin/mc mb myminio/marina;
+      /usr/bin/mc policy download myminio/marina"

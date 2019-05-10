@@ -28,8 +28,11 @@ const (
 	swaggerDocsPath = "swagger.docs_path"
 
 	s3Endpoint        = "s3.endpoint"
+	s3Bucket          = "s3.bucket"
+	s3Region          = "s3.region"
 	s3AccessKeyID     = "s3.access_key_id"
 	s3SecretAccessKey = "s3.secret_access_key"
+	s3UseSSL          = "s3.use_ssl"
 )
 
 var (
@@ -74,8 +77,11 @@ func Get() *Config {
 
 	// S3 configuration
 	v.SetDefault(s3Endpoint, "localhost:9000")
+	v.SetDefault(s3Bucket, "marina")
+	v.SetDefault(s3Region, "us-east-1")
 	v.SetDefault(s3AccessKeyID, "minio")
 	v.SetDefault(s3SecretAccessKey, "minio123")
+	v.SetDefault(s3UseSSL, false)
 	v.AutomaticEnv()
 
 	c := Config{}

@@ -29,7 +29,10 @@ type Config struct {
 
 	S3 struct {
 		Endpoint        string `mapstructure:"endpoint"`
+		Bucket          string `mapstructure:"bucket"`
+		Region          string `mapstructure:"region"`
 		AccessKeyID     string `mapstructure:"access_key_id"`
 		SecretAccessKey string `mapstructure:"secret_access_key"`
+		UseSSL          bool   `mapstructure:"use_ssl"`
 	} `mapstructure:"s3"`
 }
