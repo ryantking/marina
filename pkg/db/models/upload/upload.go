@@ -3,6 +3,7 @@ package upload
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/ryantking/marina/pkg/db"
 	udb "upper.io/db.v3"
 )
@@ -32,19 +33,20 @@ func Collection() (udb.Collection, error) {
 	return col, nil
 }
 
-// New returns a new upload
-func New() (*Model, error) {
+// New creates a new upload and returns its UUID
+func New() (string, error) {
 	col, err := Collection()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	upl := Model{}
-	err = col.InsertReturning(&upl)
+	uuid := uuid.New()
+	upl := Model{UUID: uuid.String()}
+	_, err = col.Insert(&upl)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return &upl, nil
+	return uuid.String(), nil
 }
 
 // Save saves the upload to the database

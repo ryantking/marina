@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/labstack/echo"
 	"github.com/pkg/errors"
@@ -17,22 +16,17 @@ import (
 
 // Start starts the process of uploading a new layer
 func Start(c echo.Context) error {
-	repoName, orgName := parsePath(c)
-	exists, err := repo.Exists(repoName, orgName)
+	repoName, orgName, _, err := parsePath(c)
 	if err != nil {
-		return errors.Wrap(err, "error checking if repo exists")
-	}
-	if !exists {
-		c.Set("docker_err_code", "NAME_UNKNOWN")
-		return echo.NewHTTPError(http.StatusNotFound, "repository not found")
+		return err
 	}
 
-	upl, err := upload.New()
+	uuid, err := upload.New()
 	if err != nil {
 		return errors.Wrap(err, "error creating new upload")
 	}
 
-	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%d", orgName, repoName, upl.UUID)
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", orgName, repoName, uuid)
 	c.Response().Header().Set(echo.HeaderLocation, loc)
 	c.Response().Header().Set("Content-Range", "0-0")
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
@@ -41,13 +35,12 @@ func Start(c echo.Context) error {
 
 // Chunk is used to save a chunk of data to a layer
 func Chunk(c echo.Context) error {
-	repoName, orgName := parsePath(c)
-	uuid, err := parseUUID(c)
+	repoName, orgName, uuid, err := parsePath(c)
 	if err != nil {
-		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return err
 	}
-	f, err := os.Create(fmt.Sprintf("upload_%d.tar.gz", uuid))
+
+	f, err := os.Create(fmt.Sprintf("%s.tar.gz", uuid))
 	if err != nil {
 		return err
 	}
@@ -56,7 +49,7 @@ func Chunk(c echo.Context) error {
 		return err
 	}
 
-	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%d", orgName, repoName, uuid)
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", orgName, repoName, uuid)
 	c.Response().Header().Set(echo.HeaderLocation, loc)
 	c.Response().Header().Set("Range", fmt.Sprintf("0-%d", n))
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
@@ -66,15 +59,13 @@ func Chunk(c echo.Context) error {
 
 // Finish is used to signal when the upload has completed
 func Finish(c echo.Context) error {
-	repoName, orgName := parsePath(c)
-	uuid, err := parseUUID(c)
+	repoName, orgName, uuid, err := parsePath(c)
 	if err != nil {
-		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return err
 	}
 	digest := c.QueryParam("digest")
 
-	os.Rename(fmt.Sprintf("upload_%d.tar.gz", uuid), fmt.Sprintf("%s_%s_%s.tar.gz", orgName, repoName, digest))
+	os.Rename(fmt.Sprintf("%s.tar.gz", uuid), fmt.Sprintf("%s.tar.gz", digest))
 	upl := &upload.Model{UUID: uuid, Done: true}
 	err = upl.Save()
 	if err != nil {
@@ -93,11 +84,18 @@ func Finish(c echo.Context) error {
 	return c.NoContent(http.StatusCreated)
 }
 
-func parsePath(c echo.Context) (string, string) {
-	return c.Param("repo"), c.Param("org")
-}
+func parsePath(c echo.Context) (string, string, string, error) {
+	repoName := c.Param("repo")
+	orgName := c.Param("org")
+	uuid := c.Param("uuid")
+	exists, err := repo.Exists(repoName, orgName)
+	if err != nil {
+		return "", "", "", errors.Wrap(err, "error checking if repository exists")
+	}
+	if !exists {
+		c.Set("docker_err_code", docker.CodeNameUnknown)
+		return "", "", "", echo.NewHTTPError(http.StatusNotFound, "no such repository")
+	}
 
-func parseUUID(c echo.Context) (uint64, error) {
-	s := c.Param("uuid")
-	return strconv.ParseUint(s, 10, 64)
+	return repoName, orgName, uuid, nil
 }
