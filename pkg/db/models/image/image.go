@@ -99,7 +99,7 @@ func UpdateManifest(ref, repoName, orgName string, manifest docker.Manifest, man
 	res := col.Find("digest", digest)
 	exists, err := res.Exists()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error checking if manifest exists")
 	}
 	if exists {
 		err := res.Update(image)
@@ -114,7 +114,10 @@ func UpdateManifest(ref, repoName, orgName string, manifest docker.Manifest, man
 	}
 
 	if ref != digest {
-		return tag.Set(digest, ref, repoName, orgName)
+		err := tag.Set(digest, ref, repoName, orgName)
+		if err != nil {
+			return errors.Wrap(err, "error updating tag")
+		}
 	}
 
 	return nil

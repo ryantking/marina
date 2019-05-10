@@ -71,7 +71,7 @@ func Set(digest, name, repoName, orgName string) error {
 		return err
 	}
 	if exists {
-		return res.Update(map[string]string{"digest": digest})
+		return res.Update(map[string]string{"image_digest": digest})
 	}
 
 	tag := &Model{
