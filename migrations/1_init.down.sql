@@ -1,5 +1,6 @@
-DROP TABLE `upload`;
-DROP TABLE `layer`;
-DROP TABLE `tag`;
-DROP TABLE `repository`;
-DROP TABLE `organization`;
+DROP TABLE IF EXISTS `upload`;
+DROP TABLE IF EXISTS `layer`;
+DROP TABLE IF EXISTS `tag`;
+DROP TABLE IF EXISTS `image`;
+DROP TABLE IF EXISTS `repository`;
+DROP TABLE IF EXISTS `organization`;

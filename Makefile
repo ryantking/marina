@@ -42,7 +42,8 @@ migrate_down:
 	@migrate -path "./migrations" -database "mysql://marina:marina@tcp(localhost:3306)/marinatest" down
 
 destroydb:
-	@migrate -path "./migrations" -database "mysql://marina:marina@tcp(localhost:3306)/marinatest" drop
+	@migrate -path "./migrations" -database "mysql://marina:marina@tcp(localhost:3306)/marinatest" force 1
+	@migrate -path "./migrations" -database "mysql://marina:marina@tcp(localhost:3306)/marinatest" down
 
 gin:
 	@echo "Starting local development server with gin"

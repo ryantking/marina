@@ -3,6 +3,7 @@ package layer
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/db"
 	udb "upper.io/db.v3"
 )
@@ -22,7 +23,7 @@ func Collection() (udb.Collection, error) {
 
 	db, err := db.Get()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error retrieving database connection")
 	}
 	col := db.Collection(CollectionName)
 	if !col.Exists() {
@@ -36,7 +37,7 @@ func Collection() (udb.Collection, error) {
 func New(digest, repoName, orgName string) (*Model, error) {
 	col, err := Collection()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error retrieving database connection")
 	}
 	l := Model{
 		Digest:   digest,
@@ -51,16 +52,26 @@ func New(digest, repoName, orgName string) (*Model, error) {
 }
 
 // Exists checks whether or not a given organization exists
-func Exists(digest, repoName, orgName string) (bool, error) {
+func Exists(digest string) (bool, error) {
 	col, err := Collection()
 	if err != nil {
-		return false, err
+		return false, errors.Wrap(err, "error retrieving collection")
 	}
 
-	exists, err := col.Find("digest", digest).And("repo_name", repoName).And("org_name", orgName).Exists()
+	exists, err := col.Find("digest", digest).Exists()
 	if err != nil {
-		return false, err
+		return false, errors.Wrap(err, "error checking if row exists")
 	}
 
 	return exists, nil
+}
+
+// Delete deletes a layer
+func Delete(digest string) error {
+	col, err := Collection()
+	if err != nil {
+		return errors.Wrap(err, "error retrieving collection")
+	}
+
+	return col.Find("digest", digest).Delete()
 }

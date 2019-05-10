@@ -6,20 +6,17 @@ import (
 	"os"
 
 	"github.com/labstack/echo"
+	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/db/models/layer"
+	"github.com/ryantking/marina/pkg/db/models/repo"
 	"github.com/ryantking/marina/pkg/docker"
 )
 
 // Exists returns a status 200 or 404 depending on if the layer exists or not
 func Exists(c echo.Context) error {
-	digest, repoName, orgName := parsePath(c)
-	exists, err := layer.Exists(digest, repoName, orgName)
+	digest, err := parsePath(c)
 	if err != nil {
 		return err
-	}
-	if !exists {
-		c.Set("docker_err_code", "BLOB_UNKNOWN")
-		return echo.NewHTTPError(http.StatusNotFound, "could not find layer")
 	}
 
 	c.Response().Header().Set(echo.HeaderContentLength, fmt.Sprint(len(digest)))
@@ -29,17 +26,12 @@ func Exists(c echo.Context) error {
 
 // Get downloads a layer to the response body, responding 404 if the layer is not found
 func Get(c echo.Context) error {
-	digest, repoName, orgName := parsePath(c)
-	exists, err := layer.Exists(digest, repoName, orgName)
+	digest, err := parsePath(c)
 	if err != nil {
 		return err
 	}
-	if !exists {
-		c.Set("docker_err_code", "BLOB_UNKNOWN")
-		return echo.NewHTTPError(http.StatusNotFound, "could not find layer")
-	}
 
-	f, err := os.Open(fmt.Sprintf("%s_%s_%s.tar.gz", orgName, repoName, digest))
+	f, err := os.Open(fmt.Sprintf("%s.tar.gz", digest))
 	if err != nil {
 		return err
 	}
@@ -47,6 +39,41 @@ func Get(c echo.Context) error {
 	return c.Stream(http.StatusOK, echo.MIMEOctetStream, f)
 }
 
-func parsePath(c echo.Context) (string, string, string) {
-	return c.Param("digest"), c.Param("repo"), c.Param("org")
+// Delete deletes a layer from the repository
+func Delete(c echo.Context) error {
+	digest, err := parsePath(c)
+	if err != nil {
+		return err
+	}
+	err = layer.Delete(digest)
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusAccepted)
+}
+
+func parsePath(c echo.Context) (string, error) {
+	orgName := c.Param("org")
+	repoName := c.Param("repo")
+	exists, err := repo.Exists(repoName, orgName)
+	if err != nil {
+		return "", errors.Wrap(err, "error checking if repository exists")
+	}
+	if !exists {
+		c.Set("docker_err_code", "NAME_UNKNOWN")
+		return "", echo.NewHTTPError(http.StatusNotFound, "no such repository")
+	}
+
+	digest := c.Param("digest")
+	exists, err = layer.Exists(digest)
+	if err != nil {
+		return "", errors.Wrap(err, "error checking if layer exists")
+	}
+	if !exists {
+		c.Set("docker_err_code", "BLOB_UNKNOWN")
+		return "", echo.NewHTTPError(http.StatusNotFound, "not found")
+	}
+
+	return digest, nil
 }

@@ -19,6 +19,7 @@ func RegisterRoutes(e *echo.Echo) {
 
 	v2.HEAD("/:org/:repo/blobs/:digest", layer.Exists)
 	v2.GET("/:org/:repo/blobs/:digest", layer.Get)
+	v2.DELETE("/:org/:repo/blobs/:digest", layer.Delete)
 
 	v2.GET("/:org/:repo/tags/list", tags.List)
 
@@ -29,4 +30,5 @@ func RegisterRoutes(e *echo.Echo) {
 	v2.HEAD("/:org/:repo/manifests/:ref", manifest.Exists)
 	v2.GET("/:org/:repo/manifests/:ref", manifest.Get)
 	v2.PUT("/:org/:repo/manifests/:ref", manifest.Update)
+	v2.DELETE("/:org/:repo/manifests/:ref", manifest.Delete)
 }

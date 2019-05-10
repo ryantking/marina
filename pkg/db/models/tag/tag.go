@@ -1,12 +1,10 @@
 package tag
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
 	"github.com/ryantking/marina/pkg/db"
-	"github.com/ryantking/marina/pkg/docker"
 
 	udb "upper.io/db.v3"
 )
@@ -19,8 +17,8 @@ const (
 var (
 	col udb.Collection
 
-	// ErrManifestNotFound is thrown when a manifest cannot be found
-	ErrManifestNotFound = errors.New("no manifest for the given repo, org, and tag could be found")
+	// ErrTagNotFound is thrown when a tag doesn't exist for a given repo and org
+	ErrTagNotFound = errors.New("no tag with name for the given repo and org")
 )
 
 // Collection returns the collection for the organization type
@@ -41,57 +39,48 @@ func Collection() (udb.Collection, error) {
 	return col, nil
 }
 
-// GetManifest returns the manifest with its type for a given tag
-func GetManifest(name, repoName, orgName string) (docker.Manifest, string, error) {
+// GetDigest gets the associated digest for a tag
+func GetDigest(name, repoName, orgName string) (string, error) {
 	col, err := Collection()
 	if err != nil {
-		return nil, "", err
+		return "", err
 	}
 
-	var t Model
-	err = col.Find("name", name).And("repo_name", repoName).And("org_name", orgName).One(&t)
+	tag := new(Model)
+	err = col.Find("name", name).And("repo_name", repoName).And("org_name", orgName).One(tag)
 	if err == udb.ErrNoMoreRows {
-		return nil, "", ErrManifestNotFound
+		return "", ErrTagNotFound
 	}
 	if err != nil {
-		return nil, "", err
-	}
-	man, err := docker.ParseManifest(t.ManifestType, t.Manifest)
-	if err != nil {
-		return nil, "", err
+		return "", err
 	}
 
-	return man, t.ManifestType, nil
+	return tag.ImageDigest, nil
 }
 
-// UpdateManifest updates the manifest for a given tag, creating it if it does not exist
-func UpdateManifest(name, repoName, orgName string, manifest docker.Manifest, manifestType string) error {
+// Set assocites a given tag with a digest
+func Set(digest, name, repoName, orgName string) error {
 	col, err := Collection()
 	if err != nil {
 		return err
 	}
 
-	b, err := json.Marshal(manifest)
-	if err != nil {
-		return err
-	}
-	t := Model{
-		Name:         name,
-		RepoName:     repoName,
-		OrgName:      orgName,
-		Manifest:     b,
-		ManifestType: manifestType,
-	}
 	res := col.Find("name", name).And("repo_name", repoName).And("org_name", orgName)
 	exists, err := res.Exists()
 	if err != nil {
 		return err
 	}
 	if exists {
-		return res.Update(&t)
+		return res.Update(map[string]string{"digest": digest})
 	}
 
-	_, err = col.Insert(&t)
+	tag := &Model{
+		Name:        name,
+		RepoName:    repoName,
+		OrgName:     orgName,
+		ImageDigest: digest,
+	}
+	_, err = col.Insert(tag)
 	return err
 }
 
@@ -133,4 +122,14 @@ func List(repoName, orgName string, pageSize uint, last string) ([]string, strin
 	}
 
 	return tagNames, nextLast, nil
+}
+
+// DeleteDigest deletes all tags for a given digest
+func DeleteDigest(digest string) error {
+	col, err := Collection()
+	if err != nil {
+		return err
+	}
+
+	return col.Find("digest", digest).Delete()
 }
