@@ -72,6 +72,23 @@ func Finish(c echo.Context) error {
 	}
 	digest := c.QueryParam("digest")
 
+	s := c.Request().Header.Get(echo.HeaderContentLength)
+	sz, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if sz > 0 {
+		sz, err = store.UploadChunk(uuid, c.Request().Body, sz, 0, 0)
+		if err != nil {
+			return err
+		}
+		err = chunk.New(uuid, 0, sz-1)
+		if err != nil {
+			return errors.Wrap(err, "error creating upload chunk")
+		}
+	}
+
 	err = store.FinishUpload(digest, uuid, repoName, orgName)
 	if err != nil {
 		return errors.Wrap(err, "error finishing upload")

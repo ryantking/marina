@@ -41,7 +41,7 @@ func UploadChunk(uuid string, r io.Reader, sz, start, end int64) (int64, error) 
 	}
 
 	path := fmt.Sprintf("uploads/%s/%d_%d.tar.gz", uuid, start, end)
-	if sz < 0 {
+	if end == 0 {
 		path = fmt.Sprintf("uploads/%s.tar.gz", uuid)
 	}
 	n, err := client.PutObject(config.Get().S3.Bucket, path, r, sz, minio.PutObjectOptions{})
