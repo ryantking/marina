@@ -7,7 +7,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/pkg/errors"
-	"github.com/ryantking/marina/pkg/db/models/layer"
+	"github.com/ryantking/marina/pkg/db/models/blob"
 	"github.com/ryantking/marina/pkg/db/models/upload"
 	"github.com/ryantking/marina/pkg/db/models/upload/chunk"
 	"github.com/ryantking/marina/pkg/docker"
@@ -18,7 +18,7 @@ const (
 	headerRange = "Range"
 )
 
-// Start starts the process of uploading a new layer
+// Start starts the process of uploading a new blob
 func Start(c echo.Context) error {
 	repoName, orgName, _, err := parsePath(c)
 	if err != nil {
@@ -37,7 +37,7 @@ func Start(c echo.Context) error {
 	return c.NoContent(http.StatusAccepted)
 }
 
-// Blob is used to save a chunk of data to a layer
+// Blob is used to save a chunk of data to a blob
 func Blob(c echo.Context) error {
 	defer c.Request().Body.Close()
 	repoName, orgName, uuid, err := parsePath(c)
@@ -98,9 +98,9 @@ func Finish(c echo.Context) error {
 		return errors.Wrap(err, "error updating upload status")
 	}
 
-	_, err = layer.New(digest, repoName, orgName)
+	_, err = blob.New(digest, repoName, orgName)
 	if err != nil {
-		return errors.Wrap(err, "error creating new layer in database")
+		return errors.Wrap(err, "error creating new blob in database")
 	}
 
 	loc := fmt.Sprintf("/v2/%s/%s/blobs/%s", orgName, repoName, digest)
