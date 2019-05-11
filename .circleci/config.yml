@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  unit_tests:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /go/src/github.com/ryantking/marina
+    steps:
+      - checkout
+      - run: make deps
+      - run: make test
+      - run: bash <(curl -s https://codecov.io/bash)
+workflows:
+  version: 2
+  test:
+    jobs:
+      - unit_tests

@@ -15,7 +15,7 @@ const (
 
 var col udb.Collection
 
-// Collection returns the collection for the organization type
+// Collection returns the collection for the upload type
 func Collection() (udb.Collection, error) {
 	if col != nil {
 		return col, nil
