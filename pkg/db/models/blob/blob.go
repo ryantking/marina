@@ -1,4 +1,4 @@
-package layer
+package blob
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 const (
 	// CollectionName is the name of the table in the database
-	CollectionName = "layer"
+	CollectionName = "blob"
 )
 
 var col udb.Collection
@@ -33,7 +33,7 @@ func Collection() (udb.Collection, error) {
 	return col, nil
 }
 
-// New returns a new layer
+// New returns a new blob
 func New(digest, repoName, orgName string) (*Model, error) {
 	col, err := Collection()
 	if err != nil {
@@ -66,7 +66,7 @@ func Exists(digest string) (bool, error) {
 	return exists, nil
 }
 
-// Delete deletes a layer
+// Delete deletes a blob
 func Delete(digest string) error {
 	col, err := Collection()
 	if err != nil {

@@ -1,4 +1,4 @@
-package layer
+package blob
 
 // Model represents an entry in the database
 type Model struct {

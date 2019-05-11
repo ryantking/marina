@@ -67,7 +67,7 @@ func FinishUpload(digest, uuid, repoName, orgName string) error {
 		return errors.Wrap(err, "error getting upload reader")
 	}
 
-	loc := fmt.Sprintf("layers/%s/%s/%s.tar.gz", orgName, repoName, digest)
+	loc := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
 	_, err = client.PutObject(bucket, loc, r, n, minio.PutObjectOptions{})
 	if err != nil {
 		return err
@@ -135,14 +135,14 @@ func deleteChunks(chunks []*chunk.Model) error {
 	return nil
 }
 
-// GetLayer returns the layer object as a reader interface
-func GetLayer(digest, repoName, orgName string) (io.ReadCloser, error) {
+// GetBlob returns the blob object as a reader interface
+func GetBlob(digest, repoName, orgName string) (io.ReadCloser, error) {
 	client, err := getClient()
 	if err != nil {
 		return nil, err
 	}
 
-	path := fmt.Sprintf("layers/%s/%s/%s.tar.gz", orgName, repoName, digest)
+	path := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
 	obj, err := client.GetObject(config.Get().S3.Bucket, path, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving object")
@@ -151,13 +151,13 @@ func GetLayer(digest, repoName, orgName string) (io.ReadCloser, error) {
 	return obj, nil
 }
 
-// DeleteLayer deletes a layer
-func DeleteLayer(digest, repoName, orgName string) error {
+// DeleteLayer deletes a blob
+func DeleteBlob(digest, repoName, orgName string) error {
 	client, err := getClient()
 	if err != nil {
 		return err
 	}
 
-	path := fmt.Sprintf("layers/%s/%s/%s.tar.gz", orgName, repoName, digest)
+	path := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
 	return client.RemoveObject(config.Get().S3.Bucket, path)
 }

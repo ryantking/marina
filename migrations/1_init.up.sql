@@ -31,7 +31,7 @@ CREATE TABLE `tag` (
 	FOREIGN KEY (`image_digest`) REFERENCES `image` (`digest`)
 );
 
-CREATE TABLE `layer` (
+CREATE TABLE `blob` (
 	`digest` VARCHAR(255) PRIMARY KEY,
 	`repo_name` VARCHAR(255) NOT NULL,
 	`org_name` VARCHAR(255) NOT NULL,
