@@ -3,31 +3,29 @@ package store
 import (
 	"fmt"
 	"io"
+	"sync"
 
-	"github.com/minio/minio-go"
 	"github.com/pkg/errors"
-	"github.com/ryantking/marina/pkg/config"
 	"github.com/ryantking/marina/pkg/db/models/upload/chunk"
+	"github.com/ryantking/marina/pkg/store/s3"
 )
 
-var client *minio.Client
+var (
+	client  Client
+	clientL sync.Mutex
+)
 
-func getClient() (*minio.Client, error) {
+func getClient() (Client, error) {
+	clientL.Lock()
+	defer clientL.Unlock()
+
 	if client != nil {
 		return client, nil
 	}
 
-	cfg := config.Get().S3
-	c, err := minio.NewWithRegion(cfg.Endpoint, cfg.AccessKeyID, cfg.SecretAccessKey, cfg.UseSSL, cfg.Region)
+	c, err := s3.New()
 	if err != nil {
-		return nil, errors.Wrap(err, "error creating minio client")
-	}
-	exists, err := c.BucketExists(cfg.Bucket)
-	if err != nil {
-		return nil, errors.Wrap(err, "error checking if bucket exists")
-	}
-	if !exists {
-		panic("bucket does not exist")
+		return nil, errors.Wrap(err, "error creating S3 client")
 	}
 	client = c
 	return client, nil
@@ -44,7 +42,7 @@ func UploadChunk(uuid string, r io.Reader, sz, start, end int64) (int64, error) 
 	if end == 0 {
 		path = fmt.Sprintf("uploads/%s.tar.gz", uuid)
 	}
-	n, err := client.PutObject(config.Get().S3.Bucket, path, r, sz, minio.PutObjectOptions{})
+	n, err := client.Put(path, r, sz)
 	if err != nil {
 		return 0, errors.Wrap(err, "error uploading object")
 	}
@@ -57,7 +55,6 @@ func FinishUpload(digest, uuid, repoName, orgName string) error {
 	if err != nil {
 		return err
 	}
-	bucket := config.Get().S3.Bucket
 	chunks, err := chunk.GetAll(uuid)
 	if err != nil {
 		return errors.Wrap(err, "error getting upload chunks from database")
@@ -68,7 +65,7 @@ func FinishUpload(digest, uuid, repoName, orgName string) error {
 	}
 
 	loc := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
-	_, err = client.PutObject(bucket, loc, r, n, minio.PutObjectOptions{})
+	_, err = client.Put(loc, r, n)
 	if err != nil {
 		return err
 	}
@@ -87,10 +84,9 @@ func mergeChunks(chunks []*chunk.Model) (io.Reader, int64, error) {
 		return nil, 0, err
 	}
 
-	bucket := config.Get().S3.Bucket
 	if len(chunks) == 1 {
 		loc := fmt.Sprintf("uploads/%s.tar.gz", chunks[0].UUID)
-		obj, err := client.GetObject(bucket, loc, minio.GetObjectOptions{})
+		obj, err := client.Get(loc)
 		if err != nil {
 			return nil, 0, err
 		}
@@ -101,7 +97,7 @@ func mergeChunks(chunks []*chunk.Model) (io.Reader, int64, error) {
 	readers := make([]io.Reader, len(chunks))
 	for i, chunk := range chunks {
 		loc := fmt.Sprintf("uploads/%s/%d_%d.tar.gz", chunk.UUID, chunk.RangeStart, chunk.RangeEnd)
-		obj, err := client.GetObject(bucket, loc, minio.GetObjectOptions{})
+		obj, err := client.Get(loc)
 		if err != nil {
 			return nil, 0, err
 		}
@@ -118,15 +114,14 @@ func deleteChunks(chunks []*chunk.Model) error {
 		return err
 	}
 
-	bucket := config.Get().S3.Bucket
 	if len(chunks) == 1 {
 		loc := fmt.Sprintf("uploads/%s.tar.gz", chunks[0].UUID)
-		return client.RemoveObject(bucket, loc)
+		return client.Remove(loc)
 	}
 
 	for _, chunk := range chunks {
 		loc := fmt.Sprintf("uploads/%s/%d_%d.tar.gz", chunk.UUID, chunk.RangeStart, chunk.RangeEnd)
-		err := client.RemoveObject(bucket, loc)
+		err := client.Remove(loc)
 		if err != nil {
 			return err
 		}
@@ -143,7 +138,7 @@ func GetBlob(digest, repoName, orgName string) (io.ReadCloser, error) {
 	}
 
 	path := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
-	obj, err := client.GetObject(config.Get().S3.Bucket, path, minio.GetObjectOptions{})
+	obj, err := client.Get(path)
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving object")
 	}
@@ -159,7 +154,7 @@ func DeleteBlob(digest, repoName, orgName string) error {
 	}
 
 	path := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
-	return client.RemoveObject(config.Get().S3.Bucket, path)
+	return client.Remove(path)
 }
 
 // DeleteUpload deletes an upload
