@@ -22,16 +22,18 @@ build:
 run:
 	@$(PWD)/marinad
 
+ci: test
+
 test: lint
 	@GO111MODULE=on go test -race -covermode=atomic -coverprofile=coverage.txt github.com/ryantking/marina/pkg/...
 
 lint:
 	@echo "Running golangci-lint"
-	@golangci-lint run ./pkg/...
+	@golangci-lint run pkg/...
 
 up:
 	@docker-compose up -d
-	waitforit -file=$(PWD)/waitforit.json
+	@dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
 
 down:
 	@docker-compose down
@@ -51,7 +53,6 @@ bucket:
 
 gin:
 	@echo "Starting local development server with gin"
-	@waitforit -file=$(PWD)/waitforit.json
 	@GIN_PORT=8081 BIN_APP_PORT=8080 GIN_PATH=$(PWD) GIN_BUILD=$(PWD)/cmd/marinad gin run cmd/marinad/main.go
 
 clean:
