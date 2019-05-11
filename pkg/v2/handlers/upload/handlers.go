@@ -16,6 +16,10 @@ import (
 	"github.com/ryantking/marina/pkg/store"
 )
 
+const (
+	headerRange = "Range"
+)
+
 // Start starts the process of uploading a new layer
 func Start(c echo.Context) error {
 	repoName, orgName, _, err := parsePath(c)
@@ -30,7 +34,7 @@ func Start(c echo.Context) error {
 
 	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", orgName, repoName, uuid)
 	c.Response().Header().Set(echo.HeaderLocation, loc)
-	c.Response().Header().Set("Content-Range", "0-0")
+	c.Response().Header().Set(headerRange, "0-0")
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
 	return c.NoContent(http.StatusAccepted)
 }
@@ -42,25 +46,27 @@ func Blob(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	sz, start, end, err := parseChunk(c)
+	sz, err := parseLength(c)
 	if err != nil {
 		return err
 	}
-	sz, err = store.UploadChunk(uuid, c.Request().Body, sz, start, end)
+	start, end, err := parseRange(c)
 	if err != nil {
 		return err
 	}
-	end = start + sz - 1
-	err = chunk.New(uuid, start, end)
+	err = storeChunk(c, uuid, sz, start, end)
 	if err != nil {
-		return errors.Wrap(err, "error creating upload chunk")
+		return err
 	}
 
 	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", orgName, repoName, uuid)
 	c.Response().Header().Set(echo.HeaderLocation, loc)
-	c.Response().Header().Set("Range", fmt.Sprintf("%d-%d", start, end))
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
 	c.Response().Header().Set(docker.HeaderUploadUUID, fmt.Sprint(uuid))
+	err = setRangeHeader(c, uuid)
+	if err != nil {
+		return errors.Wrap(err, "error setting range header")
+	}
 	return c.NoContent(http.StatusNoContent)
 }
 
@@ -71,21 +77,15 @@ func Finish(c echo.Context) error {
 		return err
 	}
 	digest := c.QueryParam("digest")
-
-	s := c.Request().Header.Get(echo.HeaderContentLength)
-	sz, err := strconv.ParseInt(s, 10, 64)
+	sz, err := parseLength(c)
 	if err != nil {
-		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return err
 	}
+
 	if sz > 0 {
-		sz, err = store.UploadChunk(uuid, c.Request().Body, sz, 0, 0)
+		err := storeChunk(c, uuid, sz, 0, 0)
 		if err != nil {
 			return err
-		}
-		err = chunk.New(uuid, 0, sz-1)
-		if err != nil {
-			return errors.Wrap(err, "error creating upload chunk")
 		}
 	}
 
@@ -128,32 +128,68 @@ func parsePath(c echo.Context) (string, string, string, error) {
 	return repoName, orgName, uuid, nil
 }
 
-func parseChunk(c echo.Context) (int64, int64, int64, error) {
+func parseLength(c echo.Context) (int64, error) {
 	s := c.Request().Header.Get(echo.HeaderContentLength)
 	if s == "" {
-		return -1, 0, 0, nil
+		return -1, nil
 	}
 
 	sz, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
 		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
-		return 0, 0, 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	parts := strings.Split(c.Request().Header.Get("Content-Range"), "-")
+
+	return sz, nil
+}
+
+func parseRange(c echo.Context) (int64, int64, error) {
+	s := c.Request().Header.Get("Content-Range")
+	if s == "" {
+		return 0, 0, nil
+	}
+	parts := strings.Split(s, "-")
 	if len(parts) != 2 {
 		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
-		return 0, 0, 0, echo.NewHTTPError(http.StatusBadRequest, "invalid Content-Range header")
+		return 0, 0, echo.NewHTTPError(http.StatusBadRequest, "invalid Content-Range header")
 	}
 	start, err := strconv.ParseInt(parts[0], 10, 64)
 	if err != nil {
 		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
-		return 0, 0, 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return 0, 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	end, err := strconv.ParseInt(parts[1], 10, 64)
 	if err != nil {
 		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
-		return 0, 0, 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return 0, 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	return sz, start, end, nil
+	return start, end, nil
+}
+
+func storeChunk(c echo.Context, uuid string, sz, start, end int64) error {
+	sz, err := store.UploadChunk(uuid, c.Request().Body, sz, start, end)
+	if err != nil {
+		return errors.Wrap(err, "error storing chunk")
+	}
+	end = start + sz - 1
+	err = chunk.New(uuid, start, end)
+	if err != nil {
+		return errors.Wrap(err, "error creating upload chunk")
+	}
+
+	return nil
+}
+
+func setRangeHeader(c echo.Context, uuid string) error {
+	chunks, err := chunk.GetAll(uuid)
+	if err != nil {
+		return errors.Wrap(err, "error retrieving upload chunks")
+	}
+	ranges := make([]string, len(chunks), len(chunks))
+	for i, chunk := range chunks {
+		ranges[i] = fmt.Sprintf("%d-%d", chunk.RangeStart, chunk.RangeEnd)
+	}
+	c.Response().Header().Set(headerRange, strings.Join(ranges, ","))
+	return nil
 }
