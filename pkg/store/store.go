@@ -161,3 +161,18 @@ func DeleteBlob(digest, repoName, orgName string) error {
 	path := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
 	return client.RemoveObject(config.Get().S3.Bucket, path)
 }
+
+// DeleteUpload deletes an upload
+func DeleteUpload(uuid string) error {
+	chunks, err := chunk.GetAll(uuid)
+	if err != nil {
+		return errors.Wrap(err, "error getting upload chunks from database")
+	}
+
+	err = deleteChunks(chunks)
+	if err != nil {
+		return errors.Wrap(err, "error deleting chunks")
+	}
+
+	return nil
+}

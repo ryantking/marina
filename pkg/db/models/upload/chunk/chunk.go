@@ -13,7 +13,12 @@ const (
 	CollectionName = "upload_chunk"
 )
 
-var col udb.Collection
+var (
+	col udb.Collection
+
+	// ErrNoChunksForUpload is thrown when an upload does not have any chunks uploaded
+	ErrNoChunksForUpload = errors.New("no upload chunks found")
+)
 
 // Collection returns the collection for the chunk type
 func Collection() (udb.Collection, error) {
@@ -60,4 +65,33 @@ func GetAll(uuid string) ([]*Model, error) {
 	}
 
 	return chunks, nil
+}
+
+// GetLastRange returns the last chunk received for an upload
+func GetLastRange(uuid string) (string, error) {
+	col, err := Collection()
+	if err != nil {
+		return "", errors.Wrap(err, "error retrieving collection")
+	}
+
+	chunk := new(Model)
+	err = col.Find("uuid", uuid).OrderBy("-range_start").Limit(1).One(chunk)
+	if err == udb.ErrNoMoreRows {
+		return "", ErrNoChunksForUpload
+	}
+	if err != nil {
+		return "", errors.Wrap(err, "error retrieving upload chunks")
+	}
+
+	return fmt.Sprintf("%d-%d", chunk.RangeStart, chunk.RangeEnd), nil
+}
+
+// DeleteForUUID deletes all chunks for a given UUID
+func DeleteForUUID(uuid string) error {
+	col, err := Collection()
+	if err != nil {
+		return errors.Wrap(err, "error retrieving collection")
+	}
+
+	return col.Find("uuid", uuid).Delete()
 }

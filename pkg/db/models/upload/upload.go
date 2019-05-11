@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/ryantking/marina/pkg/db"
+	"github.com/ryantking/marina/pkg/db/models/upload/chunk"
 	udb "upper.io/db.v3"
 )
 
@@ -56,4 +57,19 @@ func (upl *Model) Save() error {
 		return err
 	}
 	return col.Find("uuid", upl.UUID).Update(upl)
+}
+
+// Delete deletes the upload and all chunks
+func Delete(uuid string) error {
+	col, err := Collection()
+	if err != nil {
+		return err
+	}
+
+	err = chunk.DeleteForUUID(uuid)
+	if err != nil {
+		return err
+	}
+
+	return col.Find("uuid", uuid).Delete()
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/ryantking/marina/pkg/v2/handlers/base"
 	"github.com/ryantking/marina/pkg/v2/handlers/blob"
+	"github.com/ryantking/marina/pkg/v2/handlers/catalog"
 	"github.com/ryantking/marina/pkg/v2/handlers/manifest"
 	"github.com/ryantking/marina/pkg/v2/handlers/tag"
 	"github.com/ryantking/marina/pkg/v2/handlers/upload"
@@ -28,4 +29,6 @@ func RegisterRoutes(e *echo.Echo) {
 	v2.GET("/:org/:repo/manifests/:ref", manifest.Get)
 	v2.PUT("/:org/:repo/manifests/:ref", manifest.Update)
 	v2.DELETE("/:org/:repo/manifests/:ref", manifest.Delete)
+
+	v2.GET("/_catalog", catalog.Get)
 }

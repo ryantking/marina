@@ -3,7 +3,6 @@ package upload
 import (
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo"
 	"github.com/pkg/errors"
@@ -17,6 +16,23 @@ import (
 const (
 	headerRange = "Range"
 )
+
+// Get returns an upload
+func Get(c echo.Context) error {
+	_, _, uuid, err := parsePath(c)
+	if err != nil {
+		return err
+	}
+
+	lastRange, err := chunk.GetLastRange(uuid)
+	if err != nil {
+		return err
+	}
+
+	c.Response().Header().Set(headerRange, lastRange)
+	c.Response().Header().Set(docker.HeaderUploadUUID, uuid)
+	return c.NoContent(http.StatusNoContent)
+}
 
 // Start starts the process of uploading a new blob
 func Start(c echo.Context) error {
@@ -61,10 +77,11 @@ func Blob(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderLocation, loc)
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
 	c.Response().Header().Set(docker.HeaderUploadUUID, fmt.Sprint(uuid))
-	err = setRangeHeader(c, uuid)
+	lastRange, err := chunk.GetLastRange(uuid)
 	if err != nil {
-		return errors.Wrap(err, "error setting range header")
+		return err
 	}
+	c.Response().Header().Set(headerRange, lastRange)
 	return c.NoContent(http.StatusNoContent)
 }
 
@@ -110,6 +127,26 @@ func Finish(c echo.Context) error {
 	return c.NoContent(http.StatusCreated)
 }
 
+// Cancel cancels a currently running upload
+func Cancel(c echo.Context) error {
+	_, _, uuid, err := parsePath(c)
+	if err != nil {
+		return err
+	}
+
+	err = store.DeleteUpload(uuid)
+	if err != nil {
+		return err
+	}
+
+	err = upload.Delete(uuid)
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
+
 func storeChunk(c echo.Context, uuid string, sz, start, end int64) error {
 	sz, err := store.UploadChunk(uuid, c.Request().Body, sz, start, end)
 	if err != nil {
@@ -121,18 +158,5 @@ func storeChunk(c echo.Context, uuid string, sz, start, end int64) error {
 		return errors.Wrap(err, "error creating upload chunk")
 	}
 
-	return nil
-}
-
-func setRangeHeader(c echo.Context, uuid string) error {
-	chunks, err := chunk.GetAll(uuid)
-	if err != nil {
-		return errors.Wrap(err, "error retrieving upload chunks")
-	}
-	ranges := make([]string, len(chunks))
-	for i, chunk := range chunks {
-		ranges[i] = fmt.Sprintf("%d-%d", chunk.RangeStart, chunk.RangeEnd)
-	}
-	c.Response().Header().Set(headerRange, strings.Join(ranges, ","))
 	return nil
 }
