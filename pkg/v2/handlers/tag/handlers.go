@@ -1,4 +1,4 @@
-package tags
+package tag
 
 import (
 	"fmt"
@@ -12,24 +12,33 @@ import (
 	"github.com/ryantking/marina/pkg/docker"
 )
 
+const (
+	headerLink = "Link"
+)
+
+var (
+	repoExists = repo.Exists
+	tagList    = tag.List
+)
+
 // List lists all tags for a given repository
 func List(c echo.Context) error {
 	repoName, orgName, err := parsePath(c)
 	if err != nil {
 		return err
 	}
-	pageSize, last, err := pageAndLast(c)
+	pageSize, last, err := parsePagination(c)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	tags, nextLast, err := tag.List(repoName, orgName, pageSize, last)
+	tags, nextLast, err := tagList(repoName, orgName, pageSize, last)
 	if err != nil {
 		return errors.Wrap(err, "error getting list of tags")
 	}
 
 	if nextLast != "" {
-		link := fmt.Sprintf("/%s/%s/tags/list?n=%d&last=%s", orgName, repoName, pageSize, nextLast)
-		c.Response().Header().Set("Link", link)
+		link := fmt.Sprintf("/v2/%s/%s/tags/list?n=%d&last=%s", orgName, repoName, pageSize, nextLast)
+		c.Response().Header().Set(headerLink, link)
 	}
 	res := map[string]interface{}{}
 	res["name"] = fmt.Sprintf("%s/%s", orgName, repoName)
@@ -40,7 +49,7 @@ func List(c echo.Context) error {
 func parsePath(c echo.Context) (string, string, error) {
 	repoName := c.Param("repo")
 	orgName := c.Param("org")
-	exists, err := repo.Exists(repoName, orgName)
+	exists, err := repoExists(repoName, orgName)
 	if err != nil {
 		return "", "", errors.Wrap(err, "error checking if repository exists")
 	}
@@ -52,7 +61,7 @@ func parsePath(c echo.Context) (string, string, error) {
 	return repoName, orgName, nil
 }
 
-func pageAndLast(c echo.Context) (uint, string, error) {
+func parsePagination(c echo.Context) (uint, string, error) {
 	s := c.QueryParam("n")
 	if s == "" {
 		return 0, "", nil
