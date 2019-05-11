@@ -46,5 +46,12 @@ CREATE TABLE `upload` (
 	`_last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
 );
 
+CREATE TABLE `upload_chunk` (
+	`uuid` CHAR(36),
+	`range_start` BIGINT,
+	`range_end` BIGINT,
+	PRIMARY KEY(`uuid`, `range_start`, `range_end`)
+);
+
 INSERT INTO `organization` (`name`)
 VALUES ('library');

@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `upload_chunk`;
 DROP TABLE IF EXISTS `upload`;
 DROP TABLE IF EXISTS `layer`;
 DROP TABLE IF EXISTS `tag`;

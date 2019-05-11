@@ -7,6 +7,7 @@ import (
 	"github.com/minio/minio-go"
 	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/config"
+	"github.com/ryantking/marina/pkg/db/models/upload/chunk"
 )
 
 var client *minio.Client
@@ -33,18 +34,21 @@ func getClient() (*minio.Client, error) {
 }
 
 // CreateUpload creates a new upload from the given reader
-func CreateUpload(uuid, repoName, orgName string, r io.Reader, sz int64) (int64, error) {
+func UploadChunk(uuid string, r io.Reader, sz, start, end int64) (int64, error) {
 	client, err := getClient()
 	if err != nil {
 		return 0, err
 	}
 
-	path := fmt.Sprintf("uploads/%s/%s/%s.tar.gz", orgName, repoName, uuid)
+	path := fmt.Sprintf("uploads/%s/%d_%d.tar.gz", uuid, start, end)
+	if sz < 0 {
+		path = fmt.Sprintf("uploads/%s.tar.gz", uuid)
+	}
 	n, err := client.PutObject(config.Get().S3.Bucket, path, r, sz, minio.PutObjectOptions{})
 	if err != nil {
 		return 0, errors.Wrap(err, "error uploading object")
 	}
-	return n, err
+	return n, nil
 }
 
 // FinishUpload finalizes an upload
@@ -54,19 +58,81 @@ func FinishUpload(digest, uuid, repoName, orgName string) error {
 		return err
 	}
 	bucket := config.Get().S3.Bucket
-	srcPath := fmt.Sprintf("uploads/%s/%s/%s.tar.gz", orgName, repoName, uuid)
-	src := minio.NewSourceInfo(bucket, srcPath, nil)
-	dstPath := fmt.Sprintf("layers/%s/%s/%s.tar.gz", orgName, repoName, digest)
-	dst, err := minio.NewDestinationInfo(bucket, dstPath, nil, nil)
+	chunks, err := chunk.GetAll(uuid)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error getting upload chunks from database")
 	}
-	err = client.CopyObject(dst, src)
+	r, n, err := mergeChunks(chunks)
+	if err != nil {
+		return errors.Wrap(err, "error getting upload reader")
+	}
+
+	loc := fmt.Sprintf("layers/%s/%s/%s.tar.gz", orgName, repoName, digest)
+	_, err = client.PutObject(bucket, loc, r, n, minio.PutObjectOptions{})
 	if err != nil {
 		return err
 	}
 
-	return client.RemoveObject(bucket, srcPath)
+	err = deleteChunks(chunks)
+	if err != nil {
+		return errors.Wrap(err, "error deleting chunks")
+	}
+
+	return nil
+}
+
+func mergeChunks(chunks []*chunk.Model) (io.Reader, int64, error) {
+	client, err := getClient()
+	if err != nil {
+		return nil, 0, err
+	}
+
+	bucket := config.Get().S3.Bucket
+	if len(chunks) == 1 {
+		loc := fmt.Sprintf("uploads/%s.tar.gz", chunks[0].UUID)
+		obj, err := client.GetObject(bucket, loc, minio.GetObjectOptions{})
+		if err != nil {
+			return nil, 0, err
+		}
+		return obj, chunks[0].RangeEnd - chunks[0].RangeStart + 1, nil
+	}
+
+	var sz int64
+	readers := make([]io.Reader, len(chunks), len(chunks))
+	for i, chunk := range chunks {
+		loc := fmt.Sprintf("uploads/%s/%d_%d.tar.gz", chunk.UUID, chunk.RangeStart, chunk.RangeEnd)
+		obj, err := client.GetObject(bucket, loc, minio.GetObjectOptions{})
+		if err != nil {
+			return nil, 0, err
+		}
+		readers[i] = obj
+		sz += chunk.RangeEnd - chunk.RangeStart + 1
+	}
+
+	return io.MultiReader(readers...), sz, nil
+}
+
+func deleteChunks(chunks []*chunk.Model) error {
+	client, err := getClient()
+	if err != nil {
+		return err
+	}
+
+	bucket := config.Get().S3.Bucket
+	if len(chunks) == 1 {
+		loc := fmt.Sprintf("uploads/%s.tar.gz", chunks[0].UUID)
+		return client.RemoveObject(bucket, loc)
+	}
+
+	for _, chunk := range chunks {
+		loc := fmt.Sprintf("uploads/%s/%d_%d.tar.gz", chunk.UUID, chunk.RangeStart, chunk.RangeEnd)
+		err := client.RemoveObject(bucket, loc)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // GetLayer returns the layer object as a reader interface
