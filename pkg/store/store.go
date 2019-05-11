@@ -98,7 +98,7 @@ func mergeChunks(chunks []*chunk.Model) (io.Reader, int64, error) {
 	}
 
 	var sz int64
-	readers := make([]io.Reader, len(chunks), len(chunks))
+	readers := make([]io.Reader, len(chunks))
 	for i, chunk := range chunks {
 		loc := fmt.Sprintf("uploads/%s/%d_%d.tar.gz", chunk.UUID, chunk.RangeStart, chunk.RangeEnd)
 		obj, err := client.GetObject(bucket, loc, minio.GetObjectOptions{})

@@ -7,7 +7,7 @@ deps:
 	@GO111MODULE=on go get -u github.com/myitcv/gobin
 	@GO111MODULE=off go get -tags 'mysql' -u github.com/golang-migrate/migrate/cmd/migrate
 	@gobin github.com/codegangsta/gin@cafe2ce98974a3dcca6b92ce393a91a0b58b8133
-	@gobin github.com/maxcnunes/waitforit@v2.4.1
+	@gobin github.com/jwilder/dockerize@v0.6.1
 	@gobin github.com/golangci/golangci-lint/cmd/golangci-lint@v1.16.0
 
 .PHONY: vendor
@@ -31,6 +31,7 @@ lint:
 
 up:
 	@docker-compose up -d
+	waitforit -file=$(PWD)/waitforit.json
 
 down:
 	@docker-compose down

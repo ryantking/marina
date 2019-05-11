@@ -3,12 +3,27 @@ jobs:
   unit_tests:
     docker:
       - image: circleci/golang:1.12
+      - image: mysql:5.7.12
+        environment:
+          MYSQL_DATABASE: marinatest
+          MYSQL_USER: marina
+          MYSQL_PASSWORD: marina
+          MYSQL_ROOT_PASSWORD: marina
     working_directory: /go/src/github.com/ryantking/marina
     steps:
       - checkout
-      - run: make deps
-      - run: make test
-      - run: bash <(curl -s https://codecov.io/bash)
+      - run:
+          name: Install dependencies
+          command: make deps
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
+      - run:
+          name: Lint and run unit tests
+          command: make test
+      - run:
+          name: Upload results to codecov
+          command: bash <(curl -s https://codecov.io/bash)
 workflows:
   version: 2
   test:

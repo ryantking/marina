@@ -53,7 +53,7 @@ func GetAll(uuid string) ([]*Model, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving collection")
 	}
-	chunks := make([]*Model, 0, 0)
+	chunks := make([]*Model, 0)
 	err = col.Find("uuid", uuid).OrderBy("range_start").All(&chunks)
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving upload chunks")

@@ -12,14 +12,20 @@ import (
 func ErrorHandler(err error, c echo.Context) {
 	httpErr, ok := err.(*echo.HTTPError)
 	if !ok {
-		c.String(http.StatusInternalServerError, err.Error())
+		err = c.String(http.StatusInternalServerError, err.Error())
 		log.WithError(errors.Cause(err)).Errorf(err.Error())
+		if err != nil {
+			log.WithError(err).Errorf("error writing error to response")
+		}
 		return
 	}
 
 	dockerErrCode := c.Get("docker_err_code")
 	if dockerErrCode == nil {
-		c.String(httpErr.Code, httpErr.Message.(string))
+		err := c.String(httpErr.Code, httpErr.Message.(string))
+		if err != nil {
+			log.WithError(err).Errorf("error writing error to response")
+		}
 		return
 	}
 
@@ -27,5 +33,8 @@ func ErrorHandler(err error, c echo.Context) {
 	if detail := c.Get("docker_err_detail"); detail != nil {
 		dockerErr["detail"] = detail
 	}
-	c.JSON(httpErr.Code, map[string]interface{}{"errors": []interface{}{dockerErr}})
+	err = c.JSON(httpErr.Code, map[string]interface{}{"errors": []interface{}{dockerErr}})
+	if err != nil {
+		log.WithError(err).Errorf("error writing error to response")
+	}
 }

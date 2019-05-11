@@ -129,7 +129,7 @@ func setRangeHeader(c echo.Context, uuid string) error {
 	if err != nil {
 		return errors.Wrap(err, "error retrieving upload chunks")
 	}
-	ranges := make([]string, len(chunks), len(chunks))
+	ranges := make([]string, len(chunks))
 	for i, chunk := range chunks {
 		ranges[i] = fmt.Sprintf("%d-%d", chunk.RangeStart, chunk.RangeEnd)
 	}

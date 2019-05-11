@@ -116,7 +116,7 @@ func List(repoName, orgName string, pageSize uint, last string) ([]string, strin
 			nextLast = s
 		}
 	}
-	tagNames := make([]string, len(tags), len(tags))
+	tagNames := make([]string, len(tags))
 	for i, tag := range tags {
 		tagNames[i] = tag.Name
 	}
