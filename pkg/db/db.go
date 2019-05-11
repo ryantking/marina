@@ -71,7 +71,7 @@ func GetCollection(name string) (udb.Collection, error) {
 	}
 	col = db.Collection(name)
 	if !col.Exists() {
-		return nil, &ErrCollectionNotFound{name}
+		panic(fmt.Sprintf("collection '%s' does not exist", name))
 	}
 	collections[name] = col
 	return col, nil

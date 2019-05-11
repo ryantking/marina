@@ -2,7 +2,6 @@ package tag
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/ryantking/marina/pkg/db"
 
@@ -15,33 +14,13 @@ const (
 )
 
 var (
-	col udb.Collection
-
 	// ErrTagNotFound is thrown when a tag doesn't exist for a given repo and org
 	ErrTagNotFound = errors.New("no tag with name for the given repo and org")
 )
 
-// Collection returns the collection for the organization type
-func Collection() (udb.Collection, error) {
-	if col != nil {
-		return col, nil
-	}
-
-	db, err := db.Get()
-	if err != nil {
-		return nil, err
-	}
-	col := db.Collection(CollectionName)
-	if !col.Exists() {
-		panic(fmt.Sprintf("collection '%s' does not exist", CollectionName))
-	}
-
-	return col, nil
-}
-
 // GetDigest gets the associated digest for a tag
 func GetDigest(name, repoName, orgName string) (string, error) {
-	col, err := Collection()
+	col, err := db.GetCollection(CollectionName)
 	if err != nil {
 		return "", err
 	}
@@ -60,7 +39,7 @@ func GetDigest(name, repoName, orgName string) (string, error) {
 
 // Set assocites a given tag with a digest
 func Set(digest, name, repoName, orgName string) error {
-	col, err := Collection()
+	col, err := db.GetCollection(CollectionName)
 	if err != nil {
 		return err
 	}
@@ -86,7 +65,7 @@ func Set(digest, name, repoName, orgName string) error {
 
 // List lists all tags for a given repo
 func List(repoName, orgName string, pageSize uint, last string) ([]string, string, error) {
-	col, err := Collection()
+	col, err := db.GetCollection(CollectionName)
 	if err != nil {
 		return []string{}, "", err
 	}
@@ -126,7 +105,7 @@ func List(repoName, orgName string, pageSize uint, last string) ([]string, strin
 
 // DeleteDigest deletes all tags for a given digest
 func DeleteDigest(digest string) error {
-	col, err := Collection()
+	col, err := db.GetCollection(CollectionName)
 	if err != nil {
 		return err
 	}

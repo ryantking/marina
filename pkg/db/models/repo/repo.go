@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/ryantking/marina/pkg/db"
-	udb "upper.io/db.v3"
 )
 
 const (
@@ -12,29 +11,9 @@ const (
 	CollectionName = "repository"
 )
 
-var col udb.Collection
-
-// Collection returns the collection for the repository type
-func Collection() (udb.Collection, error) {
-	if col != nil {
-		return col, nil
-	}
-
-	db, err := db.Get()
-	if err != nil {
-		return nil, err
-	}
-	col := db.Collection(CollectionName)
-	if !col.Exists() {
-		panic(fmt.Sprintf("collection '%s' does not exist", CollectionName))
-	}
-
-	return col, nil
-}
-
 // Exists checks whether or not a given organization exists
 func Exists(name, orgName string) (bool, error) {
-	col, err := Collection()
+	col, err := db.GetCollection(CollectionName)
 	if err != nil {
 		return false, err
 	}
@@ -49,7 +28,7 @@ func Exists(name, orgName string) (bool, error) {
 
 // GetNames returns the names of all available repos
 func GetNames(pageSize uint, last string) ([]string, string, error) {
-	col, err := Collection()
+	col, err := db.GetCollection(CollectionName)
 	if err != nil {
 		return nil, "", err
 	}

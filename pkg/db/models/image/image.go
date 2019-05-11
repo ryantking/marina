@@ -2,7 +2,6 @@ package image
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -19,8 +18,6 @@ const (
 )
 
 var (
-	col udb.Collection
-
 	// ErrManifestNotFound is thrown when a manifest cannot be found
 	ErrManifestNotFound = errors.New("no manifest for the given repo, org, and reference could be found")
 
@@ -28,27 +25,9 @@ var (
 	ErrDeleteOnTag = errors.New("cannot delete by tag")
 )
 
-// Collection returns the collection for the image type
-func Collection() (udb.Collection, error) {
-	if col != nil {
-		return col, nil
-	}
-
-	db, err := db.Get()
-	if err != nil {
-		return nil, errors.Wrap(err, "error retrieving database connection")
-	}
-	col := db.Collection(CollectionName)
-	if !col.Exists() {
-		panic(fmt.Sprintf("collection '%s' does not exist", CollectionName))
-	}
-
-	return col, nil
-}
-
 // GetManifest returns the manifest with its type for a given reference
 func GetManifest(ref, repoName, orgName string) (docker.Manifest, string, error) {
-	col, err := Collection()
+	col, err := db.GetCollection(CollectionName)
 	if err != nil {
 		return nil, "", errors.Wrap(err, "error retrieving collection")
 	}
@@ -79,7 +58,7 @@ func GetManifest(ref, repoName, orgName string) (docker.Manifest, string, error)
 
 // UpdateManifest updates the manifest for a given tag, creating it if it does not exist
 func UpdateManifest(ref, repoName, orgName string, manifest docker.Manifest, manifestType string) error {
-	col, err := Collection()
+	col, err := db.GetCollection(CollectionName)
 	if err != nil {
 		return errors.Wrap(err, "error retrieving collection")
 	}
@@ -125,7 +104,7 @@ func UpdateManifest(ref, repoName, orgName string, manifest docker.Manifest, man
 
 // Delete deletes a manifest from the table along with all tags
 func Delete(digest string) error {
-	col, err := Collection()
+	col, err := db.GetCollection(CollectionName)
 	if err != nil {
 		return err
 	}
