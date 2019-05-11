@@ -1,9 +1,8 @@
 package v2
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo"
+	"github.com/ryantking/marina/pkg/v2/handlers/base"
 	"github.com/ryantking/marina/pkg/v2/handlers/layer"
 	"github.com/ryantking/marina/pkg/v2/handlers/manifest"
 	"github.com/ryantking/marina/pkg/v2/handlers/tags"
@@ -12,10 +11,8 @@ import (
 
 func RegisterRoutes(e *echo.Echo) {
 	v2 := e.Group("/v2")
-	v2.GET("/", func(c echo.Context) error {
-		c.String(http.StatusOK, "true")
-		return nil
-	})
+
+	v2.GET("/", base.Get)
 
 	v2.HEAD("/:org/:repo/blobs/:digest", layer.Exists)
 	v2.GET("/:org/:repo/blobs/:digest", layer.Get)
