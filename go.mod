@@ -32,6 +32,7 @@ require (
 	github.com/sirupsen/logrus v1.4.1
 	github.com/spf13/viper v1.3.2
 	github.com/stretchr/testify v1.3.0
+	github.com/vektra/mockery v0.0.0-20181123154057-e78b021dcbb5 // indirect
 	golang.org/x/crypto v0.0.0-20190506204251-e1dfcc566284 // indirect
 	golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c // indirect
 	golang.org/x/sys v0.0.0-20190507160741-ecd444e8653b // indirect
