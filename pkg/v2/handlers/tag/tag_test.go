@@ -56,6 +56,7 @@ func (suite *TagTestSuite) TestParsePathNonExistentRepo() {
 
 	_, _, err := parsePath(c)
 	assert.Equal(echo.NewHTTPError(http.StatusNotFound, "no such repository"), err)
+	c.AssertExpectations(suite.T())
 }
 
 func (suite *TagTestSuite) TestParsePathExistsError() {
@@ -65,11 +66,12 @@ func (suite *TagTestSuite) TestParsePathExistsError() {
 	c.On("Param", "repo").Return("testRepo")
 	c.On("Param", "org").Return("testOrg")
 	repoExists = func(repoName, orgName string) (bool, error) {
-		return true, fmt.Errorf("test error")
+		return false, fmt.Errorf("test error")
 	}
 
 	_, _, err := parsePath(c)
 	assert.EqualError(errors.Cause(err), "test error")
+	c.AssertExpectations(suite.T())
 }
 
 func (suite *TagTestSuite) TestParsePagination() {
@@ -84,6 +86,7 @@ func (suite *TagTestSuite) TestParsePagination() {
 	require.NoError(err)
 	assert.EqualValues(20, n)
 	assert.Equal("testTag", last)
+	c.AssertExpectations(suite.T())
 }
 
 func (suite *TagTestSuite) TestParsePaginationUnset() {
@@ -97,6 +100,7 @@ func (suite *TagTestSuite) TestParsePaginationUnset() {
 	require.NoError(err)
 	assert.EqualValues(0, n)
 	assert.Equal("", last)
+	c.AssertExpectations(suite.T())
 }
 
 func (suite *TagTestSuite) TestParsePaginationBadArg() {
@@ -107,6 +111,7 @@ func (suite *TagTestSuite) TestParsePaginationBadArg() {
 
 	_, _, err := parsePagination(c)
 	assert.Error(err)
+	c.AssertExpectations(suite.T())
 }
 
 func (suite *TagTestSuite) TestList() {

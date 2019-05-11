@@ -8,8 +8,13 @@ import (
 	"github.com/labstack/echo"
 	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/db/models/image"
-	"github.com/ryantking/marina/pkg/db/models/repo"
 	"github.com/ryantking/marina/pkg/docker"
+)
+
+var (
+	getManifest    = image.GetManifest
+	updateManifest = image.UpdateManifest
+	deleteManifest = image.Delete
 )
 
 // Exists returns whether or not a manifest is present for the given digest
@@ -18,9 +23,9 @@ func Exists(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	manifest, _, err := image.GetManifest(ref, repoName, orgName)
+	manifest, _, err := getManifest(ref, repoName, orgName)
 	if err == image.ErrManifestNotFound {
-		c.Set("docker_err_code", "NAME_UNKNOWN")
+		c.Set("docker_err_code", docker.CodeNameUnknown)
 		return echo.NewHTTPError(http.StatusNotFound, "could not find manifest")
 	}
 	if err != nil {
@@ -41,9 +46,9 @@ func Get(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	manifest, manifestType, err := image.GetManifest(ref, repoName, orgName)
+	manifest, manifestType, err := getManifest(ref, repoName, orgName)
 	if err == image.ErrManifestNotFound {
-		c.Set("docker_err_code", "NAME_UNKNOWN")
+		c.Set("docker_err_code", docker.CodeNameUnknown)
 		return echo.NewHTTPError(http.StatusNotFound, "could not find manifest")
 	}
 	if err != nil {
@@ -71,7 +76,7 @@ func Update(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	err = image.UpdateManifest(ref, repoName, orgName, manifest, manifestType)
+	err = updateManifest(ref, repoName, orgName, manifest, manifestType)
 	if err != nil {
 		return errors.Wrap(err, "error updating manifest in database")
 	}
@@ -89,9 +94,9 @@ func Delete(c echo.Context) error {
 		return err
 	}
 
-	err = image.Delete(ref)
+	err = deleteManifest(ref)
 	if err == image.ErrDeleteOnTag {
-		c.Set("docker_err_code", "TAG_INVALID")
+		c.Set("docker_err_code", docker.CodeTagInvalid)
 		return echo.NewHTTPError(http.StatusBadRequest, "cannot delete on tag")
 	}
 	if err != nil {
@@ -99,20 +104,4 @@ func Delete(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusAccepted)
-}
-
-func parsePath(c echo.Context) (string, string, string, error) {
-	ref := c.Param("ref")
-	repoName := c.Param("repo")
-	orgName := c.Param("org")
-	exists, err := repo.Exists(repoName, orgName)
-	if err != nil {
-		return "", "", "", errors.Wrap(err, "error checking if repository exists")
-	}
-	if !exists {
-		c.Set("docker_err_code", "NAME_UNKNOWN")
-		return "", "", "", echo.NewHTTPError(http.StatusNotFound, "no such repository")
-	}
-
-	return ref, repoName, orgName, nil
 }
