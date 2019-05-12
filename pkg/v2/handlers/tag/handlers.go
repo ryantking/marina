@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/db/models/tag"
+	"github.com/ryantking/marina/pkg/docker"
 )
 
 const (
@@ -23,7 +24,7 @@ func List(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	pageSize, last, err := parsePagination(c)
+	pageSize, last, err := docker.ParsePagination(c)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

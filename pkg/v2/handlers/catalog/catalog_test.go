@@ -9,7 +9,6 @@ import (
 	"github.com/labstack/echo"
 	"github.com/ryantking/marina/pkg/docker"
 	"github.com/ryantking/marina/pkg/web"
-	"github.com/ryantking/marina/pkg/web/mocks"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -24,46 +23,6 @@ func (suite *CatalogTestSuite) SetupSuite() {
 	e.Binder = new(docker.Binder)
 	e.GET("/v2/_catalog", Get)
 	suite.r = e
-}
-
-func (suite *CatalogTestSuite) TestParsePagination() {
-	assert := suite.Assert()
-	require := suite.Require()
-
-	c := new(mocks.Context)
-	c.On("QueryParam", "n").Return("20")
-	c.On("QueryParam", "last").Return("testTag")
-
-	n, last, err := parsePagination(c)
-	require.NoError(err)
-	assert.EqualValues(20, n)
-	assert.Equal("testTag", last)
-	c.AssertExpectations(suite.T())
-}
-
-func (suite *CatalogTestSuite) TestParsePaginationUnset() {
-	assert := suite.Assert()
-	require := suite.Require()
-
-	c := new(mocks.Context)
-	c.On("QueryParam", "n").Return("")
-
-	n, last, err := parsePagination(c)
-	require.NoError(err)
-	assert.EqualValues(0, n)
-	assert.Equal("", last)
-	c.AssertExpectations(suite.T())
-}
-
-func (suite *CatalogTestSuite) TestParsePaginationBadArg() {
-	assert := suite.Assert()
-
-	c := new(mocks.Context)
-	c.On("QueryParam", "n").Return("bad")
-
-	_, _, err := parsePagination(c)
-	assert.Error(err)
-	c.AssertExpectations(suite.T())
 }
 
 func (suite *CatalogTestSuite) TestGet() {

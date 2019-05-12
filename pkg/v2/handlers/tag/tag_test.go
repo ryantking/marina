@@ -74,46 +74,6 @@ func (suite *TagTestSuite) TestParsePathExistsError() {
 	c.AssertExpectations(suite.T())
 }
 
-func (suite *TagTestSuite) TestParsePagination() {
-	assert := suite.Assert()
-	require := suite.Require()
-
-	c := new(mocks.Context)
-	c.On("QueryParam", "n").Return("20")
-	c.On("QueryParam", "last").Return("testTag")
-
-	n, last, err := parsePagination(c)
-	require.NoError(err)
-	assert.EqualValues(20, n)
-	assert.Equal("testTag", last)
-	c.AssertExpectations(suite.T())
-}
-
-func (suite *TagTestSuite) TestParsePaginationUnset() {
-	assert := suite.Assert()
-	require := suite.Require()
-
-	c := new(mocks.Context)
-	c.On("QueryParam", "n").Return("")
-
-	n, last, err := parsePagination(c)
-	require.NoError(err)
-	assert.EqualValues(0, n)
-	assert.Equal("", last)
-	c.AssertExpectations(suite.T())
-}
-
-func (suite *TagTestSuite) TestParsePaginationBadArg() {
-	assert := suite.Assert()
-
-	c := new(mocks.Context)
-	c.On("QueryParam", "n").Return("bad")
-
-	_, _, err := parsePagination(c)
-	assert.Error(err)
-	c.AssertExpectations(suite.T())
-}
-
 func (suite *TagTestSuite) TestList() {
 	assert := suite.Assert()
 	require := suite.Require()

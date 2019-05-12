@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/ryantking/marina/pkg/db/models/repo"
+	"github.com/ryantking/marina/pkg/docker"
 )
 
 const (
@@ -18,7 +19,7 @@ var (
 
 // Get returns the catalog for the registry
 func Get(c echo.Context) error {
-	n, last, err := parsePagination(c)
+	n, last, err := docker.ParsePagination(c)
 	if err != nil {
 		return err
 	}
