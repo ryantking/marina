@@ -27,13 +27,14 @@ func New() (string, error) {
 	return uuid.String(), nil
 }
 
-// Save saves the upload to the database
-func (upl *Model) Save() error {
+// Finish sets an upload's status to done
+func Finish(uuid string) error {
 	col, err := db.GetCollection(CollectionName)
 	if err != nil {
 		return err
 	}
-	return col.Find("uuid", upl.UUID).Update(upl)
+
+	return col.Find("uuid", uuid).Update(map[string]bool{"done": true})
 }
 
 // Delete deletes the upload and all chunks

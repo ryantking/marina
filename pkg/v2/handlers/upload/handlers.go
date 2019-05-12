@@ -109,8 +109,7 @@ func Finish(c echo.Context) error {
 		return errors.Wrap(err, "error finishing upload")
 	}
 
-	upl := &upload.Model{UUID: uuid, Done: true}
-	err = upl.Save()
+	err = upload.Finish(uuid)
 	if err != nil {
 		return errors.Wrap(err, "error updating upload status")
 	}
