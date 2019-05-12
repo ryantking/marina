@@ -29,7 +29,7 @@ test: lint
 
 lint:
 	@echo "Running golangci-lint"
-	@golangci-lint run pkg/...
+	@golangci-lint run ./...
 
 up:
 	@docker-compose up -d
