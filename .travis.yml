@@ -1,5 +1,5 @@
 sudo: true
-dist: trusty
+dist: xenial
 language: go
 go:
 - 1.12.4
@@ -9,15 +9,15 @@ services:
 - mysql
 env:
   global:
-  - DB_DSN: "travis:@tcp(localhost:3306)marina"
+  - DB_DSN: "\"travis:@tcp(localhost:3306)/marina\""
 before_install:
-  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.15.0
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.16.0
   - curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod u+x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - mysql -e 'CREATE DATABASE marina'
-install:
   - make vendor
+install:
   - make build
 script:
   - make test

@@ -1,3 +1,7 @@
+run:
+  skip-dirs:
+    - ".*/mocks/.*"
+  modules-download-mode: vendor
 linters-settings:
   govet:
     check-shadowing: true
@@ -46,11 +50,6 @@ linters:
     - varcheck
     - gosec
     - typecheck
-
-run:
-  skip-dirs:
-    - vendor/
-    - pkg/golinters/goanalysis/(checker|passes)
 
 issues:
   exclude-rules:

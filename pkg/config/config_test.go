@@ -23,12 +23,17 @@ func (suite *ConfigTestSuite) SetupSuite() {
 	suite.env = map[string]string{}
 	for _, key := range vars {
 		suite.env[key] = os.Getenv(key)
+		os.Unsetenv(key)
 	}
 
 	Version = "dev"
 }
 
 func (suite *ConfigTestSuite) TearDownTest() {
+	Destroy()
+}
+
+func (suite *ConfigTestSuite) TearDownSuite() {
 	Version = "dev"
 	for key, value := range suite.env {
 		if value == "" {
@@ -37,7 +42,6 @@ func (suite *ConfigTestSuite) TearDownTest() {
 			os.Setenv(key, value)
 		}
 	}
-	Destroy()
 }
 
 func (suite *ConfigTestSuite) TestGet() {

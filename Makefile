@@ -13,23 +13,21 @@ deps:
 .PHONY: vendor
 vendor:
 	@GO111MODULE=on go mod tidy
-	@GO111MODULE=on go mod download
+	@GO111MODULE=on go mod vendor
 
 build:
 	@echo "Building Marina Server to $(PWD)/marinad ..."
-	@GO111MODULE=on go build -o $(PWD)/marinad github.com/ryantking/marina/cmd/marinad
+	@GO111MODULE=on go build -mod=vendor -o $(PWD)/marinad github.com/ryantking/marina/cmd/marinad
 
 run:
 	@$(PWD)/marinad
 
-ci: test
-
 test: lint
-	@GO111MODULE=on go test -race -covermode=atomic -coverprofile=coverage.txt github.com/ryantking/marina/pkg/...
+	@GO111MODULE=on go test -mod=vendor -race -covermode=atomic -coverprofile=coverage.txt github.com/ryantking/marina/pkg/...
 
 lint:
 	@echo "Running golangci-lint"
-	@golangci-lint run ./...
+	@GO111MODULE=on golangci-lint run ./...
 
 up:
 	@docker-compose up -d
