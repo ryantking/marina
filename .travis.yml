@@ -1,0 +1,25 @@
+sudo: true
+dist: trusty
+language: go
+go:
+- 1.12.4
+go_import_path: github.com/goharbor/harbor
+services:
+- docker
+- mysql
+env:
+  global:
+  - DB_DSN: "travis:@tcp(localhost:3306)marina"
+before_install:
+  - curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod u+x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - mysql -e 'CREATE DATABASE marina'
+install:
+  - make deps
+  - make vendor
+  - make build
+script:
+  - make test
+after_success:
+  - bash <(curl -S https://codecov.io/bash)
