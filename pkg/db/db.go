@@ -65,11 +65,11 @@ func GetCollection(name string) (udb.Collection, error) {
 		return col, nil
 	}
 
-	db, err := Get()
+	d, err := Get()
 	if err != nil {
 		return nil, err
 	}
-	col = db.Collection(name)
+	col = d.Collection(name)
 	if !col.Exists() {
 		panic(fmt.Sprintf("collection '%s' does not exist", name))
 	}

@@ -35,7 +35,7 @@ func (suite *MigrateTestSuite) TestGetLatest() {
 	testData := []byte("test migration\n")
 	for i := 1; i <= 5; i++ {
 		fname := fmt.Sprintf("%s/%d_testmigration.up.sql", migrationDir, i)
-		err := ioutil.WriteFile(fname, testData, 0777)
+		err = ioutil.WriteFile(fname, testData, 0777)
 		require.NoError(err)
 		fname = fmt.Sprintf("%s/%d_testmigration.down.sql", migrationDir, i)
 		err = ioutil.WriteFile(fname, testData, 0777)

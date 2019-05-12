@@ -22,7 +22,7 @@ func ErrorHandler(err error, c echo.Context) {
 
 	dockerErrCode := c.Get("docker_err_code")
 	if dockerErrCode == nil {
-		err := c.String(httpErr.Code, httpErr.Message.(string))
+		err = c.String(httpErr.Code, httpErr.Message.(string))
 		if err != nil {
 			log.WithError(err).Errorf("error writing error to response")
 		}

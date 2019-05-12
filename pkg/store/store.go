@@ -9,13 +9,13 @@ import (
 
 // GetBlob returns the blob object as a reader interface
 func GetBlob(digest, repoName, orgName string) (io.ReadCloser, error) {
-	client, err := getClient()
+	c, err := getClient()
 	if err != nil {
 		return nil, err
 	}
 
 	path := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
-	obj, err := client.Get(path)
+	obj, err := c.Get(path)
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving object")
 	}
@@ -25,24 +25,24 @@ func GetBlob(digest, repoName, orgName string) (io.ReadCloser, error) {
 
 // DeleteBlob deletes a blob from the storage backend
 func DeleteBlob(digest, repoName, orgName string) error {
-	client, err := getClient()
+	c, err := getClient()
 	if err != nil {
 		return err
 	}
 
 	path := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
-	return client.Remove(path)
+	return c.Remove(path)
 }
 
 // CreateUpload creates a new upload from the given reader
 func UploadChunk(uuid string, r io.Reader, sz, start int64) (int64, error) {
-	client, err := getClient()
+	c, err := getClient()
 	if err != nil {
 		return 0, err
 	}
 
 	path := fmt.Sprintf("uploads/%s/%d.tar.gz", uuid, start)
-	n, err := client.Put(path, r, sz)
+	n, err := c.Put(path, r, sz)
 	if err != nil {
 		return 0, errors.Wrap(err, "error uploading object")
 	}
@@ -51,7 +51,7 @@ func UploadChunk(uuid string, r io.Reader, sz, start int64) (int64, error) {
 
 // FinishUpload finalizes an upload
 func FinishUpload(digest, uuid, repoName, orgName string) error {
-	client, err := getClient()
+	c, err := getClient()
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func FinishUpload(digest, uuid, repoName, orgName string) error {
 	}
 
 	loc := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
-	err = chunksToBlob(client, chunks, loc)
+	err = chunksToBlob(c, chunks, loc)
 	if err != nil {
 		return errors.Wrap(err, "error merging and uploading chunks")
 	}
@@ -71,12 +71,16 @@ func FinishUpload(digest, uuid, repoName, orgName string) error {
 
 // DeleteUpload deletes an upload
 func DeleteUpload(uuid string) error {
+	c, err := getClient()
+	if err != nil {
+		return err
+	}
 	chunks, err := getChunks(uuid)
 	if err != nil {
 		return errors.Wrap(err, "error getting upload chunks from database")
 	}
 
-	err = deleteChunks(client, chunks)
+	err = deleteChunks(c, chunks)
 	if err != nil {
 		return errors.Wrap(err, "error deleting chunks")
 	}

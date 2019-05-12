@@ -98,7 +98,7 @@ func Finish(c echo.Context) error {
 	}
 
 	if sz > 0 {
-		err := storeChunk(c, uuid, sz, 0)
+		err = storeChunk(c, uuid, sz, 0)
 		if err != nil {
 			return err
 		}

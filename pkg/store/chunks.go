@@ -12,18 +12,18 @@ var (
 	getChunks = chunk.GetAll
 )
 
-func chunksToBlob(client Client, chunks []*chunk.Model, loc string) error {
-	r, n, err := mergeChunks(client, chunks)
+func chunksToBlob(c Client, chunks []*chunk.Model, loc string) error {
+	r, n, err := mergeChunks(c, chunks)
 	if err != nil {
 		return errors.Wrap(err, "error getting upload reader")
 	}
 
-	_, err = client.Put(loc, r, n)
+	_, err = c.Put(loc, r, n)
 	if err != nil {
 		return errors.Wrap(err, "error uploading blob")
 	}
 
-	err = deleteChunks(client, chunks)
+	err = deleteChunks(c, chunks)
 	if err != nil {
 		return errors.Wrap(err, "error deleting chunks")
 	}
@@ -31,12 +31,12 @@ func chunksToBlob(client Client, chunks []*chunk.Model, loc string) error {
 	return nil
 }
 
-func mergeChunks(client Client, chunks []*chunk.Model) (io.Reader, int64, error) {
+func mergeChunks(c Client, chunks []*chunk.Model) (io.Reader, int64, error) {
 	var sz int64
 	readers := make([]io.Reader, len(chunks))
 	for i, chunk := range chunks {
 		loc := fmt.Sprintf("uploads/%s/%d.tar.gz", chunk.UUID, chunk.RangeStart)
-		obj, err := client.Get(loc)
+		obj, err := c.Get(loc)
 		if err != nil {
 			return nil, 0, err
 		}
@@ -47,10 +47,10 @@ func mergeChunks(client Client, chunks []*chunk.Model) (io.Reader, int64, error)
 	return io.MultiReader(readers...), sz, nil
 }
 
-func deleteChunks(client Client, chunks []*chunk.Model) error {
+func deleteChunks(c Client, chunks []*chunk.Model) error {
 	for _, chunk := range chunks {
 		loc := fmt.Sprintf("uploads/%s/%d.tar.gz", chunk.UUID, chunk.RangeStart)
-		err := client.Remove(loc)
+		err := c.Remove(loc)
 		if err != nil {
 			return err
 		}
