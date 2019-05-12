@@ -39,6 +39,7 @@ require (
 	golang.org/x/text v0.3.2 // indirect
 	google.golang.org/appengine v1.5.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1
 	gopkg.in/ini.v1 v1.42.0 // indirect
 	upper.io/db.v3 v3.5.7+incompatible
 )

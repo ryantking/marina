@@ -114,7 +114,7 @@ func Finish(c echo.Context) error {
 		return errors.Wrap(err, "error updating upload status")
 	}
 
-	_, err = blob.New(digest, repoName, orgName)
+	err = blob.Create(digest, repoName, orgName)
 	if err != nil {
 		return errors.Wrap(err, "error creating new blob in database")
 	}

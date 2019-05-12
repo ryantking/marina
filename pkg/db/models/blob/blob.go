@@ -10,11 +10,22 @@ const (
 	CollectionName = "blob"
 )
 
-// New returns a new blob
-func New(digest, repoName, orgName string) (*Model, error) {
-	col, err := db.GetCollection(CollectionName)
+var (
+	getCollection = db.GetCollection
+)
+
+// Model represents an entry in the database
+type Model struct {
+	Digest   string `db:"digest"`
+	RepoName string `db:"repo_name"`
+	OrgName  string `db:"org_name"`
+}
+
+// Create creates a new blob in the database
+func Create(digest, repoName, orgName string) error {
+	col, err := getCollection(CollectionName)
 	if err != nil {
-		return nil, errors.Wrap(err, "error retrieving database connection")
+		return errors.Wrap(err, "error retrieving database connection")
 	}
 	l := Model{
 		Digest:   digest,
@@ -23,14 +34,15 @@ func New(digest, repoName, orgName string) (*Model, error) {
 	}
 	_, err = col.Insert(&l)
 	if err != nil {
-		return nil, err
+		return errors.Wrap(err, "error inserting model into the database")
 	}
-	return &l, nil
+
+	return nil
 }
 
 // Exists checks whether or not a given organization exists
 func Exists(digest string) (bool, error) {
-	col, err := db.GetCollection(CollectionName)
+	col, err := getCollection(CollectionName)
 	if err != nil {
 		return false, errors.Wrap(err, "error retrieving collection")
 	}
@@ -45,7 +57,7 @@ func Exists(digest string) (bool, error) {
 
 // Delete deletes a blob
 func Delete(digest string) error {
-	col, err := db.GetCollection(CollectionName)
+	col, err := getCollection(CollectionName)
 	if err != nil {
 		return errors.Wrap(err, "error retrieving collection")
 	}
