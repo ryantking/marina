@@ -42,26 +42,21 @@ func parseLength(c echo.Context) (int64, error) {
 	return sz, nil
 }
 
-func parseRange(c echo.Context) (int64, int64, error) {
+func parseRange(c echo.Context) (int64, error) {
 	s := c.Request().Header.Get("Content-Range")
 	if s == "" {
-		return 0, 0, nil
+		return 0, nil
 	}
 	parts := strings.Split(s, "-")
 	if len(parts) != 2 {
 		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
-		return 0, 0, echo.NewHTTPError(http.StatusBadRequest, "invalid Content-Range header")
+		return 0, echo.NewHTTPError(http.StatusBadRequest, "invalid Content-Range header")
 	}
 	start, err := strconv.ParseInt(parts[0], 10, 64)
 	if err != nil {
 		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
-		return 0, 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-	end, err := strconv.ParseInt(parts[1], 10, 64)
-	if err != nil {
-		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
-		return 0, 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	return start, end, nil
+	return start, nil
 }

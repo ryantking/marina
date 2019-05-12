@@ -64,11 +64,11 @@ func Blob(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	start, end, err := parseRange(c)
+	start, err := parseRange(c)
 	if err != nil {
 		return err
 	}
-	err = storeChunk(c, uuid, sz, start, end)
+	err = storeChunk(c, uuid, sz, start)
 	if err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func Finish(c echo.Context) error {
 	}
 
 	if sz > 0 {
-		err := storeChunk(c, uuid, sz, 0, 0)
+		err := storeChunk(c, uuid, sz, 0)
 		if err != nil {
 			return err
 		}
@@ -147,12 +147,12 @@ func Cancel(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-func storeChunk(c echo.Context, uuid string, sz, start, end int64) error {
-	sz, err := store.UploadChunk(uuid, c.Request().Body, sz, start, end)
+func storeChunk(c echo.Context, uuid string, sz, start int64) error {
+	sz, err := store.UploadChunk(uuid, c.Request().Body, sz, start)
 	if err != nil {
 		return errors.Wrap(err, "error storing chunk")
 	}
-	end = start + sz - 1
+	end := start + sz - 1
 	err = chunk.New(uuid, start, end)
 	if err != nil {
 		return errors.Wrap(err, "error creating upload chunk")
