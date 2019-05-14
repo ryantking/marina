@@ -14,7 +14,8 @@ const (
 )
 
 var (
-	getNames = repo.GetNames
+	getNames          = repo.GetNames
+	getNamesPaginated = repo.GetNamesPaginated
 )
 
 // Get returns the catalog for the registry
@@ -23,7 +24,24 @@ func Get(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	names, nextLast, err := getNames(n, last)
+	if n > 0 {
+		return getPaginated(c, n, last)
+	}
+
+	return getAll(c)
+}
+
+func getAll(c echo.Context) error {
+	names, err := getNames()
+	if err != nil {
+		return err
+	}
+
+	return writeNames(c, names)
+}
+
+func getPaginated(c echo.Context, n uint, last string) error {
+	names, nextLast, err := getNamesPaginated(n, last)
 	if err != nil {
 		return err
 	}
@@ -32,6 +50,10 @@ func Get(c echo.Context) error {
 		c.Response().Header().Set(headerLink, link)
 	}
 
+	return writeNames(c, names)
+}
+
+func writeNames(c echo.Context, names []string) error {
 	res := make(map[string][]string)
 	res["repositories"] = names
 	return c.JSON(http.StatusOK, res)
