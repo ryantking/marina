@@ -23,7 +23,7 @@ require (
 	github.com/google/go-cmp v0.3.0 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/jinzhu/gorm v1.9.8
-	github.com/khaiql/dbcleaner v2.3.0+incompatible // indirect
+	github.com/khaiql/dbcleaner v2.3.0+incompatible
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.1.5 // indirect

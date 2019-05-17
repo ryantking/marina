@@ -5,21 +5,47 @@ import (
 	"github.com/ryantking/marina/pkg/db"
 )
 
-// Model represents a single entry in the database
-type Model struct {
+// Org represents a single entry in the database
+type Org struct {
 	gorm.Model
-	Name string `gorm:"column:name"`
+	Name  string `gorm:"column:name"`
+	Repos []Repo `gorm:"foreignkey:org_id"`
 }
 
 // TableName returns the organization table name
-func (Model) TableName() string {
+func (Org) TableName() string {
 	return "organizations"
 }
 
-// Exists checks whether or not a given organization exists
-func Exists(name string) (bool, error) {
-	db := db.Get()
-	res := db.Where("name = ?", name).First(&Model{})
+// Repo represents an entry in the database
+type Repo struct {
+	gorm.Model
+	Name  string `gorm:"column:name"`
+	OrgID uint
+}
+
+// TableName returns the organization table name
+func (Repo) TableName() string {
+	return "repositories"
+}
+
+// OrgExists checks whether or not a given organization exists
+func OrgExists(name string) (bool, error) {
+	res := db.Get().Table("organizations").First(&Org{}, "name = ?", name)
+	if res.RecordNotFound() {
+		return false, nil
+	}
+	if res.Error != nil {
+		return false, res.Error
+	}
+
+	return true, nil
+}
+
+// Exists checks whether or not a given repository exists
+func Exists(repoName, orgName string) (bool, error) {
+	res := db.Get().Table("repositories").Joins("JOIN organizations ON repositories.org_id = organizations.id").
+		First(&Repo{}, "repositories.name = ? AND organizations.name = ?", repoName, orgName)
 	if res.RecordNotFound() {
 		return false, nil
 	}

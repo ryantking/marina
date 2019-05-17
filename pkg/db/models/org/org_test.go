@@ -18,34 +18,37 @@ type OrgTestSuite struct {
 }
 
 func (suite *OrgTestSuite) SetupSuite() {
-	require := suite.Require()
 	cfg := config.Get().DB
 	db := db.Get()
 
-	db.AutoMigrate(&Model{})
+	db.AutoMigrate(&Org{}, &Repo{})
 	suite.cleaner = dbcleaner.New()
 	mysql := engine.NewMySQLEngine(cfg.DSN)
 	suite.cleaner.SetEngine(mysql)
-	p := polluter.New(polluter.MySQLEngine(db.DB()))
+}
+
+func (suite *OrgTestSuite) TearDownSuite() {
+	db.Get().DropTable(&Repo{}, &Org{})
+}
+
+func (suite *OrgTestSuite) SetupTest() {
+	require := suite.Require()
+	suite.cleaner.Acquire("organizations")
+	suite.cleaner.Acquire("repositories")
+
+	p := polluter.New(polluter.MySQLEngine(db.Get().DB()))
 	seed, err := os.Open("seed.yml")
 	require.NoError(err)
 	err = p.Pollute(seed)
 	require.NoError(err)
 }
 
-func (suite *OrgTestSuite) TearDownSuite() {
-	db.Get().DropTable(&Model{})
-}
-
-func (suite *OrgTestSuite) SetupTest() {
-	suite.cleaner.Acquire("organization")
-}
-
 func (suite *OrgTestSuite) TearDownTest() {
-	suite.cleaner.Clean("organization")
+	suite.cleaner.Clean("repositories")
+	suite.cleaner.Clean("organizations")
 }
 
-func (suite *OrgTestSuite) TestExists() {
+func (suite *OrgTestSuite) TestOrgExists() {
 	assert := suite.Assert()
 	require := suite.Require()
 	tests := []struct {
@@ -54,9 +57,25 @@ func (suite *OrgTestSuite) TestExists() {
 	}{{"library", true}, {"mysql", true}, {"minio", false}}
 
 	for _, tt := range tests {
-		exists, err := Exists(tt.name)
+		exists, err := OrgExists(tt.name)
 		require.NoError(err, "For: %s", tt.name)
 		assert.Equal(tt.exists, exists, "For: %s", tt.name)
+	}
+}
+
+func (suite *OrgTestSuite) TestExists() {
+	assert := suite.Assert()
+	require := suite.Require()
+	tests := []struct {
+		repoName string
+		orgName  string
+		exists   bool
+	}{{"alpine", "library", true}, {"mysql", "mysql", true}, {"mysql", "library", false}}
+
+	for _, tt := range tests {
+		exists, err := Exists(tt.repoName, tt.orgName)
+		require.NoError(err, "For: %s/%s", tt.orgName, tt.repoName)
+		assert.Equal(tt.exists, exists, "For: %s/%s", tt.orgName, tt.repoName)
 	}
 }
 
