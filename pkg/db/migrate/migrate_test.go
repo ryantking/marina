@@ -8,9 +8,6 @@ import (
 
 	"github.com/ryantking/marina/pkg/config"
 	"github.com/stretchr/testify/suite"
-
-	// MySQL migrations driver
-	_ "github.com/golang-migrate/migrate/database/mysql"
 )
 
 type MigrateTestSuite struct {

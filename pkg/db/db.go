@@ -1,15 +1,12 @@
 package db
 
 import (
-	"context"
-	"database/sql"
 	"fmt"
 	"sync"
 
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/ryantking/marina/pkg/config"
-
-	udb "upper.io/db.v3"
-	"upper.io/db.v3/lib/sqlbuilder"
 )
 
 const (
@@ -17,18 +14,16 @@ const (
 )
 
 var (
-	db           sqlbuilder.Database
-	dbL          sync.Mutex
-	collections  = map[string]udb.Collection{}
-	collectionsL sync.Mutex
+	db  *gorm.DB
+	dbL sync.Mutex
 )
 
 // Get returns the connection to the database
-func Get() (sqlbuilder.Database, error) {
+func Get() *gorm.DB {
 	dbL.Lock()
 	defer dbL.Unlock()
 	if db != nil {
-		return db, nil
+		return db
 	}
 
 	cfg := config.Get()
@@ -36,60 +31,26 @@ func Get() (sqlbuilder.Database, error) {
 	if cfg.DB.Type == "mysql" {
 		connStr = fmt.Sprintf("%s?%s", connStr, mysqlParams)
 	}
-	sqlDB, err := sql.Open(cfg.DB.Type, connStr)
+	d, err := gorm.Open(cfg.DB.Type, connStr)
 	if err != nil {
-		return nil, err
+		panic(fmt.Sprintf("failed to get database connection: %s", err.Error()))
 	}
-	sess, err := sqlbuilder.New(cfg.DB.Type, sqlDB)
-	if err != nil {
-		return nil, err
-	}
-	ctx, cancel := context.WithTimeout(sess.Context(), cfg.DB.Timeout)
-	defer cancel()
-
-	err = sess.WithContext(ctx).Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	db = sess
-	return db, nil
-}
-
-func GetCollection(name string) (udb.Collection, error) {
-	collectionsL.Lock()
-	defer collectionsL.Unlock()
-
-	col, ok := collections[name]
-	if ok {
-		return col, nil
-	}
-
-	d, err := Get()
-	if err != nil {
-		return nil, err
-	}
-	col = d.Collection(name)
-	if !col.Exists() {
-		panic(fmt.Sprintf("collection '%s' does not exist", name))
-	}
-	collections[name] = col
-	return col, nil
+	db = d
+	return db
 }
 
 // Close closes the connection to the database
-func Close() error {
+func Close() {
 	dbL.Lock()
 	defer dbL.Unlock()
 	if db == nil {
-		return nil
+		return
 	}
 
 	err := db.Close()
 	if err != nil {
-		return err
+		panic("failed to close database connection")
 	}
 
 	db = nil
-	return nil
 }

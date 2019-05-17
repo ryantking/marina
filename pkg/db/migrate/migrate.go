@@ -12,6 +12,8 @@ import (
 	"github.com/golang-migrate/migrate"
 	log "github.com/sirupsen/logrus"
 
+	// MySQL migrations driver
+	_ "github.com/golang-migrate/migrate/database/mysql"
 	// Driver for file migrations
 	_ "github.com/golang-migrate/migrate/source/file"
 )

@@ -1,43 +1,42 @@
-CREATE TABLE `organization` (
-	`name` VARCHAR(255) PRIMARY KEY,
+CREATE TABLE `organizations` (
+	`id` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL,
 	`_last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
 );
 
 CREATE TABLE `repository` (
+	`id` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 	`name` VARCHAR(255) NOT NULL,
-	`org_name` VARCHAR(255) NOT NULL,
+	`org_id` BIGINT UNSIGNED NOT NULL,
 	`_last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
 	INDEX (`name`),
-	FOREIGN KEY (`org_name`) REFERENCES `organization` (`name`)
+	FOREIGN KEY (`org_id`) REFERENCES `organizations` (`id`)
 );
 
 CREATE TABLE `image` (
-	`digest` VARCHAR(255) PRIMARY KEY,
-	`repo_name` VARCHAR(255) NOT NULL,
-	`org_name` VARCHAR(255) NOT NULL,
+	`id` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	`digest` VARCHAR(255) NOT NULL,
+	`repo_id` BIGINT UNSIGNED NOT NULL,
 	`manifest` JSON NOT NULL,
 	`manifest_type` VARCHAR(255) NOT NULL,
 	`_last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
-	FOREIGN KEY (`repo_name`) REFERENCES `repository` (`name`),
-	FOREIGN KEY (`org_name`) REFERENCES `organization` (`name`)
+	FOREIGN KEY (`repo_id`) REFERENCES `repository` (`id`)
 );
 
 CREATE TABLE `tag` (
+	`id` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 	`name` VARCHAR(255) NOT NULL,
-	`repo_name` VARCHAR(255) NOT NULL,
-	`org_name` VARCHAR(255) NOT NULL,
-	`image_digest` VARCHAR(255) NOT NULL,
+	`image_id` BIGINT UNSIGNED NOT NULL,
 	`_last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
-	FOREIGN KEY (`image_digest`) REFERENCES `image` (`digest`)
+	FOREIGN KEY (`image_id`) REFERENCES `image` (`id`)
 );
 
 CREATE TABLE `blob` (
-	`digest` VARCHAR(255) PRIMARY KEY,
-	`repo_name` VARCHAR(255) NOT NULL,
-	`org_name` VARCHAR(255) NOT NULL,
+	`id` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	`digest` VARCHAR(255) NOT NULL,
+	`repo_id` BIGINT UNSIGNED NOT NULL,
 	`_last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
-	FOREIGN KEY (`repo_name`) REFERENCES `repository` (`name`),
-	FOREIGN KEY (`org_name`) REFERENCES `organization` (`name`)
+	FOREIGN KEY (`repo_id`) REFERENCES `repository` (`id`)
 );
 
 CREATE TABLE `upload` (
@@ -53,5 +52,3 @@ CREATE TABLE `upload_chunk` (
 	PRIMARY KEY(`uuid`, `range_start`, `range_end`)
 );
 
-INSERT INTO `organization` (`name`)
-VALUES ('library');

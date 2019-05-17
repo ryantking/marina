@@ -3,6 +3,7 @@ package db
 import (
 	"testing"
 
+	"github.com/jinzhu/gorm"
 	"github.com/ryantking/marina/pkg/config"
 	"github.com/stretchr/testify/suite"
 
@@ -15,32 +16,21 @@ type DBTestSuite struct {
 }
 
 func (suite *DBTestSuite) TearDownTest() {
-	require := suite.Require()
-
 	config.Destroy()
-	err := Close()
-	require.NoError(err)
+	Close()
 }
 
 func (suite *DBTestSuite) TestGetDB() {
-	require := suite.Require()
-
-	db, err := Get()
-	require.NoError(err)
-	err = db.Ping()
-	require.NoError(err)
-}
-
-func (suite *DBTestSuite) TestDBTimeout() {
 	assert := suite.Assert()
 	require := suite.Require()
 
-	config.Set("db.dsn", "foo:bar@tcp(badurl:3306)/db")
-	config.Set("db.timeout", "1ms")
-
-	db, err := Get()
-	require.Error(err)
-	assert.Nil(db)
+	var db *gorm.DB
+	require.NotPanics(func() {
+		db = Get()
+	})
+	assert.NotNil(db)
+	err := db.DB().Ping()
+	require.NoError(err)
 }
 
 func TestDBTestSuite(t *testing.T) {

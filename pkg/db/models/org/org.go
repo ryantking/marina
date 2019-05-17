@@ -1,35 +1,31 @@
 package org
 
 import (
-	"github.com/pkg/errors"
+	"github.com/jinzhu/gorm"
 	"github.com/ryantking/marina/pkg/db"
 )
 
 // Model represents a single entry in the database
 type Model struct {
-	Name string `db:"name"`
+	gorm.Model
+	Name string `gorm:"column:name"`
 }
 
-const (
-	// CollectionName is the name of the table in the database
-	CollectionName = "organization"
-)
-
-var (
-	getCollection = db.GetCollection
-)
+// TableName returns the organization table name
+func (Model) TableName() string {
+	return "organizations"
+}
 
 // Exists checks whether or not a given organization exists
 func Exists(name string) (bool, error) {
-	col, err := getCollection(CollectionName)
-	if err != nil {
-		return false, errors.Wrap(err, "error retrieving collection")
+	db := db.Get()
+	res := db.Where("name = ?", name).First(&Model{})
+	if res.RecordNotFound() {
+		return false, nil
+	}
+	if res.Error != nil {
+		return false, res.Error
 	}
 
-	exists, err := col.Find("name", name).Exists()
-	if err != nil {
-		return false, errors.Wrap(err, "error checking if org exists")
-	}
-
-	return exists, nil
+	return true, nil
 }
