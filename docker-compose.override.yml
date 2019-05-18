@@ -3,9 +3,9 @@ services:
   mysql:
     ports:
       - "3306:3306"
-  swaggerui:
+  prisma:
     ports:
-      - "8082:8080"
+      - "4466:4466"
   minio:
     ports:
       - "9000:9000"

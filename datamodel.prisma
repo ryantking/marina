@@ -1,0 +1,61 @@
+type Organization {
+	id: ID! @id
+	createdAt: DateTime! @createdAt
+	updatedAt: DateTime! @updatedAt
+	name: String! @unique
+	repos: [Repository!]!
+}
+
+type Repository {
+	id: ID! @id
+	createdAt: DateTime! @createdAt
+	updatedAt: DateTime! @updatedAt
+	name: String!
+	org: Organization! @relation(link: INLINE)
+	blobs: [Blob!]!
+}
+
+type Image {
+	id: ID! @id
+	createdAt: DateTime! @createdAt
+	updatedAt: DateTime! @updatedAt
+	repo: Repository! @relation(link: INLINE)
+	digest: String! @unique
+	manifest: Json!
+	manifest_type: String!
+	tags: [Tag!]!
+}
+
+type Tag {
+	id: ID! @id
+	createdAt: DateTime! @createdAt
+	updatedAt: DateTime! @updatedAt
+	image: Image! @relation(link: INLINE)
+}
+
+type Blob {
+	id: ID! @id
+	createdAt: DateTime! @createdAt
+	updatedAt: DateTime! @updatedAt
+	digest: String! @unique
+	repo: Repository! @relation(link: INLINE)
+}
+
+type Upload {
+	id: ID! @id
+	createdAt: DateTime! @createdAt
+	updatedAt: DateTime! @updatedAt
+	uuid: String!
+	done: Boolean! @default(value: false)
+	chunks: [Chunk!]!
+}
+
+type Chunk {
+	id: ID! @id
+	createdAt: DateTime! @createdAt
+	updatedAt: DateTime! @updatedAt
+	upload: Upload! @relation(link: INLINE)
+	rangeStart: Int
+	rangeEnd: Int
+}
+

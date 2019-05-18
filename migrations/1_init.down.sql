@@ -1,7 +1,0 @@
-DROP TABLE IF EXISTS `upload_chunk`;
-DROP TABLE IF EXISTS `upload`;
-DROP TABLE IF EXISTS `blob`;
-DROP TABLE IF EXISTS `tag`;
-DROP TABLE IF EXISTS `image`;
-DROP TABLE IF EXISTS `repository`;
-DROP TABLE IF EXISTS `organization`;

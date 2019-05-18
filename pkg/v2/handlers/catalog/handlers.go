@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	"github.com/ryantking/marina/pkg/db/models/repo"
 	"github.com/ryantking/marina/pkg/docker"
+	"github.com/ryantking/marina/pkg/prisma"
 )
 
 const (
@@ -14,8 +14,7 @@ const (
 )
 
 var (
-	getNames          = repo.GetNames
-	getNamesPaginated = repo.GetNamesPaginated
+	client = prisma.New(nil)
 )
 
 // Get returns the catalog for the registry

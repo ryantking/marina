@@ -3,18 +3,33 @@ version: '3'
 services:
   mysql:
     image: mysql:5.7.12
+    restart: always
     environment:
       MYSQL_DATABASE: marinatest
       MYSQL_USER: marina
       MYSQL_PASSWORD: marina
       MYSQL_ROOT_PASSWORD: marina
     command: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"
-  swaggerui:
-    image: swaggerapi/swagger-ui:v3.0.5
+    volumes:
+      - mysql:/var/lib/mysql
+  prisma:
+    image: prismagraphql/prisma:1.32
+    restart: always
     environment:
-      API_URL: http://localhost:8081/api/docs.json
+      PRISMA_CONFIG: |
+        port: 4466
+        databases:
+          default:
+            connector: mysql
+            host: mysql
+            port: 3306
+            user: root
+            password: marina
+    links:
+      - mysql
   minio:
     image: minio/minio:RELEASE.2019-05-02T19-07-09Z
+    restart: always
     environment:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
@@ -33,3 +48,5 @@ services:
       /usr/bin/mc rm -r --force myminio/marina;
       /usr/bin/mc mb myminio/marina;
       /usr/bin/mc policy download myminio/marina"
+volumes:
+  mysql: ~
