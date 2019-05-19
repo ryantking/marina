@@ -1,19 +1,18 @@
 package blob
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/labstack/echo"
-	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/docker"
+	"github.com/ryantking/marina/pkg/testutil"
 	"github.com/ryantking/marina/pkg/web"
-	"github.com/ryantking/marina/pkg/web/mocks"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -31,163 +30,153 @@ func (suite *BlobTestSuite) SetupSuite() {
 	suite.r = e
 }
 
-func (suite *BlobTestSuite) TestParsePath() {
-	assert := suite.Assert()
-	require := suite.Require()
-
-	c := new(mocks.Context)
-	c.On("Param", "repo").Return("testRepo")
-	c.On("Param", "org").Return("testOrg")
-	c.On("Param", "digest").Return("testDigest")
-	repoExists = func(repoName, orgName string) (bool, error) {
-		return true, nil
-	}
-	blobExists = func(digest string) (bool, error) {
-		return true, nil
-	}
-
-	digest, repoName, orgName, err := parsePath(c)
-	require.NoError(err)
-	assert.Equal("testDigest", digest)
-	assert.Equal("testRepo", repoName)
-	assert.Equal("testOrg", orgName)
-	c.AssertExpectations(suite.T())
+func (suite *BlobTestSuite) SetupTest() {
+	testutil.Aquire("Blob", "Repository", "Organization")
 }
 
-func (suite *BlobTestSuite) TestParsePathNonExistentRepo() {
-	assert := suite.Assert()
-
-	c := new(mocks.Context)
-	c.On("Param", "digest").Return("testDigest")
-	c.On("Param", "repo").Return("testRepo")
-	c.On("Param", "org").Return("testOrg")
-	c.On("Set", "docker_err_code", docker.CodeNameUnknown)
-	repoExists = func(repoName, orgName string) (bool, error) {
-		return false, nil
-	}
-
-	_, _, _, err := parsePath(c)
-	assert.Equal(echo.NewHTTPError(http.StatusNotFound, "no such repository"), err)
-	c.AssertExpectations(suite.T())
-}
-
-func (suite *BlobTestSuite) TestParsePathNonExistentBlob() {
-	assert := suite.Assert()
-
-	c := new(mocks.Context)
-	c.On("Param", "digest").Return("testDigest")
-	c.On("Param", "repo").Return("testRepo")
-	c.On("Param", "org").Return("testOrg")
-	c.On("Set", "docker_err_code", docker.CodeBlobUnknown)
-	repoExists = func(repoName, orgName string) (bool, error) {
-		return true, nil
-	}
-	blobExists = func(digest string) (bool, error) {
-		return false, nil
-	}
-
-	_, _, _, err := parsePath(c)
-	assert.Equal(echo.NewHTTPError(http.StatusNotFound, "not found"), err)
-	c.AssertExpectations(suite.T())
-}
-
-func (suite *BlobTestSuite) TestParsePathExistsRepoError() {
-	assert := suite.Assert()
-
-	c := new(mocks.Context)
-	c.On("Param", "digest").Return("testDigest")
-	c.On("Param", "repo").Return("testRepo")
-	c.On("Param", "org").Return("testOrg")
-	repoExists = func(repoName, orgName string) (bool, error) {
-		return false, fmt.Errorf("test error")
-	}
-
-	_, _, _, err := parsePath(c)
-	assert.EqualError(errors.Cause(err), "test error")
-	c.AssertExpectations(suite.T())
-}
-
-func (suite *BlobTestSuite) TestParsePathExistsBlobError() {
-	assert := suite.Assert()
-
-	c := new(mocks.Context)
-	c.On("Param", "digest").Return("testDigest")
-	c.On("Param", "repo").Return("testRepo")
-	c.On("Param", "org").Return("testOrg")
-	repoExists = func(repoName, orgName string) (bool, error) {
-		return true, nil
-	}
-	blobExists = func(digest string) (bool, error) {
-		return false, fmt.Errorf("test error")
-	}
-
-	_, _, _, err := parsePath(c)
-	assert.EqualError(errors.Cause(err), "test error")
-	c.AssertExpectations(suite.T())
+func (suite *BlobTestSuite) TearDownTest() {
+	testutil.Clean("Blob", "Repository", "Organization")
 }
 
 func (suite *BlobTestSuite) TestExists() {
 	assert := suite.Assert()
 	require := suite.Require()
-
-	repoExists = func(repoName, orgName string) (bool, error) {
-		return true, nil
+	tests := []struct {
+		org    string
+		repo   string
+		digest string
+		code   int
+		body   string
+	}{
+		{
+			"library", "alpine",
+			"sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9",
+			http.StatusOK, "",
+		},
+		{
+			"alpine", "mysql",
+			"sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9",
+			http.StatusNotFound,
+			`{"errors":[{"code":"NAME_UNKNOWN","message":"repository name not known to registry"}]}`,
+		},
+		{
+			"library", "redis",
+			"sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9",
+			http.StatusNotFound,
+			`{"errors":[{"code":"BLOB_UNKNOWN","message":"blob unknown to registry"}]}`,
+		},
 	}
-	blobExists = func(digest string) (bool, error) {
-		return true, nil
-	}
 
-	req := httptest.NewRequest(http.MethodHead, "/v2/testOrg/testRepo/blobs/testDigest", nil)
-	rr := httptest.NewRecorder()
-	suite.r.ServeHTTP(rr, req)
-	require.Equal(http.StatusOK, rr.Code)
-	assert.Equal(fmt.Sprint(len("testDigest")), rr.Header().Get(echo.HeaderContentLength))
-	assert.Equal("testDigest", rr.Header().Get(docker.HeaderContentDigest))
+	for _, tt := range tests {
+		url := fmt.Sprintf("/v2/%s/%s/blobs/%s", tt.org, tt.repo, tt.digest)
+		req := httptest.NewRequest(http.MethodHead, url, nil)
+		rr := httptest.NewRecorder()
+		suite.r.ServeHTTP(rr, req)
+		require.Equal(tt.code, rr.Code)
+		if tt.code == http.StatusOK {
+			assert.Equal(tt.digest, rr.Header().Get(docker.HeaderContentDigest))
+			assert.Equal(fmt.Sprint(len(tt.digest)), rr.Header().Get(echo.HeaderContentLength))
+		} else {
+			b, err := ioutil.ReadAll(rr.Body)
+			require.NoError(err)
+			assert.JSONEq(tt.body, string(b))
+		}
+	}
 }
 
 func (suite *BlobTestSuite) TestGet() {
 	assert := suite.Assert()
 	require := suite.Require()
+	tests := []struct {
+		org    string
+		repo   string
+		digest string
+		code   int
+		body   string
+	}{
+		{
+			"library", "alpine",
+			"sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9",
+			http.StatusOK, "library/alpine test layer",
+		},
+		{
+			"alpine", "mysql",
+			"sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9",
+			http.StatusNotFound,
+			`{"errors":[{"code":"NAME_UNKNOWN","message":"repository name not known to registry"}]}`,
+		},
+		{
+			"library", "redis",
+			"sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9",
+			http.StatusNotFound,
+			`{"errors":[{"code":"BLOB_UNKNOWN","message":"blob unknown to registry"}]}`,
+		},
+	}
 
-	blob := []byte("testBlob")
-	r := ioutil.NopCloser(bytes.NewReader(blob))
-	repoExists = func(repoName, orgName string) (bool, error) {
-		return true, nil
-	}
-	blobExists = func(digest string) (bool, error) {
-		return true, nil
-	}
-	getBlob = func(digest, repoName, orgName string) (io.ReadCloser, error) {
-		return r, nil
-	}
+	for _, tt := range tests {
+		getBlob = func(digest, repo, org string) (io.ReadCloser, error) {
+			assert.Equal(tt.digest, digest)
+			assert.Equal(tt.repo, repo)
+			assert.Equal(tt.org, org)
+			return ioutil.NopCloser(strings.NewReader(tt.body)), nil
+		}
 
-	req := httptest.NewRequest(http.MethodGet, "/v2/testOrg/testRepo/blobs/testDigest", nil)
-	rr := httptest.NewRecorder()
-	suite.r.ServeHTTP(rr, req)
-	require.Equal(http.StatusOK, rr.Code)
-	assert.Equal(echo.MIMEOctetStream, rr.Header().Get(echo.HeaderContentType))
+		url := fmt.Sprintf("/v2/%s/%s/blobs/%s", tt.org, tt.repo, tt.digest)
+		req := httptest.NewRequest(http.MethodGet, url, nil)
+		rr := httptest.NewRecorder()
+		suite.r.ServeHTTP(rr, req)
+		require.Equal(tt.code, rr.Code)
+		b, err := ioutil.ReadAll(rr.Body)
+		require.NoError(err)
+		if tt.code == http.StatusOK {
+			assert.Equal(tt.digest, rr.Header().Get(docker.HeaderContentDigest))
+			assert.Equal(tt.body, string(b))
+		} else {
+			assert.JSONEq(tt.body, string(b))
+		}
+	}
 }
 
 func (suite *BlobTestSuite) TestDelete() {
 	assert := suite.Assert()
+	require := suite.Require()
+	tests := []struct {
+		org    string
+		repo   string
+		digest string
+		code   int
+	}{
+		{
+			"library", "alpine",
+			"sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9",
+			http.StatusAccepted,
+		},
+		{
+			"alpine", "mysql",
+			"sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9",
+			http.StatusNotFound,
+		},
+		{
+			"library", "redis",
+			"sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9",
+			http.StatusNotFound,
+		},
+	}
 
-	repoExists = func(repoName, orgName string) (bool, error) {
-		return true, nil
-	}
-	blobExists = func(digest string) (bool, error) {
-		return true, nil
-	}
-	deleteBlob = func(digest, repoName, orgName string) error {
-		return nil
-	}
-	deleteBlobEntry = func(digest string) error {
-		return nil
-	}
+	for _, tt := range tests {
+		deleteBlob = func(digest, repo, org string) error {
+			assert.Equal(tt.digest, digest)
+			assert.Equal(tt.repo, repo)
+			assert.Equal(tt.org, org)
+			return nil
+		}
 
-	req := httptest.NewRequest(http.MethodDelete, "/v2/testOrg/testRepo/blobs/testDigest", nil)
-	rr := httptest.NewRecorder()
-	suite.r.ServeHTTP(rr, req)
-	assert.Equal(http.StatusAccepted, rr.Code)
+		url := fmt.Sprintf("/v2/%s/%s/blobs/%s", tt.org, tt.repo, tt.digest)
+		req := httptest.NewRequest(http.MethodDelete, url, nil)
+		rr := httptest.NewRecorder()
+		suite.r.ServeHTTP(rr, req)
+		require.Equal(tt.code, rr.Code)
+	}
 }
 
 func TestBlobTestSuite(t *testing.T) {

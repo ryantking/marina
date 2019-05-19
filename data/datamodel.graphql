@@ -4,6 +4,8 @@ type Organization {
 	updatedAt: DateTime! @updatedAt
 	name: String! @unique
 	repos: [Repository!]!
+    blobs: [Blob!]!
+    images: [Image!]!
 }
 
 type Repository {
@@ -45,7 +47,7 @@ type Upload {
 	id: ID! @id
 	createdAt: DateTime! @createdAt
 	updatedAt: DateTime! @updatedAt
-	uuid: String!
+	uuid: String! @unique
 	done: Boolean! @default(value: false)
 	chunks: [Chunk!]!
 }
