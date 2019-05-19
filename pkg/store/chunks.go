@@ -1,29 +1,44 @@
 package store
 
 import (
+	"context"
 	"fmt"
 	"io"
 
 	"github.com/pkg/errors"
-	"github.com/ryantking/marina/pkg/db/models/upload/chunk"
+	"github.com/ryantking/marina/pkg/prisma"
 )
 
-var (
-	getChunks = chunk.GetAll
-)
+var c = prisma.New(nil)
 
-func chunksToBlob(c Client, chunks []*chunk.Model, loc string) error {
-	r, n, err := mergeChunks(c, chunks)
+func getChunks(uuid string) ([]prisma.Chunk, error) {
+	chunks, err := c.Upload(prisma.UploadWhereUniqueInput{Uuid: &uuid}).Chunks(nil).Exec(context.Background())
 	if err != nil {
-		return errors.Wrap(err, "error getting upload reader")
+		return nil, err
 	}
 
-	_, err = c.Put(loc, r, n)
+	return chunks, nil
+}
+
+func mergeChunks(c Client, uuid string, chunks []prisma.Chunk, loc string) error {
+	var sz int32
+	readers := make([]io.Reader, len(chunks))
+	for i, chunk := range chunks {
+		loc := fmt.Sprintf("uploads/%s/%d.tar.gz", uuid, chunk.RangeStart)
+		obj, err := c.Get(loc)
+		if err != nil {
+			return err
+		}
+		readers[i] = obj
+		sz += chunk.RangeEnd - chunk.RangeStart + 1
+	}
+
+	_, err := c.Put(loc, io.MultiReader(readers...), int64(sz))
 	if err != nil {
 		return errors.Wrap(err, "error uploading blob")
 	}
 
-	err = deleteChunks(c, chunks)
+	err = deleteChunks(c, uuid, chunks)
 	if err != nil {
 		return errors.Wrap(err, "error deleting chunks")
 	}
@@ -31,25 +46,9 @@ func chunksToBlob(c Client, chunks []*chunk.Model, loc string) error {
 	return nil
 }
 
-func mergeChunks(c Client, chunks []*chunk.Model) (io.Reader, int64, error) {
-	var sz int64
-	readers := make([]io.Reader, len(chunks))
-	for i, chunk := range chunks {
-		loc := fmt.Sprintf("uploads/%s/%d.tar.gz", chunk.UUID, chunk.RangeStart)
-		obj, err := c.Get(loc)
-		if err != nil {
-			return nil, 0, err
-		}
-		readers[i] = obj
-		sz += chunk.RangeEnd - chunk.RangeStart + 1
-	}
-
-	return io.MultiReader(readers...), sz, nil
-}
-
-func deleteChunks(c Client, chunks []*chunk.Model) error {
+func deleteChunks(c Client, uuid string, chunks []prisma.Chunk) error {
 	for _, chunk := range chunks {
-		loc := fmt.Sprintf("uploads/%s/%d.tar.gz", chunk.UUID, chunk.RangeStart)
+		loc := fmt.Sprintf("uploads/%s/%d.tar.gz", uuid, chunk.RangeStart)
 		err := c.Remove(loc)
 		if err != nil {
 			return err

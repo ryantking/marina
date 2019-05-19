@@ -61,7 +61,7 @@ func FinishUpload(digest, uuid, repoName, orgName string) error {
 	}
 
 	loc := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
-	err = chunksToBlob(c, chunks, loc)
+	err = mergeChunks(c, uuid, chunks, loc)
 	if err != nil {
 		return errors.Wrap(err, "error merging and uploading chunks")
 	}
@@ -80,7 +80,7 @@ func DeleteUpload(uuid string) error {
 		return errors.Wrap(err, "error getting upload chunks from database")
 	}
 
-	err = deleteChunks(c, chunks)
+	err = deleteChunks(c, uuid, chunks)
 	if err != nil {
 		return errors.Wrap(err, "error deleting chunks")
 	}

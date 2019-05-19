@@ -2,11 +2,12 @@ package store
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"testing"
 
-	"github.com/ryantking/marina/pkg/db/models/upload/chunk"
 	"github.com/ryantking/marina/pkg/store/mocks"
+	"github.com/ryantking/marina/pkg/testutil"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,10 +20,12 @@ type StoreTestSuite struct {
 func (suite *StoreTestSuite) SetupTest() {
 	suite.client = new(mocks.Client)
 	client = suite.client
+	testutil.Aquire("Chunk", "Upload")
 }
 
 func (suite *StoreTestSuite) TearDownTest() {
 	suite.client.AssertExpectations(suite.T())
+	testutil.Clean("Chunk", "Upload")
 }
 
 func (suite *StoreTestSuite) TestGetBlob() {
@@ -30,9 +33,12 @@ func (suite *StoreTestSuite) TestGetBlob() {
 	require := suite.Require()
 
 	obj := ioutil.NopCloser(bytes.NewBuffer([]byte("test")))
-	suite.client.On("Get", "blobs/testOrg/testRepo/testDigest.tar.gz").Return(obj, nil)
+	digest := "sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9"
+	repo := "alpine"
+	org := "library"
+	suite.client.On("Get", fmt.Sprintf("blobs/%s/%s/%s.tar.gz", org, repo, digest)).Return(obj, nil)
 
-	r, err := GetBlob("testDigest", "testRepo", "testOrg")
+	r, err := GetBlob(digest, repo, org)
 	require.NoError(err)
 	assert.EqualValues(obj, r)
 }
@@ -40,9 +46,12 @@ func (suite *StoreTestSuite) TestGetBlob() {
 func (suite *StoreTestSuite) TestDeleteBlob() {
 	assert := suite.Assert()
 
-	suite.client.On("Remove", "blobs/testOrg/testRepo/testDigest.tar.gz").Return(nil)
+	digest := "sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9"
+	repo := "alpine"
+	org := "library"
+	suite.client.On("Remove", fmt.Sprintf("blobs/%s/%s/%s.tar.gz", org, repo, digest)).Return(nil)
 
-	err := DeleteBlob("testDigest", "testRepo", "testOrg")
+	err := DeleteBlob(digest, repo, org)
 	assert.NoError(err)
 }
 
@@ -51,53 +60,42 @@ func (suite *StoreTestSuite) TestUploadChunk() {
 	require := suite.Require()
 
 	r := bytes.NewBuffer([]byte("testChunk"))
-	suite.client.On("Put", "uploads/testUUID/0.tar.gz", mock.Anything, int64(20)).Return(int64(20), nil)
+	uuid := "6b3c9a93-af5d-473f-a4ce-9710022185cd"
+	suite.client.On("Put", fmt.Sprintf("uploads/%s/0.tar.gz", uuid), mock.Anything, int64(20)).Return(int64(20), nil)
 
-	n, err := UploadChunk("testUUID", r, 20, 0)
+	n, err := UploadChunk(uuid, r, 20, 0)
 	require.NoError(err)
 	assert.EqualValues(20, n)
 }
 
 func (suite *StoreTestSuite) TestFinishUpload() {
-	assert := suite.Assert()
 	require := suite.Require()
 
+	uuid := "6b3c9a93-af5d-473f-a4ce-9710022185cd"
+	digest := "sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9"
+	repo := "alpine"
+	org := "library"
 	r1 := ioutil.NopCloser(bytes.NewBuffer([]byte("chunk1")))
 	r2 := ioutil.NopCloser(bytes.NewBuffer([]byte("chunk2")))
-	getChunks = func(uuid string) ([]*chunk.Model, error) {
-		assert.Equal("testUUID", uuid)
-		chunks := []*chunk.Model{
-			&chunk.Model{UUID: "testUUID", RangeStart: 0, RangeEnd: 9},
-			&chunk.Model{UUID: "testUUID", RangeStart: 10, RangeEnd: 19},
-		}
-		return chunks, nil
-	}
-	suite.client.On("Get", "uploads/testUUID/0.tar.gz").Return(r1, nil)
-	suite.client.On("Get", "uploads/testUUID/10.tar.gz").Return(r2, nil)
-	suite.client.On("Put", "blobs/testOrg/testRepo/testDigest.tar.gz", mock.Anything, int64(20)).Return(int64(20), nil)
-	suite.client.On("Remove", "uploads/testUUID/0.tar.gz").Return(nil)
-	suite.client.On("Remove", "uploads/testUUID/10.tar.gz").Return(nil)
+	suite.client.On("Get", fmt.Sprintf("uploads/%s/0.tar.gz", uuid)).Return(r1, nil)
+	suite.client.On("Get", fmt.Sprintf("uploads/%s/1024.tar.gz", uuid)).Return(r2, nil)
+	suite.client.On("Put", fmt.Sprintf("blobs/%s/%s/%s.tar.gz", org, repo, digest),
+		mock.Anything, int64(2048)).Return(int64(2048), nil)
+	suite.client.On("Remove", fmt.Sprintf("uploads/%s/0.tar.gz", uuid)).Return(nil)
+	suite.client.On("Remove", fmt.Sprintf("uploads/%s/1024.tar.gz", uuid)).Return(nil)
 
-	err := FinishUpload("testDigest", "testUUID", "testRepo", "testOrg")
+	err := FinishUpload(digest, uuid, repo, org)
 	require.NoError(err)
 }
 
 func (suite *StoreTestSuite) TestDeleteUpload() {
-	assert := suite.Assert()
 	require := suite.Require()
 
-	getChunks = func(uuid string) ([]*chunk.Model, error) {
-		assert.Equal("testUUID", uuid)
-		chunks := []*chunk.Model{
-			&chunk.Model{UUID: "testUUID", RangeStart: 0, RangeEnd: 9},
-			&chunk.Model{UUID: "testUUID", RangeStart: 10, RangeEnd: 19},
-		}
-		return chunks, nil
-	}
-	suite.client.On("Remove", "uploads/testUUID/0.tar.gz").Return(nil)
-	suite.client.On("Remove", "uploads/testUUID/10.tar.gz").Return(nil)
+	uuid := "6b3c9a93-af5d-473f-a4ce-9710022185cd"
+	suite.client.On("Remove", fmt.Sprintf("uploads/%s/0.tar.gz", uuid)).Return(nil)
+	suite.client.On("Remove", fmt.Sprintf("uploads/%s/1024.tar.gz", uuid)).Return(nil)
 
-	err := DeleteUpload("testUUID")
+	err := DeleteUpload(uuid)
 	require.NoError(err)
 }
 

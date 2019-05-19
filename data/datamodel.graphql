@@ -57,7 +57,7 @@ type Chunk {
 	createdAt: DateTime! @createdAt
 	updatedAt: DateTime! @updatedAt
 	upload: Upload! @relation(link: INLINE)
-	rangeStart: Int
-	rangeEnd: Int
+	rangeStart: Int!
+	rangeEnd: Int!
 }
 

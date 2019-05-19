@@ -1942,8 +1942,8 @@ type BlobUpdateManyMutationInput struct {
 type ChunkCreateInput struct {
 	ID         *string                           `json:"id,omitempty"`
 	Upload     UploadCreateOneWithoutChunksInput `json:"upload"`
-	RangeStart *int32                            `json:"rangeStart,omitempty"`
-	RangeEnd   *int32                            `json:"rangeEnd,omitempty"`
+	RangeStart int32                             `json:"rangeStart"`
+	RangeEnd   int32                             `json:"rangeEnd"`
 }
 
 type UploadCreateOneWithoutChunksInput struct {
@@ -2181,8 +2181,8 @@ type ChunkCreateManyWithoutUploadInput struct {
 
 type ChunkCreateWithoutUploadInput struct {
 	ID         *string `json:"id,omitempty"`
-	RangeStart *int32  `json:"rangeStart,omitempty"`
-	RangeEnd   *int32  `json:"rangeEnd,omitempty"`
+	RangeStart int32   `json:"rangeStart"`
+	RangeEnd   int32   `json:"rangeEnd"`
 }
 
 type UploadUpdateInput struct {
@@ -2948,8 +2948,8 @@ type Chunk struct {
 	ID         string `json:"id"`
 	CreatedAt  string `json:"createdAt"`
 	UpdatedAt  string `json:"updatedAt"`
-	RangeStart *int32 `json:"rangeStart,omitempty"`
-	RangeEnd   *int32 `json:"rangeEnd,omitempty"`
+	RangeStart int32  `json:"rangeStart"`
+	RangeEnd   int32  `json:"rangeEnd"`
 }
 
 type UploadExec struct {
@@ -3887,8 +3887,8 @@ type ChunkPreviousValues struct {
 	ID         string `json:"id"`
 	CreatedAt  string `json:"createdAt"`
 	UpdatedAt  string `json:"updatedAt"`
-	RangeStart *int32 `json:"rangeStart,omitempty"`
-	RangeEnd   *int32 `json:"rangeEnd,omitempty"`
+	RangeStart int32  `json:"rangeStart"`
+	RangeEnd   int32  `json:"rangeEnd"`
 }
 
 type ImageSubscriptionPayloadExec struct {

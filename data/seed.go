@@ -70,4 +70,16 @@ func main() {
 		panic(err.Error())
 	}
 
+	_, err = client.CreateUpload(prisma.UploadCreateInput{
+		Uuid: "6b3c9a93-af5d-473f-a4ce-9710022185cd",
+		Chunks: &prisma.ChunkCreateManyWithoutUploadInput{
+			Create: []prisma.ChunkCreateWithoutUploadInput{
+				prisma.ChunkCreateWithoutUploadInput{RangeStart: 0, RangeEnd: 1023},
+				prisma.ChunkCreateWithoutUploadInput{RangeStart: 1024, RangeEnd: 2047},
+			},
+		},
+	}).Exec(ctx)
+	if err != nil {
+		panic(err.Error())
+	}
 }
