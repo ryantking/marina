@@ -24,6 +24,20 @@ func main() {
 							},
 						},
 					},
+					Images: &prisma.ImageCreateManyWithoutRepoInput{
+						Create: []prisma.ImageCreateWithoutRepoInput{
+							prisma.ImageCreateWithoutRepoInput{
+								Digest:       "sha256:cdf98d1859c1beb33ec70507249d34bacf888d59c24df3204057f9a6c758dddb",
+								Manifest:     `{"config": {"digest": "sha256:cdf98d1859c1beb33ec70507249d34bacf888d59c24df3204057f9a6c758dddb"}}`,
+								ManifestType: "application/vnd.docker.distribution.manifest.v2+json",
+								Tags: &prisma.TagCreateManyWithoutImageInput{
+									Create: []prisma.TagCreateWithoutImageInput{
+										prisma.TagCreateWithoutImageInput{Ref: "3.9"},
+									},
+								},
+							},
+						},
+					},
 				},
 				prisma.RepositoryCreateWithoutOrgInput{
 					Name:     "redis",

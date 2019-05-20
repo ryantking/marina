@@ -12,8 +12,8 @@ import (
 func ErrorHandler(err error, c echo.Context) {
 	httpErr, ok := err.(*echo.HTTPError)
 	if !ok {
-		err = c.String(http.StatusInternalServerError, err.Error())
 		log.WithError(errors.Cause(err)).Errorf(err.Error())
+		err = c.String(http.StatusInternalServerError, err.Error())
 		if err != nil {
 			log.WithError(err).Errorf("error writing error to response")
 		}

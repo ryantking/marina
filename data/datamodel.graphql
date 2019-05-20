@@ -14,18 +14,19 @@ type Repository {
 	updatedAt: DateTime! @updatedAt
 	name: String!
     fullName: String!
-	org: Organization!
+	org: Organization! @relation(link: INLINE)
 	blobs: [Blob!]!
+    images: [Image!]!
 }
 
 type Image {
 	id: ID! @id
 	createdAt: DateTime! @createdAt
 	updatedAt: DateTime! @updatedAt
-	repo: Repository!
+	repo: Repository! @relation(link: INLINE)
 	digest: String! @unique
-	manifest: Json!
-	manifest_type: String!
+	manifest: String!
+	manifestType: String!
 	tags: [Tag!]!
 }
 
@@ -33,7 +34,8 @@ type Tag {
 	id: ID! @id
 	createdAt: DateTime! @createdAt
 	updatedAt: DateTime! @updatedAt
-	image: Image!
+    ref: String!
+	image: Image! @relation(link: INLINE)
 }
 
 type Blob {
@@ -57,7 +59,7 @@ type Chunk {
 	id: ID! @id
 	createdAt: DateTime! @createdAt
 	updatedAt: DateTime! @updatedAt
-	upload: Upload!
+	upload: Upload! @relation(link: INLINE)
 	rangeStart: Int!
 	rangeEnd: Int!
 }

@@ -186,7 +186,7 @@ func (client *Client) Image(params ImageWhereUniqueInput) *ImageExec {
 		params,
 		[2]string{"ImageWhereUniqueInput!", "Image"},
 		"image",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImageExec{ret}
 }
@@ -220,7 +220,7 @@ func (client *Client) Images(params *ImagesParams) *ImageExecArray {
 		wparams,
 		[3]string{"ImageWhereInput", "ImageOrderByInput", "Image"},
 		"images",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImageExecArray{ret}
 }
@@ -363,7 +363,7 @@ func (client *Client) Tag(params TagWhereUniqueInput) *TagExec {
 		params,
 		[2]string{"TagWhereUniqueInput!", "Tag"},
 		"tag",
-		[]string{"id", "createdAt", "updatedAt"})
+		[]string{"id", "createdAt", "updatedAt", "ref"})
 
 	return &TagExec{ret}
 }
@@ -397,7 +397,7 @@ func (client *Client) Tags(params *TagsParams) *TagExecArray {
 		wparams,
 		[3]string{"TagWhereInput", "TagOrderByInput", "Tag"},
 		"tags",
-		[]string{"id", "createdAt", "updatedAt"})
+		[]string{"id", "createdAt", "updatedAt", "ref"})
 
 	return &TagExecArray{ret}
 }
@@ -640,7 +640,7 @@ func (client *Client) CreateImage(params ImageCreateInput) *ImageExec {
 		params,
 		[2]string{"ImageCreateInput!", "Image"},
 		"createImage",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImageExec{ret}
 }
@@ -658,7 +658,7 @@ func (client *Client) UpdateImage(params ImageUpdateParams) *ImageExec {
 		},
 		[3]string{"ImageUpdateInput!", "ImageWhereUniqueInput!", "Image"},
 		"updateImage",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImageExec{ret}
 }
@@ -695,7 +695,7 @@ func (client *Client) UpsertImage(params ImageUpsertParams) *ImageExec {
 		uparams,
 		[4]string{"ImageWhereUniqueInput!", "ImageCreateInput!", "ImageUpdateInput!", "Image"},
 		"upsertImage",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImageExec{ret}
 }
@@ -705,7 +705,7 @@ func (client *Client) DeleteImage(params ImageWhereUniqueInput) *ImageExec {
 		params,
 		[2]string{"ImageWhereUniqueInput!", "Image"},
 		"deleteImage",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImageExec{ret}
 }
@@ -880,7 +880,7 @@ func (client *Client) CreateTag(params TagCreateInput) *TagExec {
 		params,
 		[2]string{"TagCreateInput!", "Tag"},
 		"createTag",
-		[]string{"id", "createdAt", "updatedAt"})
+		[]string{"id", "createdAt", "updatedAt", "ref"})
 
 	return &TagExec{ret}
 }
@@ -898,9 +898,25 @@ func (client *Client) UpdateTag(params TagUpdateParams) *TagExec {
 		},
 		[3]string{"TagUpdateInput!", "TagWhereUniqueInput!", "Tag"},
 		"updateTag",
-		[]string{"id", "createdAt", "updatedAt"})
+		[]string{"id", "createdAt", "updatedAt", "ref"})
 
 	return &TagExec{ret}
+}
+
+type TagUpdateManyParams struct {
+	Data  TagUpdateManyMutationInput `json:"data"`
+	Where *TagWhereInput             `json:"where,omitempty"`
+}
+
+func (client *Client) UpdateManyTags(params TagUpdateManyParams) *BatchPayloadExec {
+	exec := client.Client.UpdateMany(
+		prisma.UpdateParams{
+			Data:  params.Data,
+			Where: params.Where,
+		},
+		[2]string{"TagUpdateManyMutationInput!", "TagWhereInput"},
+		"updateManyTags")
+	return &BatchPayloadExec{exec}
 }
 
 type TagUpsertParams struct {
@@ -919,7 +935,7 @@ func (client *Client) UpsertTag(params TagUpsertParams) *TagExec {
 		uparams,
 		[4]string{"TagWhereUniqueInput!", "TagCreateInput!", "TagUpdateInput!", "Tag"},
 		"upsertTag",
-		[]string{"id", "createdAt", "updatedAt"})
+		[]string{"id", "createdAt", "updatedAt", "ref"})
 
 	return &TagExec{ret}
 }
@@ -929,7 +945,7 @@ func (client *Client) DeleteTag(params TagWhereUniqueInput) *TagExec {
 		params,
 		[2]string{"TagWhereUniqueInput!", "Tag"},
 		"deleteTag",
-		[]string{"id", "createdAt", "updatedAt"})
+		[]string{"id", "createdAt", "updatedAt", "ref"})
 
 	return &TagExec{ret}
 }
@@ -1060,8 +1076,8 @@ const (
 	ImageOrderByInputDigestDesc       ImageOrderByInput = "digest_DESC"
 	ImageOrderByInputManifestAsc      ImageOrderByInput = "manifest_ASC"
 	ImageOrderByInputManifestDesc     ImageOrderByInput = "manifest_DESC"
-	ImageOrderByInputManifestTypeAsc  ImageOrderByInput = "manifest_type_ASC"
-	ImageOrderByInputManifestTypeDesc ImageOrderByInput = "manifest_type_DESC"
+	ImageOrderByInputManifestTypeAsc  ImageOrderByInput = "manifestType_ASC"
+	ImageOrderByInputManifestTypeDesc ImageOrderByInput = "manifestType_DESC"
 )
 
 type TagOrderByInput string
@@ -1073,6 +1089,8 @@ const (
 	TagOrderByInputCreatedAtDesc TagOrderByInput = "createdAt_DESC"
 	TagOrderByInputUpdatedAtAsc  TagOrderByInput = "updatedAt_ASC"
 	TagOrderByInputUpdatedAtDesc TagOrderByInput = "updatedAt_DESC"
+	TagOrderByInputRefAsc        TagOrderByInput = "ref_ASC"
+	TagOrderByInputRefDesc       TagOrderByInput = "ref_DESC"
 )
 
 type ChunkOrderByInput string
@@ -1194,6 +1212,9 @@ type RepositoryWhereInput struct {
 	BlobsEvery            *BlobWhereInput         `json:"blobs_every,omitempty"`
 	BlobsSome             *BlobWhereInput         `json:"blobs_some,omitempty"`
 	BlobsNone             *BlobWhereInput         `json:"blobs_none,omitempty"`
+	ImagesEvery           *ImageWhereInput        `json:"images_every,omitempty"`
+	ImagesSome            *ImageWhereInput        `json:"images_some,omitempty"`
+	ImagesNone            *ImageWhereInput        `json:"images_none,omitempty"`
 	And                   []RepositoryWhereInput  `json:"AND,omitempty"`
 	Or                    []RepositoryWhereInput  `json:"OR,omitempty"`
 	Not                   []RepositoryWhereInput  `json:"NOT,omitempty"`
@@ -1355,20 +1376,34 @@ type ImageWhereInput struct {
 	DigestNotStartsWith       *string               `json:"digest_not_starts_with,omitempty"`
 	DigestEndsWith            *string               `json:"digest_ends_with,omitempty"`
 	DigestNotEndsWith         *string               `json:"digest_not_ends_with,omitempty"`
-	ManifestType              *string               `json:"manifest_type,omitempty"`
-	ManifestTypeNot           *string               `json:"manifest_type_not,omitempty"`
-	ManifestTypeIn            []string              `json:"manifest_type_in,omitempty"`
-	ManifestTypeNotIn         []string              `json:"manifest_type_not_in,omitempty"`
-	ManifestTypeLt            *string               `json:"manifest_type_lt,omitempty"`
-	ManifestTypeLte           *string               `json:"manifest_type_lte,omitempty"`
-	ManifestTypeGt            *string               `json:"manifest_type_gt,omitempty"`
-	ManifestTypeGte           *string               `json:"manifest_type_gte,omitempty"`
-	ManifestTypeContains      *string               `json:"manifest_type_contains,omitempty"`
-	ManifestTypeNotContains   *string               `json:"manifest_type_not_contains,omitempty"`
-	ManifestTypeStartsWith    *string               `json:"manifest_type_starts_with,omitempty"`
-	ManifestTypeNotStartsWith *string               `json:"manifest_type_not_starts_with,omitempty"`
-	ManifestTypeEndsWith      *string               `json:"manifest_type_ends_with,omitempty"`
-	ManifestTypeNotEndsWith   *string               `json:"manifest_type_not_ends_with,omitempty"`
+	Manifest                  *string               `json:"manifest,omitempty"`
+	ManifestNot               *string               `json:"manifest_not,omitempty"`
+	ManifestIn                []string              `json:"manifest_in,omitempty"`
+	ManifestNotIn             []string              `json:"manifest_not_in,omitempty"`
+	ManifestLt                *string               `json:"manifest_lt,omitempty"`
+	ManifestLte               *string               `json:"manifest_lte,omitempty"`
+	ManifestGt                *string               `json:"manifest_gt,omitempty"`
+	ManifestGte               *string               `json:"manifest_gte,omitempty"`
+	ManifestContains          *string               `json:"manifest_contains,omitempty"`
+	ManifestNotContains       *string               `json:"manifest_not_contains,omitempty"`
+	ManifestStartsWith        *string               `json:"manifest_starts_with,omitempty"`
+	ManifestNotStartsWith     *string               `json:"manifest_not_starts_with,omitempty"`
+	ManifestEndsWith          *string               `json:"manifest_ends_with,omitempty"`
+	ManifestNotEndsWith       *string               `json:"manifest_not_ends_with,omitempty"`
+	ManifestType              *string               `json:"manifestType,omitempty"`
+	ManifestTypeNot           *string               `json:"manifestType_not,omitempty"`
+	ManifestTypeIn            []string              `json:"manifestType_in,omitempty"`
+	ManifestTypeNotIn         []string              `json:"manifestType_not_in,omitempty"`
+	ManifestTypeLt            *string               `json:"manifestType_lt,omitempty"`
+	ManifestTypeLte           *string               `json:"manifestType_lte,omitempty"`
+	ManifestTypeGt            *string               `json:"manifestType_gt,omitempty"`
+	ManifestTypeGte           *string               `json:"manifestType_gte,omitempty"`
+	ManifestTypeContains      *string               `json:"manifestType_contains,omitempty"`
+	ManifestTypeNotContains   *string               `json:"manifestType_not_contains,omitempty"`
+	ManifestTypeStartsWith    *string               `json:"manifestType_starts_with,omitempty"`
+	ManifestTypeNotStartsWith *string               `json:"manifestType_not_starts_with,omitempty"`
+	ManifestTypeEndsWith      *string               `json:"manifestType_ends_with,omitempty"`
+	ManifestTypeNotEndsWith   *string               `json:"manifestType_not_ends_with,omitempty"`
 	TagsEvery                 *TagWhereInput        `json:"tags_every,omitempty"`
 	TagsSome                  *TagWhereInput        `json:"tags_some,omitempty"`
 	TagsNone                  *TagWhereInput        `json:"tags_none,omitempty"`
@@ -1378,40 +1413,54 @@ type ImageWhereInput struct {
 }
 
 type TagWhereInput struct {
-	ID              *string          `json:"id,omitempty"`
-	IDNot           *string          `json:"id_not,omitempty"`
-	IDIn            []string         `json:"id_in,omitempty"`
-	IDNotIn         []string         `json:"id_not_in,omitempty"`
-	IDLt            *string          `json:"id_lt,omitempty"`
-	IDLte           *string          `json:"id_lte,omitempty"`
-	IDGt            *string          `json:"id_gt,omitempty"`
-	IDGte           *string          `json:"id_gte,omitempty"`
-	IDContains      *string          `json:"id_contains,omitempty"`
-	IDNotContains   *string          `json:"id_not_contains,omitempty"`
-	IDStartsWith    *string          `json:"id_starts_with,omitempty"`
-	IDNotStartsWith *string          `json:"id_not_starts_with,omitempty"`
-	IDEndsWith      *string          `json:"id_ends_with,omitempty"`
-	IDNotEndsWith   *string          `json:"id_not_ends_with,omitempty"`
-	CreatedAt       *string          `json:"createdAt,omitempty"`
-	CreatedAtNot    *string          `json:"createdAt_not,omitempty"`
-	CreatedAtIn     []string         `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn  []string         `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt     *string          `json:"createdAt_lt,omitempty"`
-	CreatedAtLte    *string          `json:"createdAt_lte,omitempty"`
-	CreatedAtGt     *string          `json:"createdAt_gt,omitempty"`
-	CreatedAtGte    *string          `json:"createdAt_gte,omitempty"`
-	UpdatedAt       *string          `json:"updatedAt,omitempty"`
-	UpdatedAtNot    *string          `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn     []string         `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn  []string         `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt     *string          `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte    *string          `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt     *string          `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte    *string          `json:"updatedAt_gte,omitempty"`
-	Image           *ImageWhereInput `json:"image,omitempty"`
-	And             []TagWhereInput  `json:"AND,omitempty"`
-	Or              []TagWhereInput  `json:"OR,omitempty"`
-	Not             []TagWhereInput  `json:"NOT,omitempty"`
+	ID               *string          `json:"id,omitempty"`
+	IDNot            *string          `json:"id_not,omitempty"`
+	IDIn             []string         `json:"id_in,omitempty"`
+	IDNotIn          []string         `json:"id_not_in,omitempty"`
+	IDLt             *string          `json:"id_lt,omitempty"`
+	IDLte            *string          `json:"id_lte,omitempty"`
+	IDGt             *string          `json:"id_gt,omitempty"`
+	IDGte            *string          `json:"id_gte,omitempty"`
+	IDContains       *string          `json:"id_contains,omitempty"`
+	IDNotContains    *string          `json:"id_not_contains,omitempty"`
+	IDStartsWith     *string          `json:"id_starts_with,omitempty"`
+	IDNotStartsWith  *string          `json:"id_not_starts_with,omitempty"`
+	IDEndsWith       *string          `json:"id_ends_with,omitempty"`
+	IDNotEndsWith    *string          `json:"id_not_ends_with,omitempty"`
+	CreatedAt        *string          `json:"createdAt,omitempty"`
+	CreatedAtNot     *string          `json:"createdAt_not,omitempty"`
+	CreatedAtIn      []string         `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn   []string         `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt      *string          `json:"createdAt_lt,omitempty"`
+	CreatedAtLte     *string          `json:"createdAt_lte,omitempty"`
+	CreatedAtGt      *string          `json:"createdAt_gt,omitempty"`
+	CreatedAtGte     *string          `json:"createdAt_gte,omitempty"`
+	UpdatedAt        *string          `json:"updatedAt,omitempty"`
+	UpdatedAtNot     *string          `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn      []string         `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn   []string         `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt      *string          `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte     *string          `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt      *string          `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte     *string          `json:"updatedAt_gte,omitempty"`
+	Ref              *string          `json:"ref,omitempty"`
+	RefNot           *string          `json:"ref_not,omitempty"`
+	RefIn            []string         `json:"ref_in,omitempty"`
+	RefNotIn         []string         `json:"ref_not_in,omitempty"`
+	RefLt            *string          `json:"ref_lt,omitempty"`
+	RefLte           *string          `json:"ref_lte,omitempty"`
+	RefGt            *string          `json:"ref_gt,omitempty"`
+	RefGte           *string          `json:"ref_gte,omitempty"`
+	RefContains      *string          `json:"ref_contains,omitempty"`
+	RefNotContains   *string          `json:"ref_not_contains,omitempty"`
+	RefStartsWith    *string          `json:"ref_starts_with,omitempty"`
+	RefNotStartsWith *string          `json:"ref_not_starts_with,omitempty"`
+	RefEndsWith      *string          `json:"ref_ends_with,omitempty"`
+	RefNotEndsWith   *string          `json:"ref_not_ends_with,omitempty"`
+	Image            *ImageWhereInput `json:"image,omitempty"`
+	And              []TagWhereInput  `json:"AND,omitempty"`
+	Or               []TagWhereInput  `json:"OR,omitempty"`
+	Not              []TagWhereInput  `json:"NOT,omitempty"`
 }
 
 type ChunkWhereUniqueInput struct {
@@ -1565,6 +1614,7 @@ type RepositoryCreateWithoutBlobsInput struct {
 	Name     string                                 `json:"name"`
 	FullName string                                 `json:"fullName"`
 	Org      OrganizationCreateOneWithoutReposInput `json:"org"`
+	Images   *ImageCreateManyWithoutRepoInput       `json:"images,omitempty"`
 }
 
 type OrganizationCreateOneWithoutReposInput struct {
@@ -1590,20 +1640,20 @@ type ImageCreateManyInput struct {
 }
 
 type ImageCreateInput struct {
-	ID           *string                         `json:"id,omitempty"`
-	Repo         RepositoryCreateOneInput        `json:"repo"`
-	Digest       string                          `json:"digest"`
-	Manifest     map[string]interface{}          `json:"manifest"`
-	ManifestType string                          `json:"manifest_type"`
-	Tags         *TagCreateManyWithoutImageInput `json:"tags,omitempty"`
+	ID           *string                               `json:"id,omitempty"`
+	Repo         RepositoryCreateOneWithoutImagesInput `json:"repo"`
+	Digest       string                                `json:"digest"`
+	Manifest     string                                `json:"manifest"`
+	ManifestType string                                `json:"manifestType"`
+	Tags         *TagCreateManyWithoutImageInput       `json:"tags,omitempty"`
 }
 
-type RepositoryCreateOneInput struct {
-	Create  *RepositoryCreateInput      `json:"create,omitempty"`
-	Connect *RepositoryWhereUniqueInput `json:"connect,omitempty"`
+type RepositoryCreateOneWithoutImagesInput struct {
+	Create  *RepositoryCreateWithoutImagesInput `json:"create,omitempty"`
+	Connect *RepositoryWhereUniqueInput         `json:"connect,omitempty"`
 }
 
-type RepositoryCreateInput struct {
+type RepositoryCreateWithoutImagesInput struct {
 	ID       *string                                `json:"id,omitempty"`
 	Name     string                                 `json:"name"`
 	FullName string                                 `json:"fullName"`
@@ -1627,7 +1677,21 @@ type TagCreateManyWithoutImageInput struct {
 }
 
 type TagCreateWithoutImageInput struct {
-	ID *string `json:"id,omitempty"`
+	ID  *string `json:"id,omitempty"`
+	Ref string  `json:"ref"`
+}
+
+type ImageCreateManyWithoutRepoInput struct {
+	Create  []ImageCreateWithoutRepoInput `json:"create,omitempty"`
+	Connect []ImageWhereUniqueInput       `json:"connect,omitempty"`
+}
+
+type ImageCreateWithoutRepoInput struct {
+	ID           *string                         `json:"id,omitempty"`
+	Digest       string                          `json:"digest"`
+	Manifest     string                          `json:"manifest"`
+	ManifestType string                          `json:"manifestType"`
+	Tags         *TagCreateManyWithoutImageInput `json:"tags,omitempty"`
 }
 
 type BlobUpdateInput struct {
@@ -1646,6 +1710,7 @@ type RepositoryUpdateWithoutBlobsDataInput struct {
 	Name     *string                                         `json:"name,omitempty"`
 	FullName *string                                         `json:"fullName,omitempty"`
 	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
+	Images   *ImageUpdateManyWithoutRepoInput                `json:"images,omitempty"`
 }
 
 type OrganizationUpdateOneRequiredWithoutReposInput struct {
@@ -1766,21 +1831,21 @@ type ImageUpdateWithWhereUniqueNestedInput struct {
 }
 
 type ImageUpdateDataInput struct {
-	Repo         *RepositoryUpdateOneRequiredInput `json:"repo,omitempty"`
-	Digest       *string                           `json:"digest,omitempty"`
-	Manifest     *map[string]interface{}           `json:"manifest,omitempty"`
-	ManifestType *string                           `json:"manifest_type,omitempty"`
-	Tags         *TagUpdateManyWithoutImageInput   `json:"tags,omitempty"`
+	Repo         *RepositoryUpdateOneRequiredWithoutImagesInput `json:"repo,omitempty"`
+	Digest       *string                                        `json:"digest,omitempty"`
+	Manifest     *string                                        `json:"manifest,omitempty"`
+	ManifestType *string                                        `json:"manifestType,omitempty"`
+	Tags         *TagUpdateManyWithoutImageInput                `json:"tags,omitempty"`
 }
 
-type RepositoryUpdateOneRequiredInput struct {
-	Create  *RepositoryCreateInput       `json:"create,omitempty"`
-	Update  *RepositoryUpdateDataInput   `json:"update,omitempty"`
-	Upsert  *RepositoryUpsertNestedInput `json:"upsert,omitempty"`
-	Connect *RepositoryWhereUniqueInput  `json:"connect,omitempty"`
+type RepositoryUpdateOneRequiredWithoutImagesInput struct {
+	Create  *RepositoryCreateWithoutImagesInput     `json:"create,omitempty"`
+	Update  *RepositoryUpdateWithoutImagesDataInput `json:"update,omitempty"`
+	Upsert  *RepositoryUpsertWithoutImagesInput     `json:"upsert,omitempty"`
+	Connect *RepositoryWhereUniqueInput             `json:"connect,omitempty"`
 }
 
-type RepositoryUpdateDataInput struct {
+type RepositoryUpdateWithoutImagesDataInput struct {
 	Name     *string                                         `json:"name,omitempty"`
 	FullName *string                                         `json:"fullName,omitempty"`
 	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
@@ -1814,54 +1879,95 @@ type BlobUpsertWithWhereUniqueWithoutRepoInput struct {
 	Create BlobCreateWithoutRepoInput     `json:"create"`
 }
 
-type RepositoryUpsertNestedInput struct {
-	Update RepositoryUpdateDataInput `json:"update"`
-	Create RepositoryCreateInput     `json:"create"`
+type RepositoryUpsertWithoutImagesInput struct {
+	Update RepositoryUpdateWithoutImagesDataInput `json:"update"`
+	Create RepositoryCreateWithoutImagesInput     `json:"create"`
 }
 
 type TagUpdateManyWithoutImageInput struct {
-	Create     []TagCreateWithoutImageInput `json:"create,omitempty"`
-	Delete     []TagWhereUniqueInput        `json:"delete,omitempty"`
-	Connect    []TagWhereUniqueInput        `json:"connect,omitempty"`
-	Set        []TagWhereUniqueInput        `json:"set,omitempty"`
-	Disconnect []TagWhereUniqueInput        `json:"disconnect,omitempty"`
-	DeleteMany []TagScalarWhereInput        `json:"deleteMany,omitempty"`
+	Create     []TagCreateWithoutImageInput                `json:"create,omitempty"`
+	Delete     []TagWhereUniqueInput                       `json:"delete,omitempty"`
+	Connect    []TagWhereUniqueInput                       `json:"connect,omitempty"`
+	Set        []TagWhereUniqueInput                       `json:"set,omitempty"`
+	Disconnect []TagWhereUniqueInput                       `json:"disconnect,omitempty"`
+	Update     []TagUpdateWithWhereUniqueWithoutImageInput `json:"update,omitempty"`
+	Upsert     []TagUpsertWithWhereUniqueWithoutImageInput `json:"upsert,omitempty"`
+	DeleteMany []TagScalarWhereInput                       `json:"deleteMany,omitempty"`
+	UpdateMany []TagUpdateManyWithWhereNestedInput         `json:"updateMany,omitempty"`
+}
+
+type TagUpdateWithWhereUniqueWithoutImageInput struct {
+	Where TagWhereUniqueInput            `json:"where"`
+	Data  TagUpdateWithoutImageDataInput `json:"data"`
+}
+
+type TagUpdateWithoutImageDataInput struct {
+	Ref *string `json:"ref,omitempty"`
+}
+
+type TagUpsertWithWhereUniqueWithoutImageInput struct {
+	Where  TagWhereUniqueInput            `json:"where"`
+	Update TagUpdateWithoutImageDataInput `json:"update"`
+	Create TagCreateWithoutImageInput     `json:"create"`
 }
 
 type TagScalarWhereInput struct {
-	ID              *string               `json:"id,omitempty"`
-	IDNot           *string               `json:"id_not,omitempty"`
-	IDIn            []string              `json:"id_in,omitempty"`
-	IDNotIn         []string              `json:"id_not_in,omitempty"`
-	IDLt            *string               `json:"id_lt,omitempty"`
-	IDLte           *string               `json:"id_lte,omitempty"`
-	IDGt            *string               `json:"id_gt,omitempty"`
-	IDGte           *string               `json:"id_gte,omitempty"`
-	IDContains      *string               `json:"id_contains,omitempty"`
-	IDNotContains   *string               `json:"id_not_contains,omitempty"`
-	IDStartsWith    *string               `json:"id_starts_with,omitempty"`
-	IDNotStartsWith *string               `json:"id_not_starts_with,omitempty"`
-	IDEndsWith      *string               `json:"id_ends_with,omitempty"`
-	IDNotEndsWith   *string               `json:"id_not_ends_with,omitempty"`
-	CreatedAt       *string               `json:"createdAt,omitempty"`
-	CreatedAtNot    *string               `json:"createdAt_not,omitempty"`
-	CreatedAtIn     []string              `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn  []string              `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt     *string               `json:"createdAt_lt,omitempty"`
-	CreatedAtLte    *string               `json:"createdAt_lte,omitempty"`
-	CreatedAtGt     *string               `json:"createdAt_gt,omitempty"`
-	CreatedAtGte    *string               `json:"createdAt_gte,omitempty"`
-	UpdatedAt       *string               `json:"updatedAt,omitempty"`
-	UpdatedAtNot    *string               `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn     []string              `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn  []string              `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt     *string               `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte    *string               `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt     *string               `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte    *string               `json:"updatedAt_gte,omitempty"`
-	And             []TagScalarWhereInput `json:"AND,omitempty"`
-	Or              []TagScalarWhereInput `json:"OR,omitempty"`
-	Not             []TagScalarWhereInput `json:"NOT,omitempty"`
+	ID               *string               `json:"id,omitempty"`
+	IDNot            *string               `json:"id_not,omitempty"`
+	IDIn             []string              `json:"id_in,omitempty"`
+	IDNotIn          []string              `json:"id_not_in,omitempty"`
+	IDLt             *string               `json:"id_lt,omitempty"`
+	IDLte            *string               `json:"id_lte,omitempty"`
+	IDGt             *string               `json:"id_gt,omitempty"`
+	IDGte            *string               `json:"id_gte,omitempty"`
+	IDContains       *string               `json:"id_contains,omitempty"`
+	IDNotContains    *string               `json:"id_not_contains,omitempty"`
+	IDStartsWith     *string               `json:"id_starts_with,omitempty"`
+	IDNotStartsWith  *string               `json:"id_not_starts_with,omitempty"`
+	IDEndsWith       *string               `json:"id_ends_with,omitempty"`
+	IDNotEndsWith    *string               `json:"id_not_ends_with,omitempty"`
+	CreatedAt        *string               `json:"createdAt,omitempty"`
+	CreatedAtNot     *string               `json:"createdAt_not,omitempty"`
+	CreatedAtIn      []string              `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn   []string              `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt      *string               `json:"createdAt_lt,omitempty"`
+	CreatedAtLte     *string               `json:"createdAt_lte,omitempty"`
+	CreatedAtGt      *string               `json:"createdAt_gt,omitempty"`
+	CreatedAtGte     *string               `json:"createdAt_gte,omitempty"`
+	UpdatedAt        *string               `json:"updatedAt,omitempty"`
+	UpdatedAtNot     *string               `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn      []string              `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn   []string              `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt      *string               `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte     *string               `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt      *string               `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte     *string               `json:"updatedAt_gte,omitempty"`
+	Ref              *string               `json:"ref,omitempty"`
+	RefNot           *string               `json:"ref_not,omitempty"`
+	RefIn            []string              `json:"ref_in,omitempty"`
+	RefNotIn         []string              `json:"ref_not_in,omitempty"`
+	RefLt            *string               `json:"ref_lt,omitempty"`
+	RefLte           *string               `json:"ref_lte,omitempty"`
+	RefGt            *string               `json:"ref_gt,omitempty"`
+	RefGte           *string               `json:"ref_gte,omitempty"`
+	RefContains      *string               `json:"ref_contains,omitempty"`
+	RefNotContains   *string               `json:"ref_not_contains,omitempty"`
+	RefStartsWith    *string               `json:"ref_starts_with,omitempty"`
+	RefNotStartsWith *string               `json:"ref_not_starts_with,omitempty"`
+	RefEndsWith      *string               `json:"ref_ends_with,omitempty"`
+	RefNotEndsWith   *string               `json:"ref_not_ends_with,omitempty"`
+	And              []TagScalarWhereInput `json:"AND,omitempty"`
+	Or               []TagScalarWhereInput `json:"OR,omitempty"`
+	Not              []TagScalarWhereInput `json:"NOT,omitempty"`
+}
+
+type TagUpdateManyWithWhereNestedInput struct {
+	Where TagScalarWhereInput    `json:"where"`
+	Data  TagUpdateManyDataInput `json:"data"`
+}
+
+type TagUpdateManyDataInput struct {
+	Ref *string `json:"ref,omitempty"`
 }
 
 type ImageUpsertWithWhereUniqueNestedInput struct {
@@ -1915,20 +2021,34 @@ type ImageScalarWhereInput struct {
 	DigestNotStartsWith       *string                 `json:"digest_not_starts_with,omitempty"`
 	DigestEndsWith            *string                 `json:"digest_ends_with,omitempty"`
 	DigestNotEndsWith         *string                 `json:"digest_not_ends_with,omitempty"`
-	ManifestType              *string                 `json:"manifest_type,omitempty"`
-	ManifestTypeNot           *string                 `json:"manifest_type_not,omitempty"`
-	ManifestTypeIn            []string                `json:"manifest_type_in,omitempty"`
-	ManifestTypeNotIn         []string                `json:"manifest_type_not_in,omitempty"`
-	ManifestTypeLt            *string                 `json:"manifest_type_lt,omitempty"`
-	ManifestTypeLte           *string                 `json:"manifest_type_lte,omitempty"`
-	ManifestTypeGt            *string                 `json:"manifest_type_gt,omitempty"`
-	ManifestTypeGte           *string                 `json:"manifest_type_gte,omitempty"`
-	ManifestTypeContains      *string                 `json:"manifest_type_contains,omitempty"`
-	ManifestTypeNotContains   *string                 `json:"manifest_type_not_contains,omitempty"`
-	ManifestTypeStartsWith    *string                 `json:"manifest_type_starts_with,omitempty"`
-	ManifestTypeNotStartsWith *string                 `json:"manifest_type_not_starts_with,omitempty"`
-	ManifestTypeEndsWith      *string                 `json:"manifest_type_ends_with,omitempty"`
-	ManifestTypeNotEndsWith   *string                 `json:"manifest_type_not_ends_with,omitempty"`
+	Manifest                  *string                 `json:"manifest,omitempty"`
+	ManifestNot               *string                 `json:"manifest_not,omitempty"`
+	ManifestIn                []string                `json:"manifest_in,omitempty"`
+	ManifestNotIn             []string                `json:"manifest_not_in,omitempty"`
+	ManifestLt                *string                 `json:"manifest_lt,omitempty"`
+	ManifestLte               *string                 `json:"manifest_lte,omitempty"`
+	ManifestGt                *string                 `json:"manifest_gt,omitempty"`
+	ManifestGte               *string                 `json:"manifest_gte,omitempty"`
+	ManifestContains          *string                 `json:"manifest_contains,omitempty"`
+	ManifestNotContains       *string                 `json:"manifest_not_contains,omitempty"`
+	ManifestStartsWith        *string                 `json:"manifest_starts_with,omitempty"`
+	ManifestNotStartsWith     *string                 `json:"manifest_not_starts_with,omitempty"`
+	ManifestEndsWith          *string                 `json:"manifest_ends_with,omitempty"`
+	ManifestNotEndsWith       *string                 `json:"manifest_not_ends_with,omitempty"`
+	ManifestType              *string                 `json:"manifestType,omitempty"`
+	ManifestTypeNot           *string                 `json:"manifestType_not,omitempty"`
+	ManifestTypeIn            []string                `json:"manifestType_in,omitempty"`
+	ManifestTypeNotIn         []string                `json:"manifestType_not_in,omitempty"`
+	ManifestTypeLt            *string                 `json:"manifestType_lt,omitempty"`
+	ManifestTypeLte           *string                 `json:"manifestType_lte,omitempty"`
+	ManifestTypeGt            *string                 `json:"manifestType_gt,omitempty"`
+	ManifestTypeGte           *string                 `json:"manifestType_gte,omitempty"`
+	ManifestTypeContains      *string                 `json:"manifestType_contains,omitempty"`
+	ManifestTypeNotContains   *string                 `json:"manifestType_not_contains,omitempty"`
+	ManifestTypeStartsWith    *string                 `json:"manifestType_starts_with,omitempty"`
+	ManifestTypeNotStartsWith *string                 `json:"manifestType_not_starts_with,omitempty"`
+	ManifestTypeEndsWith      *string                 `json:"manifestType_ends_with,omitempty"`
+	ManifestTypeNotEndsWith   *string                 `json:"manifestType_not_ends_with,omitempty"`
 	And                       []ImageScalarWhereInput `json:"AND,omitempty"`
 	Or                        []ImageScalarWhereInput `json:"OR,omitempty"`
 	Not                       []ImageScalarWhereInput `json:"NOT,omitempty"`
@@ -1940,14 +2060,44 @@ type ImageUpdateManyWithWhereNestedInput struct {
 }
 
 type ImageUpdateManyDataInput struct {
-	Digest       *string                 `json:"digest,omitempty"`
-	Manifest     *map[string]interface{} `json:"manifest,omitempty"`
-	ManifestType *string                 `json:"manifest_type,omitempty"`
+	Digest       *string `json:"digest,omitempty"`
+	Manifest     *string `json:"manifest,omitempty"`
+	ManifestType *string `json:"manifestType,omitempty"`
 }
 
 type OrganizationUpsertWithoutReposInput struct {
 	Update OrganizationUpdateWithoutReposDataInput `json:"update"`
 	Create OrganizationCreateWithoutReposInput     `json:"create"`
+}
+
+type ImageUpdateManyWithoutRepoInput struct {
+	Create     []ImageCreateWithoutRepoInput                `json:"create,omitempty"`
+	Delete     []ImageWhereUniqueInput                      `json:"delete,omitempty"`
+	Connect    []ImageWhereUniqueInput                      `json:"connect,omitempty"`
+	Set        []ImageWhereUniqueInput                      `json:"set,omitempty"`
+	Disconnect []ImageWhereUniqueInput                      `json:"disconnect,omitempty"`
+	Update     []ImageUpdateWithWhereUniqueWithoutRepoInput `json:"update,omitempty"`
+	Upsert     []ImageUpsertWithWhereUniqueWithoutRepoInput `json:"upsert,omitempty"`
+	DeleteMany []ImageScalarWhereInput                      `json:"deleteMany,omitempty"`
+	UpdateMany []ImageUpdateManyWithWhereNestedInput        `json:"updateMany,omitempty"`
+}
+
+type ImageUpdateWithWhereUniqueWithoutRepoInput struct {
+	Where ImageWhereUniqueInput           `json:"where"`
+	Data  ImageUpdateWithoutRepoDataInput `json:"data"`
+}
+
+type ImageUpdateWithoutRepoDataInput struct {
+	Digest       *string                         `json:"digest,omitempty"`
+	Manifest     *string                         `json:"manifest,omitempty"`
+	ManifestType *string                         `json:"manifestType,omitempty"`
+	Tags         *TagUpdateManyWithoutImageInput `json:"tags,omitempty"`
+}
+
+type ImageUpsertWithWhereUniqueWithoutRepoInput struct {
+	Where  ImageWhereUniqueInput           `json:"where"`
+	Update ImageUpdateWithoutRepoDataInput `json:"update"`
+	Create ImageCreateWithoutRepoInput     `json:"create"`
 }
 
 type RepositoryUpsertWithoutBlobsInput struct {
@@ -2006,17 +2156,17 @@ type ChunkUpdateManyMutationInput struct {
 }
 
 type ImageUpdateInput struct {
-	Repo         *RepositoryUpdateOneRequiredInput `json:"repo,omitempty"`
-	Digest       *string                           `json:"digest,omitempty"`
-	Manifest     *map[string]interface{}           `json:"manifest,omitempty"`
-	ManifestType *string                           `json:"manifest_type,omitempty"`
-	Tags         *TagUpdateManyWithoutImageInput   `json:"tags,omitempty"`
+	Repo         *RepositoryUpdateOneRequiredWithoutImagesInput `json:"repo,omitempty"`
+	Digest       *string                                        `json:"digest,omitempty"`
+	Manifest     *string                                        `json:"manifest,omitempty"`
+	ManifestType *string                                        `json:"manifestType,omitempty"`
+	Tags         *TagUpdateManyWithoutImageInput                `json:"tags,omitempty"`
 }
 
 type ImageUpdateManyMutationInput struct {
-	Digest       *string                 `json:"digest,omitempty"`
-	Manifest     *map[string]interface{} `json:"manifest,omitempty"`
-	ManifestType *string                 `json:"manifest_type,omitempty"`
+	Digest       *string `json:"digest,omitempty"`
+	Manifest     *string `json:"manifest,omitempty"`
+	ManifestType *string `json:"manifestType,omitempty"`
 }
 
 type OrganizationCreateInput struct {
@@ -2033,10 +2183,11 @@ type RepositoryCreateManyWithoutOrgInput struct {
 }
 
 type RepositoryCreateWithoutOrgInput struct {
-	ID       *string                         `json:"id,omitempty"`
-	Name     string                          `json:"name"`
-	FullName string                          `json:"fullName"`
-	Blobs    *BlobCreateManyWithoutRepoInput `json:"blobs,omitempty"`
+	ID       *string                          `json:"id,omitempty"`
+	Name     string                           `json:"name"`
+	FullName string                           `json:"fullName"`
+	Blobs    *BlobCreateManyWithoutRepoInput  `json:"blobs,omitempty"`
+	Images   *ImageCreateManyWithoutRepoInput `json:"images,omitempty"`
 }
 
 type OrganizationUpdateInput struct {
@@ -2064,9 +2215,10 @@ type RepositoryUpdateWithWhereUniqueWithoutOrgInput struct {
 }
 
 type RepositoryUpdateWithoutOrgDataInput struct {
-	Name     *string                         `json:"name,omitempty"`
-	FullName *string                         `json:"fullName,omitempty"`
-	Blobs    *BlobUpdateManyWithoutRepoInput `json:"blobs,omitempty"`
+	Name     *string                          `json:"name,omitempty"`
+	FullName *string                          `json:"fullName,omitempty"`
+	Blobs    *BlobUpdateManyWithoutRepoInput  `json:"blobs,omitempty"`
+	Images   *ImageUpdateManyWithoutRepoInput `json:"images,omitempty"`
 }
 
 type RepositoryUpsertWithWhereUniqueWithoutOrgInput struct {
@@ -2153,11 +2305,21 @@ type OrganizationUpdateManyMutationInput struct {
 	Name *string `json:"name,omitempty"`
 }
 
+type RepositoryCreateInput struct {
+	ID       *string                                `json:"id,omitempty"`
+	Name     string                                 `json:"name"`
+	FullName string                                 `json:"fullName"`
+	Org      OrganizationCreateOneWithoutReposInput `json:"org"`
+	Blobs    *BlobCreateManyWithoutRepoInput        `json:"blobs,omitempty"`
+	Images   *ImageCreateManyWithoutRepoInput       `json:"images,omitempty"`
+}
+
 type RepositoryUpdateInput struct {
 	Name     *string                                         `json:"name,omitempty"`
 	FullName *string                                         `json:"fullName,omitempty"`
 	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
 	Blobs    *BlobUpdateManyWithoutRepoInput                 `json:"blobs,omitempty"`
+	Images   *ImageUpdateManyWithoutRepoInput                `json:"images,omitempty"`
 }
 
 type RepositoryUpdateManyMutationInput struct {
@@ -2167,6 +2329,7 @@ type RepositoryUpdateManyMutationInput struct {
 
 type TagCreateInput struct {
 	ID    *string                        `json:"id,omitempty"`
+	Ref   string                         `json:"ref"`
 	Image ImageCreateOneWithoutTagsInput `json:"image"`
 }
 
@@ -2176,14 +2339,15 @@ type ImageCreateOneWithoutTagsInput struct {
 }
 
 type ImageCreateWithoutTagsInput struct {
-	ID           *string                  `json:"id,omitempty"`
-	Repo         RepositoryCreateOneInput `json:"repo"`
-	Digest       string                   `json:"digest"`
-	Manifest     map[string]interface{}   `json:"manifest"`
-	ManifestType string                   `json:"manifest_type"`
+	ID           *string                               `json:"id,omitempty"`
+	Repo         RepositoryCreateOneWithoutImagesInput `json:"repo"`
+	Digest       string                                `json:"digest"`
+	Manifest     string                                `json:"manifest"`
+	ManifestType string                                `json:"manifestType"`
 }
 
 type TagUpdateInput struct {
+	Ref   *string                                 `json:"ref,omitempty"`
 	Image *ImageUpdateOneRequiredWithoutTagsInput `json:"image,omitempty"`
 }
 
@@ -2195,15 +2359,19 @@ type ImageUpdateOneRequiredWithoutTagsInput struct {
 }
 
 type ImageUpdateWithoutTagsDataInput struct {
-	Repo         *RepositoryUpdateOneRequiredInput `json:"repo,omitempty"`
-	Digest       *string                           `json:"digest,omitempty"`
-	Manifest     *map[string]interface{}           `json:"manifest,omitempty"`
-	ManifestType *string                           `json:"manifest_type,omitempty"`
+	Repo         *RepositoryUpdateOneRequiredWithoutImagesInput `json:"repo,omitempty"`
+	Digest       *string                                        `json:"digest,omitempty"`
+	Manifest     *string                                        `json:"manifest,omitempty"`
+	ManifestType *string                                        `json:"manifestType,omitempty"`
 }
 
 type ImageUpsertWithoutTagsInput struct {
 	Update ImageUpdateWithoutTagsDataInput `json:"update"`
 	Create ImageCreateWithoutTagsInput     `json:"create"`
+}
+
+type TagUpdateManyMutationInput struct {
+	Ref *string `json:"ref,omitempty"`
 }
 
 type UploadCreateInput struct {
@@ -2499,6 +2667,40 @@ func (instance *RepositoryExec) Blobs(params *BlobsParamsExec) *BlobExecArray {
 	return &BlobExecArray{ret}
 }
 
+type ImagesParamsExec struct {
+	Where   *ImageWhereInput
+	OrderBy *ImageOrderByInput
+	Skip    *int32
+	After   *string
+	Before  *string
+	First   *int32
+	Last    *int32
+}
+
+func (instance *RepositoryExec) Images(params *ImagesParamsExec) *ImageExecArray {
+	var wparams *prisma.WhereParams
+	if params != nil {
+		wparams = &prisma.WhereParams{
+			Where:   params.Where,
+			OrderBy: (*string)(params.OrderBy),
+			Skip:    params.Skip,
+			After:   params.After,
+			Before:  params.Before,
+			First:   params.First,
+			Last:    params.Last,
+		}
+	}
+
+	ret := instance.exec.Client.GetMany(
+		instance.exec,
+		wparams,
+		[3]string{"ImageWhereInput", "ImageOrderByInput", "Image"},
+		"images",
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
+
+	return &ImageExecArray{ret}
+}
+
 func (instance RepositoryExec) Exec(ctx context.Context) (*Repository, error) {
 	var v Repository
 	ok, err := instance.exec.Exec(ctx, &v)
@@ -2595,16 +2797,6 @@ func (instance *OrganizationExec) Blobs(params *BlobsParamsExec) *BlobExecArray 
 	return &BlobExecArray{ret}
 }
 
-type ImagesParamsExec struct {
-	Where   *ImageWhereInput
-	OrderBy *ImageOrderByInput
-	Skip    *int32
-	After   *string
-	Before  *string
-	First   *int32
-	Last    *int32
-}
-
 func (instance *OrganizationExec) Images(params *ImagesParamsExec) *ImageExecArray {
 	var wparams *prisma.WhereParams
 	if params != nil {
@@ -2624,7 +2816,7 @@ func (instance *OrganizationExec) Images(params *ImagesParamsExec) *ImageExecArr
 		wparams,
 		[3]string{"ImageWhereInput", "ImageOrderByInput", "Image"},
 		"images",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImageExecArray{ret}
 }
@@ -2706,7 +2898,7 @@ func (instance *ImageExec) Tags(params *TagsParamsExec) *TagExecArray {
 		wparams,
 		[3]string{"TagWhereInput", "TagOrderByInput", "Tag"},
 		"tags",
-		[]string{"id", "createdAt", "updatedAt"})
+		[]string{"id", "createdAt", "updatedAt", "ref"})
 
 	return &TagExecArray{ret}
 }
@@ -2738,12 +2930,12 @@ func (instance ImageExecArray) Exec(ctx context.Context) ([]Image, error) {
 }
 
 type Image struct {
-	ID           string                 `json:"id"`
-	CreatedAt    string                 `json:"createdAt"`
-	UpdatedAt    string                 `json:"updatedAt"`
-	Digest       string                 `json:"digest"`
-	Manifest     map[string]interface{} `json:"manifest"`
-	ManifestType string                 `json:"manifest_type"`
+	ID           string `json:"id"`
+	CreatedAt    string `json:"createdAt"`
+	UpdatedAt    string `json:"updatedAt"`
+	Digest       string `json:"digest"`
+	Manifest     string `json:"manifest"`
+	ManifestType string `json:"manifestType"`
 }
 
 type TagExec struct {
@@ -2756,7 +2948,7 @@ func (instance *TagExec) Image() *ImageExec {
 		nil,
 		[2]string{"", "Image"},
 		"image",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImageExec{ret}
 }
@@ -2791,6 +2983,7 @@ type Tag struct {
 	ID        string `json:"id"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
+	Ref       string `json:"ref"`
 }
 
 type BlobConnectionExec struct {
@@ -3255,7 +3448,7 @@ func (instance *ImageEdgeExec) Node() *ImageExec {
 		nil,
 		[2]string{"", "Image"},
 		"node",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImageExec{ret}
 }
@@ -3594,7 +3787,7 @@ func (instance *TagEdgeExec) Node() *TagExec {
 		nil,
 		[2]string{"", "Tag"},
 		"node",
-		[]string{"id", "createdAt", "updatedAt"})
+		[]string{"id", "createdAt", "updatedAt", "ref"})
 
 	return &TagExec{ret}
 }
@@ -3941,7 +4134,7 @@ func (instance *ImageSubscriptionPayloadExec) Node() *ImageExec {
 		nil,
 		[2]string{"", "Image"},
 		"node",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImageExec{ret}
 }
@@ -3952,7 +4145,7 @@ func (instance *ImageSubscriptionPayloadExec) PreviousValues() *ImagePreviousVal
 		nil,
 		[2]string{"", "ImagePreviousValues"},
 		"previousValues",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifest_type"})
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
 	return &ImagePreviousValuesExec{ret}
 }
@@ -4019,12 +4212,12 @@ func (instance ImagePreviousValuesExecArray) Exec(ctx context.Context) ([]ImageP
 }
 
 type ImagePreviousValues struct {
-	ID           string                 `json:"id"`
-	CreatedAt    string                 `json:"createdAt"`
-	UpdatedAt    string                 `json:"updatedAt"`
-	Digest       string                 `json:"digest"`
-	Manifest     map[string]interface{} `json:"manifest"`
-	ManifestType string                 `json:"manifest_type"`
+	ID           string `json:"id"`
+	CreatedAt    string `json:"createdAt"`
+	UpdatedAt    string `json:"updatedAt"`
+	Digest       string `json:"digest"`
+	Manifest     string `json:"manifest"`
+	ManifestType string `json:"manifestType"`
 }
 
 type OrganizationSubscriptionPayloadExec struct {
@@ -4226,7 +4419,7 @@ func (instance *TagSubscriptionPayloadExec) Node() *TagExec {
 		nil,
 		[2]string{"", "Tag"},
 		"node",
-		[]string{"id", "createdAt", "updatedAt"})
+		[]string{"id", "createdAt", "updatedAt", "ref"})
 
 	return &TagExec{ret}
 }
@@ -4237,7 +4430,7 @@ func (instance *TagSubscriptionPayloadExec) PreviousValues() *TagPreviousValuesE
 		nil,
 		[2]string{"", "TagPreviousValues"},
 		"previousValues",
-		[]string{"id", "createdAt", "updatedAt"})
+		[]string{"id", "createdAt", "updatedAt", "ref"})
 
 	return &TagPreviousValuesExec{ret}
 }
@@ -4307,6 +4500,7 @@ type TagPreviousValues struct {
 	ID        string `json:"id"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
+	Ref       string `json:"ref"`
 }
 
 type UploadSubscriptionPayloadExec struct {

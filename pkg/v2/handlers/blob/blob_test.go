@@ -31,7 +31,7 @@ func (suite *BlobTestSuite) SetupSuite() {
 }
 
 func (suite *BlobTestSuite) SetupTest() {
-	testutil.Aquire("Blob", "Repository", "Organization")
+	testutil.Acquire("Blob", "Repository", "Organization")
 }
 
 func (suite *BlobTestSuite) TearDownTest() {

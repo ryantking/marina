@@ -14,13 +14,13 @@ var client = prisma.New(nil)
 
 // ParsePath parses the repository and organization out of the path
 func ParsePath(c echo.Context) (string, string, error) {
-	repoName := c.Param("repo")
-	orgName := c.Param("org")
+	repo := c.Param("repo")
+	org := c.Param("org")
 	repos, err := client.Repositories(&prisma.RepositoriesParams{
 		Where: &prisma.RepositoryWhereInput{
-			Name: &repoName,
+			Name: &repo,
 			Org: &prisma.OrganizationWhereInput{
-				Name: &orgName,
+				Name: &org,
 			},
 		},
 	}).Exec(context.Background())
@@ -32,7 +32,7 @@ func ParsePath(c echo.Context) (string, string, error) {
 		return "", "", echo.NewHTTPError(http.StatusNotFound, "repository name not known to registry")
 	}
 
-	return repoName, orgName, nil
+	return repo, org, nil
 }
 
 // ParsePagination parses the docker page number and last from the request

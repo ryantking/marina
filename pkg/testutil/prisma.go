@@ -47,7 +47,7 @@ func unlockTable(table string) {
 	mus[table].Unlock()
 }
 
-func Aquire(tables ...string) {
+func Acquire(tables ...string) {
 	dataL.Lock()
 	defer dataL.Unlock()
 
