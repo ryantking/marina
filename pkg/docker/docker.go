@@ -1,11 +1,5 @@
 package docker
 
-import (
-	"strconv"
-
-	"github.com/labstack/echo"
-)
-
 const (
 	// HeaderAPIVersion is the header used to announce to clients which API version the server supports
 	HeaderAPIVersion = "Docker-Distribution-API-Version"
@@ -26,17 +20,3 @@ const (
 	MIMEImageManifestV1 = "application/json application/vnd.oci.image.manifest.v1+json"
 	MIMEImageIndexV1    = "application/vnd.oci.image.index.v1+json"
 )
-
-// ParsePagination parses the docker page number and last from the request
-func ParsePagination(c echo.Context) (uint, string, error) {
-	s := c.QueryParam("n")
-	if s == "" {
-		return 0, "", nil
-	}
-	n, err := strconv.ParseUint(s, 10, 32)
-	if err != nil {
-		return 0, "", err
-	}
-
-	return uint(n), c.QueryParam("last"), nil
-}

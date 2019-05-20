@@ -304,7 +304,7 @@ func (client *Client) Repository(params RepositoryWhereUniqueInput) *RepositoryE
 		params,
 		[2]string{"RepositoryWhereUniqueInput!", "Repository"},
 		"repository",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExec{ret}
 }
@@ -338,7 +338,7 @@ func (client *Client) Repositories(params *RepositoriesParams) *RepositoryExecAr
 		wparams,
 		[3]string{"RepositoryWhereInput", "RepositoryOrderByInput", "Repository"},
 		"repositories",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExecArray{ret}
 }
@@ -800,7 +800,7 @@ func (client *Client) CreateRepository(params RepositoryCreateInput) *Repository
 		params,
 		[2]string{"RepositoryCreateInput!", "Repository"},
 		"createRepository",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExec{ret}
 }
@@ -818,7 +818,7 @@ func (client *Client) UpdateRepository(params RepositoryUpdateParams) *Repositor
 		},
 		[3]string{"RepositoryUpdateInput!", "RepositoryWhereUniqueInput!", "Repository"},
 		"updateRepository",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExec{ret}
 }
@@ -855,7 +855,7 @@ func (client *Client) UpsertRepository(params RepositoryUpsertParams) *Repositor
 		uparams,
 		[4]string{"RepositoryWhereUniqueInput!", "RepositoryCreateInput!", "RepositoryUpdateInput!", "Repository"},
 		"upsertRepository",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExec{ret}
 }
@@ -865,7 +865,7 @@ func (client *Client) DeleteRepository(params RepositoryWhereUniqueInput) *Repos
 		params,
 		[2]string{"RepositoryWhereUniqueInput!", "Repository"},
 		"deleteRepository",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExec{ret}
 }
@@ -1030,6 +1030,8 @@ const (
 	RepositoryOrderByInputUpdatedAtDesc RepositoryOrderByInput = "updatedAt_DESC"
 	RepositoryOrderByInputNameAsc       RepositoryOrderByInput = "name_ASC"
 	RepositoryOrderByInputNameDesc      RepositoryOrderByInput = "name_DESC"
+	RepositoryOrderByInputFullNameAsc   RepositoryOrderByInput = "fullName_ASC"
+	RepositoryOrderByInputFullNameDesc  RepositoryOrderByInput = "fullName_DESC"
 )
 
 type BlobOrderByInput string
@@ -1130,57 +1132,71 @@ type BlobWhereUniqueInput struct {
 }
 
 type RepositoryWhereInput struct {
-	ID                *string                 `json:"id,omitempty"`
-	IDNot             *string                 `json:"id_not,omitempty"`
-	IDIn              []string                `json:"id_in,omitempty"`
-	IDNotIn           []string                `json:"id_not_in,omitempty"`
-	IDLt              *string                 `json:"id_lt,omitempty"`
-	IDLte             *string                 `json:"id_lte,omitempty"`
-	IDGt              *string                 `json:"id_gt,omitempty"`
-	IDGte             *string                 `json:"id_gte,omitempty"`
-	IDContains        *string                 `json:"id_contains,omitempty"`
-	IDNotContains     *string                 `json:"id_not_contains,omitempty"`
-	IDStartsWith      *string                 `json:"id_starts_with,omitempty"`
-	IDNotStartsWith   *string                 `json:"id_not_starts_with,omitempty"`
-	IDEndsWith        *string                 `json:"id_ends_with,omitempty"`
-	IDNotEndsWith     *string                 `json:"id_not_ends_with,omitempty"`
-	CreatedAt         *string                 `json:"createdAt,omitempty"`
-	CreatedAtNot      *string                 `json:"createdAt_not,omitempty"`
-	CreatedAtIn       []string                `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn    []string                `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt       *string                 `json:"createdAt_lt,omitempty"`
-	CreatedAtLte      *string                 `json:"createdAt_lte,omitempty"`
-	CreatedAtGt       *string                 `json:"createdAt_gt,omitempty"`
-	CreatedAtGte      *string                 `json:"createdAt_gte,omitempty"`
-	UpdatedAt         *string                 `json:"updatedAt,omitempty"`
-	UpdatedAtNot      *string                 `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn       []string                `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn    []string                `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt       *string                 `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte      *string                 `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt       *string                 `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte      *string                 `json:"updatedAt_gte,omitempty"`
-	Name              *string                 `json:"name,omitempty"`
-	NameNot           *string                 `json:"name_not,omitempty"`
-	NameIn            []string                `json:"name_in,omitempty"`
-	NameNotIn         []string                `json:"name_not_in,omitempty"`
-	NameLt            *string                 `json:"name_lt,omitempty"`
-	NameLte           *string                 `json:"name_lte,omitempty"`
-	NameGt            *string                 `json:"name_gt,omitempty"`
-	NameGte           *string                 `json:"name_gte,omitempty"`
-	NameContains      *string                 `json:"name_contains,omitempty"`
-	NameNotContains   *string                 `json:"name_not_contains,omitempty"`
-	NameStartsWith    *string                 `json:"name_starts_with,omitempty"`
-	NameNotStartsWith *string                 `json:"name_not_starts_with,omitempty"`
-	NameEndsWith      *string                 `json:"name_ends_with,omitempty"`
-	NameNotEndsWith   *string                 `json:"name_not_ends_with,omitempty"`
-	Org               *OrganizationWhereInput `json:"org,omitempty"`
-	BlobsEvery        *BlobWhereInput         `json:"blobs_every,omitempty"`
-	BlobsSome         *BlobWhereInput         `json:"blobs_some,omitempty"`
-	BlobsNone         *BlobWhereInput         `json:"blobs_none,omitempty"`
-	And               []RepositoryWhereInput  `json:"AND,omitempty"`
-	Or                []RepositoryWhereInput  `json:"OR,omitempty"`
-	Not               []RepositoryWhereInput  `json:"NOT,omitempty"`
+	ID                    *string                 `json:"id,omitempty"`
+	IDNot                 *string                 `json:"id_not,omitempty"`
+	IDIn                  []string                `json:"id_in,omitempty"`
+	IDNotIn               []string                `json:"id_not_in,omitempty"`
+	IDLt                  *string                 `json:"id_lt,omitempty"`
+	IDLte                 *string                 `json:"id_lte,omitempty"`
+	IDGt                  *string                 `json:"id_gt,omitempty"`
+	IDGte                 *string                 `json:"id_gte,omitempty"`
+	IDContains            *string                 `json:"id_contains,omitempty"`
+	IDNotContains         *string                 `json:"id_not_contains,omitempty"`
+	IDStartsWith          *string                 `json:"id_starts_with,omitempty"`
+	IDNotStartsWith       *string                 `json:"id_not_starts_with,omitempty"`
+	IDEndsWith            *string                 `json:"id_ends_with,omitempty"`
+	IDNotEndsWith         *string                 `json:"id_not_ends_with,omitempty"`
+	CreatedAt             *string                 `json:"createdAt,omitempty"`
+	CreatedAtNot          *string                 `json:"createdAt_not,omitempty"`
+	CreatedAtIn           []string                `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn        []string                `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt           *string                 `json:"createdAt_lt,omitempty"`
+	CreatedAtLte          *string                 `json:"createdAt_lte,omitempty"`
+	CreatedAtGt           *string                 `json:"createdAt_gt,omitempty"`
+	CreatedAtGte          *string                 `json:"createdAt_gte,omitempty"`
+	UpdatedAt             *string                 `json:"updatedAt,omitempty"`
+	UpdatedAtNot          *string                 `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn           []string                `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn        []string                `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt           *string                 `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte          *string                 `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt           *string                 `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte          *string                 `json:"updatedAt_gte,omitempty"`
+	Name                  *string                 `json:"name,omitempty"`
+	NameNot               *string                 `json:"name_not,omitempty"`
+	NameIn                []string                `json:"name_in,omitempty"`
+	NameNotIn             []string                `json:"name_not_in,omitempty"`
+	NameLt                *string                 `json:"name_lt,omitempty"`
+	NameLte               *string                 `json:"name_lte,omitempty"`
+	NameGt                *string                 `json:"name_gt,omitempty"`
+	NameGte               *string                 `json:"name_gte,omitempty"`
+	NameContains          *string                 `json:"name_contains,omitempty"`
+	NameNotContains       *string                 `json:"name_not_contains,omitempty"`
+	NameStartsWith        *string                 `json:"name_starts_with,omitempty"`
+	NameNotStartsWith     *string                 `json:"name_not_starts_with,omitempty"`
+	NameEndsWith          *string                 `json:"name_ends_with,omitempty"`
+	NameNotEndsWith       *string                 `json:"name_not_ends_with,omitempty"`
+	FullName              *string                 `json:"fullName,omitempty"`
+	FullNameNot           *string                 `json:"fullName_not,omitempty"`
+	FullNameIn            []string                `json:"fullName_in,omitempty"`
+	FullNameNotIn         []string                `json:"fullName_not_in,omitempty"`
+	FullNameLt            *string                 `json:"fullName_lt,omitempty"`
+	FullNameLte           *string                 `json:"fullName_lte,omitempty"`
+	FullNameGt            *string                 `json:"fullName_gt,omitempty"`
+	FullNameGte           *string                 `json:"fullName_gte,omitempty"`
+	FullNameContains      *string                 `json:"fullName_contains,omitempty"`
+	FullNameNotContains   *string                 `json:"fullName_not_contains,omitempty"`
+	FullNameStartsWith    *string                 `json:"fullName_starts_with,omitempty"`
+	FullNameNotStartsWith *string                 `json:"fullName_not_starts_with,omitempty"`
+	FullNameEndsWith      *string                 `json:"fullName_ends_with,omitempty"`
+	FullNameNotEndsWith   *string                 `json:"fullName_not_ends_with,omitempty"`
+	Org                   *OrganizationWhereInput `json:"org,omitempty"`
+	BlobsEvery            *BlobWhereInput         `json:"blobs_every,omitempty"`
+	BlobsSome             *BlobWhereInput         `json:"blobs_some,omitempty"`
+	BlobsNone             *BlobWhereInput         `json:"blobs_none,omitempty"`
+	And                   []RepositoryWhereInput  `json:"AND,omitempty"`
+	Or                    []RepositoryWhereInput  `json:"OR,omitempty"`
+	Not                   []RepositoryWhereInput  `json:"NOT,omitempty"`
 }
 
 type OrganizationWhereInput struct {
@@ -1545,9 +1561,10 @@ type RepositoryCreateOneWithoutBlobsInput struct {
 }
 
 type RepositoryCreateWithoutBlobsInput struct {
-	ID   *string                                `json:"id,omitempty"`
-	Name string                                 `json:"name"`
-	Org  OrganizationCreateOneWithoutReposInput `json:"org"`
+	ID       *string                                `json:"id,omitempty"`
+	Name     string                                 `json:"name"`
+	FullName string                                 `json:"fullName"`
+	Org      OrganizationCreateOneWithoutReposInput `json:"org"`
 }
 
 type OrganizationCreateOneWithoutReposInput struct {
@@ -1587,10 +1604,11 @@ type RepositoryCreateOneInput struct {
 }
 
 type RepositoryCreateInput struct {
-	ID    *string                                `json:"id,omitempty"`
-	Name  string                                 `json:"name"`
-	Org   OrganizationCreateOneWithoutReposInput `json:"org"`
-	Blobs *BlobCreateManyWithoutRepoInput        `json:"blobs,omitempty"`
+	ID       *string                                `json:"id,omitempty"`
+	Name     string                                 `json:"name"`
+	FullName string                                 `json:"fullName"`
+	Org      OrganizationCreateOneWithoutReposInput `json:"org"`
+	Blobs    *BlobCreateManyWithoutRepoInput        `json:"blobs,omitempty"`
 }
 
 type BlobCreateManyWithoutRepoInput struct {
@@ -1625,8 +1643,9 @@ type RepositoryUpdateOneRequiredWithoutBlobsInput struct {
 }
 
 type RepositoryUpdateWithoutBlobsDataInput struct {
-	Name *string                                         `json:"name,omitempty"`
-	Org  *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
+	Name     *string                                         `json:"name,omitempty"`
+	FullName *string                                         `json:"fullName,omitempty"`
+	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
 }
 
 type OrganizationUpdateOneRequiredWithoutReposInput struct {
@@ -1762,9 +1781,10 @@ type RepositoryUpdateOneRequiredInput struct {
 }
 
 type RepositoryUpdateDataInput struct {
-	Name  *string                                         `json:"name,omitempty"`
-	Org   *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
-	Blobs *BlobUpdateManyWithoutRepoInput                 `json:"blobs,omitempty"`
+	Name     *string                                         `json:"name,omitempty"`
+	FullName *string                                         `json:"fullName,omitempty"`
+	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
+	Blobs    *BlobUpdateManyWithoutRepoInput                 `json:"blobs,omitempty"`
 }
 
 type BlobUpdateManyWithoutRepoInput struct {
@@ -2013,9 +2033,10 @@ type RepositoryCreateManyWithoutOrgInput struct {
 }
 
 type RepositoryCreateWithoutOrgInput struct {
-	ID    *string                         `json:"id,omitempty"`
-	Name  string                          `json:"name"`
-	Blobs *BlobCreateManyWithoutRepoInput `json:"blobs,omitempty"`
+	ID       *string                         `json:"id,omitempty"`
+	Name     string                          `json:"name"`
+	FullName string                          `json:"fullName"`
+	Blobs    *BlobCreateManyWithoutRepoInput `json:"blobs,omitempty"`
 }
 
 type OrganizationUpdateInput struct {
@@ -2043,8 +2064,9 @@ type RepositoryUpdateWithWhereUniqueWithoutOrgInput struct {
 }
 
 type RepositoryUpdateWithoutOrgDataInput struct {
-	Name  *string                         `json:"name,omitempty"`
-	Blobs *BlobUpdateManyWithoutRepoInput `json:"blobs,omitempty"`
+	Name     *string                         `json:"name,omitempty"`
+	FullName *string                         `json:"fullName,omitempty"`
+	Blobs    *BlobUpdateManyWithoutRepoInput `json:"blobs,omitempty"`
 }
 
 type RepositoryUpsertWithWhereUniqueWithoutOrgInput struct {
@@ -2054,53 +2076,67 @@ type RepositoryUpsertWithWhereUniqueWithoutOrgInput struct {
 }
 
 type RepositoryScalarWhereInput struct {
-	ID                *string                      `json:"id,omitempty"`
-	IDNot             *string                      `json:"id_not,omitempty"`
-	IDIn              []string                     `json:"id_in,omitempty"`
-	IDNotIn           []string                     `json:"id_not_in,omitempty"`
-	IDLt              *string                      `json:"id_lt,omitempty"`
-	IDLte             *string                      `json:"id_lte,omitempty"`
-	IDGt              *string                      `json:"id_gt,omitempty"`
-	IDGte             *string                      `json:"id_gte,omitempty"`
-	IDContains        *string                      `json:"id_contains,omitempty"`
-	IDNotContains     *string                      `json:"id_not_contains,omitempty"`
-	IDStartsWith      *string                      `json:"id_starts_with,omitempty"`
-	IDNotStartsWith   *string                      `json:"id_not_starts_with,omitempty"`
-	IDEndsWith        *string                      `json:"id_ends_with,omitempty"`
-	IDNotEndsWith     *string                      `json:"id_not_ends_with,omitempty"`
-	CreatedAt         *string                      `json:"createdAt,omitempty"`
-	CreatedAtNot      *string                      `json:"createdAt_not,omitempty"`
-	CreatedAtIn       []string                     `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn    []string                     `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt       *string                      `json:"createdAt_lt,omitempty"`
-	CreatedAtLte      *string                      `json:"createdAt_lte,omitempty"`
-	CreatedAtGt       *string                      `json:"createdAt_gt,omitempty"`
-	CreatedAtGte      *string                      `json:"createdAt_gte,omitempty"`
-	UpdatedAt         *string                      `json:"updatedAt,omitempty"`
-	UpdatedAtNot      *string                      `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn       []string                     `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn    []string                     `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt       *string                      `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte      *string                      `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt       *string                      `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte      *string                      `json:"updatedAt_gte,omitempty"`
-	Name              *string                      `json:"name,omitempty"`
-	NameNot           *string                      `json:"name_not,omitempty"`
-	NameIn            []string                     `json:"name_in,omitempty"`
-	NameNotIn         []string                     `json:"name_not_in,omitempty"`
-	NameLt            *string                      `json:"name_lt,omitempty"`
-	NameLte           *string                      `json:"name_lte,omitempty"`
-	NameGt            *string                      `json:"name_gt,omitempty"`
-	NameGte           *string                      `json:"name_gte,omitempty"`
-	NameContains      *string                      `json:"name_contains,omitempty"`
-	NameNotContains   *string                      `json:"name_not_contains,omitempty"`
-	NameStartsWith    *string                      `json:"name_starts_with,omitempty"`
-	NameNotStartsWith *string                      `json:"name_not_starts_with,omitempty"`
-	NameEndsWith      *string                      `json:"name_ends_with,omitempty"`
-	NameNotEndsWith   *string                      `json:"name_not_ends_with,omitempty"`
-	And               []RepositoryScalarWhereInput `json:"AND,omitempty"`
-	Or                []RepositoryScalarWhereInput `json:"OR,omitempty"`
-	Not               []RepositoryScalarWhereInput `json:"NOT,omitempty"`
+	ID                    *string                      `json:"id,omitempty"`
+	IDNot                 *string                      `json:"id_not,omitempty"`
+	IDIn                  []string                     `json:"id_in,omitempty"`
+	IDNotIn               []string                     `json:"id_not_in,omitempty"`
+	IDLt                  *string                      `json:"id_lt,omitempty"`
+	IDLte                 *string                      `json:"id_lte,omitempty"`
+	IDGt                  *string                      `json:"id_gt,omitempty"`
+	IDGte                 *string                      `json:"id_gte,omitempty"`
+	IDContains            *string                      `json:"id_contains,omitempty"`
+	IDNotContains         *string                      `json:"id_not_contains,omitempty"`
+	IDStartsWith          *string                      `json:"id_starts_with,omitempty"`
+	IDNotStartsWith       *string                      `json:"id_not_starts_with,omitempty"`
+	IDEndsWith            *string                      `json:"id_ends_with,omitempty"`
+	IDNotEndsWith         *string                      `json:"id_not_ends_with,omitempty"`
+	CreatedAt             *string                      `json:"createdAt,omitempty"`
+	CreatedAtNot          *string                      `json:"createdAt_not,omitempty"`
+	CreatedAtIn           []string                     `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn        []string                     `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt           *string                      `json:"createdAt_lt,omitempty"`
+	CreatedAtLte          *string                      `json:"createdAt_lte,omitempty"`
+	CreatedAtGt           *string                      `json:"createdAt_gt,omitempty"`
+	CreatedAtGte          *string                      `json:"createdAt_gte,omitempty"`
+	UpdatedAt             *string                      `json:"updatedAt,omitempty"`
+	UpdatedAtNot          *string                      `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn           []string                     `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn        []string                     `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt           *string                      `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte          *string                      `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt           *string                      `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte          *string                      `json:"updatedAt_gte,omitempty"`
+	Name                  *string                      `json:"name,omitempty"`
+	NameNot               *string                      `json:"name_not,omitempty"`
+	NameIn                []string                     `json:"name_in,omitempty"`
+	NameNotIn             []string                     `json:"name_not_in,omitempty"`
+	NameLt                *string                      `json:"name_lt,omitempty"`
+	NameLte               *string                      `json:"name_lte,omitempty"`
+	NameGt                *string                      `json:"name_gt,omitempty"`
+	NameGte               *string                      `json:"name_gte,omitempty"`
+	NameContains          *string                      `json:"name_contains,omitempty"`
+	NameNotContains       *string                      `json:"name_not_contains,omitempty"`
+	NameStartsWith        *string                      `json:"name_starts_with,omitempty"`
+	NameNotStartsWith     *string                      `json:"name_not_starts_with,omitempty"`
+	NameEndsWith          *string                      `json:"name_ends_with,omitempty"`
+	NameNotEndsWith       *string                      `json:"name_not_ends_with,omitempty"`
+	FullName              *string                      `json:"fullName,omitempty"`
+	FullNameNot           *string                      `json:"fullName_not,omitempty"`
+	FullNameIn            []string                     `json:"fullName_in,omitempty"`
+	FullNameNotIn         []string                     `json:"fullName_not_in,omitempty"`
+	FullNameLt            *string                      `json:"fullName_lt,omitempty"`
+	FullNameLte           *string                      `json:"fullName_lte,omitempty"`
+	FullNameGt            *string                      `json:"fullName_gt,omitempty"`
+	FullNameGte           *string                      `json:"fullName_gte,omitempty"`
+	FullNameContains      *string                      `json:"fullName_contains,omitempty"`
+	FullNameNotContains   *string                      `json:"fullName_not_contains,omitempty"`
+	FullNameStartsWith    *string                      `json:"fullName_starts_with,omitempty"`
+	FullNameNotStartsWith *string                      `json:"fullName_not_starts_with,omitempty"`
+	FullNameEndsWith      *string                      `json:"fullName_ends_with,omitempty"`
+	FullNameNotEndsWith   *string                      `json:"fullName_not_ends_with,omitempty"`
+	And                   []RepositoryScalarWhereInput `json:"AND,omitempty"`
+	Or                    []RepositoryScalarWhereInput `json:"OR,omitempty"`
+	Not                   []RepositoryScalarWhereInput `json:"NOT,omitempty"`
 }
 
 type RepositoryUpdateManyWithWhereNestedInput struct {
@@ -2109,7 +2145,8 @@ type RepositoryUpdateManyWithWhereNestedInput struct {
 }
 
 type RepositoryUpdateManyDataInput struct {
-	Name *string `json:"name,omitempty"`
+	Name     *string `json:"name,omitempty"`
+	FullName *string `json:"fullName,omitempty"`
 }
 
 type OrganizationUpdateManyMutationInput struct {
@@ -2117,13 +2154,15 @@ type OrganizationUpdateManyMutationInput struct {
 }
 
 type RepositoryUpdateInput struct {
-	Name  *string                                         `json:"name,omitempty"`
-	Org   *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
-	Blobs *BlobUpdateManyWithoutRepoInput                 `json:"blobs,omitempty"`
+	Name     *string                                         `json:"name,omitempty"`
+	FullName *string                                         `json:"fullName,omitempty"`
+	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
+	Blobs    *BlobUpdateManyWithoutRepoInput                 `json:"blobs,omitempty"`
 }
 
 type RepositoryUpdateManyMutationInput struct {
-	Name *string `json:"name,omitempty"`
+	Name     *string `json:"name,omitempty"`
+	FullName *string `json:"fullName,omitempty"`
 }
 
 type TagCreateInput struct {
@@ -2373,7 +2412,7 @@ func (instance *BlobExec) Repo() *RepositoryExec {
 		nil,
 		[2]string{"", "Repository"},
 		"repo",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExec{ret}
 }
@@ -2491,6 +2530,7 @@ type Repository struct {
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 	Name      string `json:"name"`
+	FullName  string `json:"fullName"`
 }
 
 type OrganizationExec struct {
@@ -2526,7 +2566,7 @@ func (instance *OrganizationExec) Repos(params *ReposParamsExec) *RepositoryExec
 		wparams,
 		[3]string{"RepositoryWhereInput", "RepositoryOrderByInput", "Repository"},
 		"repos",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExecArray{ret}
 }
@@ -2632,7 +2672,7 @@ func (instance *ImageExec) Repo() *RepositoryExec {
 		nil,
 		[2]string{"", "Repository"},
 		"repo",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExec{ret}
 }
@@ -3441,7 +3481,7 @@ func (instance *RepositoryEdgeExec) Node() *RepositoryExec {
 		nil,
 		[2]string{"", "Repository"},
 		"node",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExec{ret}
 }
@@ -4091,7 +4131,7 @@ func (instance *RepositorySubscriptionPayloadExec) Node() *RepositoryExec {
 		nil,
 		[2]string{"", "Repository"},
 		"node",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryExec{ret}
 }
@@ -4102,7 +4142,7 @@ func (instance *RepositorySubscriptionPayloadExec) PreviousValues() *RepositoryP
 		nil,
 		[2]string{"", "RepositoryPreviousValues"},
 		"previousValues",
-		[]string{"id", "createdAt", "updatedAt", "name"})
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
 
 	return &RepositoryPreviousValuesExec{ret}
 }
@@ -4173,6 +4213,7 @@ type RepositoryPreviousValues struct {
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 	Name      string `json:"name"`
+	FullName  string `json:"fullName"`
 }
 
 type TagSubscriptionPayloadExec struct {

@@ -29,37 +29,28 @@ func (suite *CatalogTestSuite) TestGet() {
 	assert := suite.Assert()
 	require := suite.Require()
 
-	getNames = func() ([]string, error) {
-		return []string{"org1/repo1", "org1/repo2", "org2/repo3"}, nil
-	}
-
 	req := httptest.NewRequest(http.MethodGet, "/v2/_catalog", nil)
 	rr := httptest.NewRecorder()
 	suite.r.ServeHTTP(rr, req)
 	require.Equal(http.StatusOK, rr.Code)
 	b, err := ioutil.ReadAll(rr.Body)
 	require.NoError(err)
-	assert.JSONEq(`{"repositories": ["org1/repo1", "org1/repo2", "org2/repo3"]}`, string(b))
+	expected := `{"repositories": ["library/alpine", "library/nginx", "library/redis", "mysql/mysql", "mysql/mysql-client"]}`
+	assert.JSONEq(expected, string(b))
 }
 
 func (suite *CatalogTestSuite) TestGetPaginated() {
 	assert := suite.Assert()
 	require := suite.Require()
 
-	getNamesPaginated = func(n uint, last string) ([]string, string, error) {
-		assert.EqualValues(3, n)
-		assert.Equal("org1/repo1", last)
-		return []string{"org1/repo2", "org1/repo3", "org2/repo4"}, "org2/repo4", nil
-	}
-
-	req := httptest.NewRequest(http.MethodGet, "/v2/_catalog?n=3&last=org1/repo1", nil)
+	req := httptest.NewRequest(http.MethodGet, "/v2/_catalog?n=2&last=library/nginx", nil)
 	rr := httptest.NewRecorder()
 	suite.r.ServeHTTP(rr, req)
 	require.Equal(http.StatusOK, rr.Code)
 	b, err := ioutil.ReadAll(rr.Body)
 	require.NoError(err)
-	assert.JSONEq(`{"repositories": ["org1/repo2", "org1/repo3", "org2/repo4"]}`, string(b))
-	assert.Equal("/v2/_catalog?n=3&last=org2/repo4", rr.Header().Get(headerLink))
+	assert.JSONEq(`{"repositories": ["library/redis", "mysql/mysql"]}`, string(b))
+	assert.Equal("/v2/_catalog?n=2&last=mysql/mysql", rr.Header().Get(headerLink))
 }
 
 func TestCatalogTestSuite(t *testing.T) {

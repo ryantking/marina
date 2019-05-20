@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo"
 	"github.com/ryantking/marina/pkg/docker"
@@ -32,4 +33,18 @@ func ParsePath(c echo.Context) (string, string, error) {
 	}
 
 	return repoName, orgName, nil
+}
+
+// ParsePagination parses the docker page number and last from the request
+func ParsePagination(c echo.Context) (int32, string, error) {
+	s := c.QueryParam("n")
+	if s == "" {
+		return 0, "", nil
+	}
+	n, err := strconv.ParseInt(s, 10, 32)
+	if err != nil {
+		return 0, "", echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	return int32(n), c.QueryParam("last"), nil
 }

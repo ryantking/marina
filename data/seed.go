@@ -15,7 +15,8 @@ func main() {
 		Repos: &prisma.RepositoryCreateManyWithoutOrgInput{
 			Create: []prisma.RepositoryCreateWithoutOrgInput{
 				prisma.RepositoryCreateWithoutOrgInput{
-					Name: "alpine",
+					Name:     "alpine",
+					FullName: "library/alpine",
 					Blobs: &prisma.BlobCreateManyWithoutRepoInput{
 						Create: []prisma.BlobCreateWithoutRepoInput{
 							prisma.BlobCreateWithoutRepoInput{
@@ -25,7 +26,8 @@ func main() {
 					},
 				},
 				prisma.RepositoryCreateWithoutOrgInput{
-					Name: "redis",
+					Name:     "redis",
+					FullName: "library/redis",
 					Blobs: &prisma.BlobCreateManyWithoutRepoInput{
 						Create: []prisma.BlobCreateWithoutRepoInput{
 							prisma.BlobCreateWithoutRepoInput{
@@ -49,7 +51,7 @@ func main() {
 						},
 					},
 				},
-				prisma.RepositoryCreateWithoutOrgInput{Name: "nginx"},
+				prisma.RepositoryCreateWithoutOrgInput{Name: "nginx", FullName: "library/nginx"},
 			},
 		},
 	}).Exec(ctx)
@@ -61,8 +63,8 @@ func main() {
 		Name: "mysql",
 		Repos: &prisma.RepositoryCreateManyWithoutOrgInput{
 			Create: []prisma.RepositoryCreateWithoutOrgInput{
-				prisma.RepositoryCreateWithoutOrgInput{Name: "mysql"},
-				prisma.RepositoryCreateWithoutOrgInput{Name: "mysql-client"},
+				prisma.RepositoryCreateWithoutOrgInput{Name: "mysql", FullName: "mysql/mysql"},
+				prisma.RepositoryCreateWithoutOrgInput{Name: "mysql-client", FullName: "mysql/mysql-client"},
 			},
 		},
 	}).Exec(ctx)
