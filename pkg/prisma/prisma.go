@@ -1144,190 +1144,19 @@ const (
 	MutationTypeDeleted MutationType = "DELETED"
 )
 
+type BlobUpdateWithWhereUniqueWithoutRepoInput struct {
+	Where BlobWhereUniqueInput           `json:"where"`
+	Data  BlobUpdateWithoutRepoDataInput `json:"data"`
+}
+
 type BlobWhereUniqueInput struct {
 	ID     *string `json:"id,omitempty"`
 	Digest *string `json:"digest,omitempty"`
 }
 
-type RepositoryWhereInput struct {
-	ID                    *string                 `json:"id,omitempty"`
-	IDNot                 *string                 `json:"id_not,omitempty"`
-	IDIn                  []string                `json:"id_in,omitempty"`
-	IDNotIn               []string                `json:"id_not_in,omitempty"`
-	IDLt                  *string                 `json:"id_lt,omitempty"`
-	IDLte                 *string                 `json:"id_lte,omitempty"`
-	IDGt                  *string                 `json:"id_gt,omitempty"`
-	IDGte                 *string                 `json:"id_gte,omitempty"`
-	IDContains            *string                 `json:"id_contains,omitempty"`
-	IDNotContains         *string                 `json:"id_not_contains,omitempty"`
-	IDStartsWith          *string                 `json:"id_starts_with,omitempty"`
-	IDNotStartsWith       *string                 `json:"id_not_starts_with,omitempty"`
-	IDEndsWith            *string                 `json:"id_ends_with,omitempty"`
-	IDNotEndsWith         *string                 `json:"id_not_ends_with,omitempty"`
-	CreatedAt             *string                 `json:"createdAt,omitempty"`
-	CreatedAtNot          *string                 `json:"createdAt_not,omitempty"`
-	CreatedAtIn           []string                `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn        []string                `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt           *string                 `json:"createdAt_lt,omitempty"`
-	CreatedAtLte          *string                 `json:"createdAt_lte,omitempty"`
-	CreatedAtGt           *string                 `json:"createdAt_gt,omitempty"`
-	CreatedAtGte          *string                 `json:"createdAt_gte,omitempty"`
-	UpdatedAt             *string                 `json:"updatedAt,omitempty"`
-	UpdatedAtNot          *string                 `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn           []string                `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn        []string                `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt           *string                 `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte          *string                 `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt           *string                 `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte          *string                 `json:"updatedAt_gte,omitempty"`
-	Name                  *string                 `json:"name,omitempty"`
-	NameNot               *string                 `json:"name_not,omitempty"`
-	NameIn                []string                `json:"name_in,omitempty"`
-	NameNotIn             []string                `json:"name_not_in,omitempty"`
-	NameLt                *string                 `json:"name_lt,omitempty"`
-	NameLte               *string                 `json:"name_lte,omitempty"`
-	NameGt                *string                 `json:"name_gt,omitempty"`
-	NameGte               *string                 `json:"name_gte,omitempty"`
-	NameContains          *string                 `json:"name_contains,omitempty"`
-	NameNotContains       *string                 `json:"name_not_contains,omitempty"`
-	NameStartsWith        *string                 `json:"name_starts_with,omitempty"`
-	NameNotStartsWith     *string                 `json:"name_not_starts_with,omitempty"`
-	NameEndsWith          *string                 `json:"name_ends_with,omitempty"`
-	NameNotEndsWith       *string                 `json:"name_not_ends_with,omitempty"`
-	FullName              *string                 `json:"fullName,omitempty"`
-	FullNameNot           *string                 `json:"fullName_not,omitempty"`
-	FullNameIn            []string                `json:"fullName_in,omitempty"`
-	FullNameNotIn         []string                `json:"fullName_not_in,omitempty"`
-	FullNameLt            *string                 `json:"fullName_lt,omitempty"`
-	FullNameLte           *string                 `json:"fullName_lte,omitempty"`
-	FullNameGt            *string                 `json:"fullName_gt,omitempty"`
-	FullNameGte           *string                 `json:"fullName_gte,omitempty"`
-	FullNameContains      *string                 `json:"fullName_contains,omitempty"`
-	FullNameNotContains   *string                 `json:"fullName_not_contains,omitempty"`
-	FullNameStartsWith    *string                 `json:"fullName_starts_with,omitempty"`
-	FullNameNotStartsWith *string                 `json:"fullName_not_starts_with,omitempty"`
-	FullNameEndsWith      *string                 `json:"fullName_ends_with,omitempty"`
-	FullNameNotEndsWith   *string                 `json:"fullName_not_ends_with,omitempty"`
-	Org                   *OrganizationWhereInput `json:"org,omitempty"`
-	BlobsEvery            *BlobWhereInput         `json:"blobs_every,omitempty"`
-	BlobsSome             *BlobWhereInput         `json:"blobs_some,omitempty"`
-	BlobsNone             *BlobWhereInput         `json:"blobs_none,omitempty"`
-	ImagesEvery           *ImageWhereInput        `json:"images_every,omitempty"`
-	ImagesSome            *ImageWhereInput        `json:"images_some,omitempty"`
-	ImagesNone            *ImageWhereInput        `json:"images_none,omitempty"`
-	And                   []RepositoryWhereInput  `json:"AND,omitempty"`
-	Or                    []RepositoryWhereInput  `json:"OR,omitempty"`
-	Not                   []RepositoryWhereInput  `json:"NOT,omitempty"`
-}
-
-type OrganizationWhereInput struct {
-	ID                *string                  `json:"id,omitempty"`
-	IDNot             *string                  `json:"id_not,omitempty"`
-	IDIn              []string                 `json:"id_in,omitempty"`
-	IDNotIn           []string                 `json:"id_not_in,omitempty"`
-	IDLt              *string                  `json:"id_lt,omitempty"`
-	IDLte             *string                  `json:"id_lte,omitempty"`
-	IDGt              *string                  `json:"id_gt,omitempty"`
-	IDGte             *string                  `json:"id_gte,omitempty"`
-	IDContains        *string                  `json:"id_contains,omitempty"`
-	IDNotContains     *string                  `json:"id_not_contains,omitempty"`
-	IDStartsWith      *string                  `json:"id_starts_with,omitempty"`
-	IDNotStartsWith   *string                  `json:"id_not_starts_with,omitempty"`
-	IDEndsWith        *string                  `json:"id_ends_with,omitempty"`
-	IDNotEndsWith     *string                  `json:"id_not_ends_with,omitempty"`
-	CreatedAt         *string                  `json:"createdAt,omitempty"`
-	CreatedAtNot      *string                  `json:"createdAt_not,omitempty"`
-	CreatedAtIn       []string                 `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn    []string                 `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt       *string                  `json:"createdAt_lt,omitempty"`
-	CreatedAtLte      *string                  `json:"createdAt_lte,omitempty"`
-	CreatedAtGt       *string                  `json:"createdAt_gt,omitempty"`
-	CreatedAtGte      *string                  `json:"createdAt_gte,omitempty"`
-	UpdatedAt         *string                  `json:"updatedAt,omitempty"`
-	UpdatedAtNot      *string                  `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn       []string                 `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn    []string                 `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt       *string                  `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte      *string                  `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt       *string                  `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte      *string                  `json:"updatedAt_gte,omitempty"`
-	Name              *string                  `json:"name,omitempty"`
-	NameNot           *string                  `json:"name_not,omitempty"`
-	NameIn            []string                 `json:"name_in,omitempty"`
-	NameNotIn         []string                 `json:"name_not_in,omitempty"`
-	NameLt            *string                  `json:"name_lt,omitempty"`
-	NameLte           *string                  `json:"name_lte,omitempty"`
-	NameGt            *string                  `json:"name_gt,omitempty"`
-	NameGte           *string                  `json:"name_gte,omitempty"`
-	NameContains      *string                  `json:"name_contains,omitempty"`
-	NameNotContains   *string                  `json:"name_not_contains,omitempty"`
-	NameStartsWith    *string                  `json:"name_starts_with,omitempty"`
-	NameNotStartsWith *string                  `json:"name_not_starts_with,omitempty"`
-	NameEndsWith      *string                  `json:"name_ends_with,omitempty"`
-	NameNotEndsWith   *string                  `json:"name_not_ends_with,omitempty"`
-	ReposEvery        *RepositoryWhereInput    `json:"repos_every,omitempty"`
-	ReposSome         *RepositoryWhereInput    `json:"repos_some,omitempty"`
-	ReposNone         *RepositoryWhereInput    `json:"repos_none,omitempty"`
-	BlobsEvery        *BlobWhereInput          `json:"blobs_every,omitempty"`
-	BlobsSome         *BlobWhereInput          `json:"blobs_some,omitempty"`
-	BlobsNone         *BlobWhereInput          `json:"blobs_none,omitempty"`
-	ImagesEvery       *ImageWhereInput         `json:"images_every,omitempty"`
-	ImagesSome        *ImageWhereInput         `json:"images_some,omitempty"`
-	ImagesNone        *ImageWhereInput         `json:"images_none,omitempty"`
-	And               []OrganizationWhereInput `json:"AND,omitempty"`
-	Or                []OrganizationWhereInput `json:"OR,omitempty"`
-	Not               []OrganizationWhereInput `json:"NOT,omitempty"`
-}
-
-type BlobWhereInput struct {
-	ID                  *string               `json:"id,omitempty"`
-	IDNot               *string               `json:"id_not,omitempty"`
-	IDIn                []string              `json:"id_in,omitempty"`
-	IDNotIn             []string              `json:"id_not_in,omitempty"`
-	IDLt                *string               `json:"id_lt,omitempty"`
-	IDLte               *string               `json:"id_lte,omitempty"`
-	IDGt                *string               `json:"id_gt,omitempty"`
-	IDGte               *string               `json:"id_gte,omitempty"`
-	IDContains          *string               `json:"id_contains,omitempty"`
-	IDNotContains       *string               `json:"id_not_contains,omitempty"`
-	IDStartsWith        *string               `json:"id_starts_with,omitempty"`
-	IDNotStartsWith     *string               `json:"id_not_starts_with,omitempty"`
-	IDEndsWith          *string               `json:"id_ends_with,omitempty"`
-	IDNotEndsWith       *string               `json:"id_not_ends_with,omitempty"`
-	CreatedAt           *string               `json:"createdAt,omitempty"`
-	CreatedAtNot        *string               `json:"createdAt_not,omitempty"`
-	CreatedAtIn         []string              `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn      []string              `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt         *string               `json:"createdAt_lt,omitempty"`
-	CreatedAtLte        *string               `json:"createdAt_lte,omitempty"`
-	CreatedAtGt         *string               `json:"createdAt_gt,omitempty"`
-	CreatedAtGte        *string               `json:"createdAt_gte,omitempty"`
-	UpdatedAt           *string               `json:"updatedAt,omitempty"`
-	UpdatedAtNot        *string               `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn         []string              `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn      []string              `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt         *string               `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte        *string               `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt         *string               `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte        *string               `json:"updatedAt_gte,omitempty"`
-	Digest              *string               `json:"digest,omitempty"`
-	DigestNot           *string               `json:"digest_not,omitempty"`
-	DigestIn            []string              `json:"digest_in,omitempty"`
-	DigestNotIn         []string              `json:"digest_not_in,omitempty"`
-	DigestLt            *string               `json:"digest_lt,omitempty"`
-	DigestLte           *string               `json:"digest_lte,omitempty"`
-	DigestGt            *string               `json:"digest_gt,omitempty"`
-	DigestGte           *string               `json:"digest_gte,omitempty"`
-	DigestContains      *string               `json:"digest_contains,omitempty"`
-	DigestNotContains   *string               `json:"digest_not_contains,omitempty"`
-	DigestStartsWith    *string               `json:"digest_starts_with,omitempty"`
-	DigestNotStartsWith *string               `json:"digest_not_starts_with,omitempty"`
-	DigestEndsWith      *string               `json:"digest_ends_with,omitempty"`
-	DigestNotEndsWith   *string               `json:"digest_not_ends_with,omitempty"`
-	Repo                *RepositoryWhereInput `json:"repo,omitempty"`
-	And                 []BlobWhereInput      `json:"AND,omitempty"`
-	Or                  []BlobWhereInput      `json:"OR,omitempty"`
-	Not                 []BlobWhereInput      `json:"NOT,omitempty"`
+type TagUpdateWithWhereUniqueWithoutImageInput struct {
+	Where TagWhereUniqueInput            `json:"where"`
+	Data  TagUpdateWithoutImageDataInput `json:"data"`
 }
 
 type ImageWhereInput struct {
@@ -1412,59 +1241,272 @@ type ImageWhereInput struct {
 	Not                       []ImageWhereInput     `json:"NOT,omitempty"`
 }
 
-type TagWhereInput struct {
-	ID               *string          `json:"id,omitempty"`
-	IDNot            *string          `json:"id_not,omitempty"`
-	IDIn             []string         `json:"id_in,omitempty"`
-	IDNotIn          []string         `json:"id_not_in,omitempty"`
-	IDLt             *string          `json:"id_lt,omitempty"`
-	IDLte            *string          `json:"id_lte,omitempty"`
-	IDGt             *string          `json:"id_gt,omitempty"`
-	IDGte            *string          `json:"id_gte,omitempty"`
-	IDContains       *string          `json:"id_contains,omitempty"`
-	IDNotContains    *string          `json:"id_not_contains,omitempty"`
-	IDStartsWith     *string          `json:"id_starts_with,omitempty"`
-	IDNotStartsWith  *string          `json:"id_not_starts_with,omitempty"`
-	IDEndsWith       *string          `json:"id_ends_with,omitempty"`
-	IDNotEndsWith    *string          `json:"id_not_ends_with,omitempty"`
-	CreatedAt        *string          `json:"createdAt,omitempty"`
-	CreatedAtNot     *string          `json:"createdAt_not,omitempty"`
-	CreatedAtIn      []string         `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn   []string         `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt      *string          `json:"createdAt_lt,omitempty"`
-	CreatedAtLte     *string          `json:"createdAt_lte,omitempty"`
-	CreatedAtGt      *string          `json:"createdAt_gt,omitempty"`
-	CreatedAtGte     *string          `json:"createdAt_gte,omitempty"`
-	UpdatedAt        *string          `json:"updatedAt,omitempty"`
-	UpdatedAtNot     *string          `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn      []string         `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn   []string         `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt      *string          `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte     *string          `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt      *string          `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte     *string          `json:"updatedAt_gte,omitempty"`
-	Ref              *string          `json:"ref,omitempty"`
-	RefNot           *string          `json:"ref_not,omitempty"`
-	RefIn            []string         `json:"ref_in,omitempty"`
-	RefNotIn         []string         `json:"ref_not_in,omitempty"`
-	RefLt            *string          `json:"ref_lt,omitempty"`
-	RefLte           *string          `json:"ref_lte,omitempty"`
-	RefGt            *string          `json:"ref_gt,omitempty"`
-	RefGte           *string          `json:"ref_gte,omitempty"`
-	RefContains      *string          `json:"ref_contains,omitempty"`
-	RefNotContains   *string          `json:"ref_not_contains,omitempty"`
-	RefStartsWith    *string          `json:"ref_starts_with,omitempty"`
-	RefNotStartsWith *string          `json:"ref_not_starts_with,omitempty"`
-	RefEndsWith      *string          `json:"ref_ends_with,omitempty"`
-	RefNotEndsWith   *string          `json:"ref_not_ends_with,omitempty"`
-	Image            *ImageWhereInput `json:"image,omitempty"`
-	And              []TagWhereInput  `json:"AND,omitempty"`
-	Or               []TagWhereInput  `json:"OR,omitempty"`
-	Not              []TagWhereInput  `json:"NOT,omitempty"`
+type TagUpdateWithoutImageDataInput struct {
+	Ref *string `json:"ref,omitempty"`
 }
 
-type ChunkWhereUniqueInput struct {
-	ID *string `json:"id,omitempty"`
+type BlobWhereInput struct {
+	ID                  *string               `json:"id,omitempty"`
+	IDNot               *string               `json:"id_not,omitempty"`
+	IDIn                []string              `json:"id_in,omitempty"`
+	IDNotIn             []string              `json:"id_not_in,omitempty"`
+	IDLt                *string               `json:"id_lt,omitempty"`
+	IDLte               *string               `json:"id_lte,omitempty"`
+	IDGt                *string               `json:"id_gt,omitempty"`
+	IDGte               *string               `json:"id_gte,omitempty"`
+	IDContains          *string               `json:"id_contains,omitempty"`
+	IDNotContains       *string               `json:"id_not_contains,omitempty"`
+	IDStartsWith        *string               `json:"id_starts_with,omitempty"`
+	IDNotStartsWith     *string               `json:"id_not_starts_with,omitempty"`
+	IDEndsWith          *string               `json:"id_ends_with,omitempty"`
+	IDNotEndsWith       *string               `json:"id_not_ends_with,omitempty"`
+	CreatedAt           *string               `json:"createdAt,omitempty"`
+	CreatedAtNot        *string               `json:"createdAt_not,omitempty"`
+	CreatedAtIn         []string              `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn      []string              `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt         *string               `json:"createdAt_lt,omitempty"`
+	CreatedAtLte        *string               `json:"createdAt_lte,omitempty"`
+	CreatedAtGt         *string               `json:"createdAt_gt,omitempty"`
+	CreatedAtGte        *string               `json:"createdAt_gte,omitempty"`
+	UpdatedAt           *string               `json:"updatedAt,omitempty"`
+	UpdatedAtNot        *string               `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn         []string              `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn      []string              `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt         *string               `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte        *string               `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt         *string               `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte        *string               `json:"updatedAt_gte,omitempty"`
+	Digest              *string               `json:"digest,omitempty"`
+	DigestNot           *string               `json:"digest_not,omitempty"`
+	DigestIn            []string              `json:"digest_in,omitempty"`
+	DigestNotIn         []string              `json:"digest_not_in,omitempty"`
+	DigestLt            *string               `json:"digest_lt,omitempty"`
+	DigestLte           *string               `json:"digest_lte,omitempty"`
+	DigestGt            *string               `json:"digest_gt,omitempty"`
+	DigestGte           *string               `json:"digest_gte,omitempty"`
+	DigestContains      *string               `json:"digest_contains,omitempty"`
+	DigestNotContains   *string               `json:"digest_not_contains,omitempty"`
+	DigestStartsWith    *string               `json:"digest_starts_with,omitempty"`
+	DigestNotStartsWith *string               `json:"digest_not_starts_with,omitempty"`
+	DigestEndsWith      *string               `json:"digest_ends_with,omitempty"`
+	DigestNotEndsWith   *string               `json:"digest_not_ends_with,omitempty"`
+	Repo                *RepositoryWhereInput `json:"repo,omitempty"`
+	And                 []BlobWhereInput      `json:"AND,omitempty"`
+	Or                  []BlobWhereInput      `json:"OR,omitempty"`
+	Not                 []BlobWhereInput      `json:"NOT,omitempty"`
+}
+
+type TagUpsertWithWhereUniqueWithoutImageInput struct {
+	Where  TagWhereUniqueInput            `json:"where"`
+	Update TagUpdateWithoutImageDataInput `json:"update"`
+	Create TagCreateWithoutImageInput     `json:"create"`
+}
+
+type OrganizationWhereInput struct {
+	ID                *string                  `json:"id,omitempty"`
+	IDNot             *string                  `json:"id_not,omitempty"`
+	IDIn              []string                 `json:"id_in,omitempty"`
+	IDNotIn           []string                 `json:"id_not_in,omitempty"`
+	IDLt              *string                  `json:"id_lt,omitempty"`
+	IDLte             *string                  `json:"id_lte,omitempty"`
+	IDGt              *string                  `json:"id_gt,omitempty"`
+	IDGte             *string                  `json:"id_gte,omitempty"`
+	IDContains        *string                  `json:"id_contains,omitempty"`
+	IDNotContains     *string                  `json:"id_not_contains,omitempty"`
+	IDStartsWith      *string                  `json:"id_starts_with,omitempty"`
+	IDNotStartsWith   *string                  `json:"id_not_starts_with,omitempty"`
+	IDEndsWith        *string                  `json:"id_ends_with,omitempty"`
+	IDNotEndsWith     *string                  `json:"id_not_ends_with,omitempty"`
+	CreatedAt         *string                  `json:"createdAt,omitempty"`
+	CreatedAtNot      *string                  `json:"createdAt_not,omitempty"`
+	CreatedAtIn       []string                 `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn    []string                 `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt       *string                  `json:"createdAt_lt,omitempty"`
+	CreatedAtLte      *string                  `json:"createdAt_lte,omitempty"`
+	CreatedAtGt       *string                  `json:"createdAt_gt,omitempty"`
+	CreatedAtGte      *string                  `json:"createdAt_gte,omitempty"`
+	UpdatedAt         *string                  `json:"updatedAt,omitempty"`
+	UpdatedAtNot      *string                  `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn       []string                 `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn    []string                 `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt       *string                  `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte      *string                  `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt       *string                  `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte      *string                  `json:"updatedAt_gte,omitempty"`
+	Name              *string                  `json:"name,omitempty"`
+	NameNot           *string                  `json:"name_not,omitempty"`
+	NameIn            []string                 `json:"name_in,omitempty"`
+	NameNotIn         []string                 `json:"name_not_in,omitempty"`
+	NameLt            *string                  `json:"name_lt,omitempty"`
+	NameLte           *string                  `json:"name_lte,omitempty"`
+	NameGt            *string                  `json:"name_gt,omitempty"`
+	NameGte           *string                  `json:"name_gte,omitempty"`
+	NameContains      *string                  `json:"name_contains,omitempty"`
+	NameNotContains   *string                  `json:"name_not_contains,omitempty"`
+	NameStartsWith    *string                  `json:"name_starts_with,omitempty"`
+	NameNotStartsWith *string                  `json:"name_not_starts_with,omitempty"`
+	NameEndsWith      *string                  `json:"name_ends_with,omitempty"`
+	NameNotEndsWith   *string                  `json:"name_not_ends_with,omitempty"`
+	ReposEvery        *RepositoryWhereInput    `json:"repos_every,omitempty"`
+	ReposSome         *RepositoryWhereInput    `json:"repos_some,omitempty"`
+	ReposNone         *RepositoryWhereInput    `json:"repos_none,omitempty"`
+	BlobsEvery        *BlobWhereInput          `json:"blobs_every,omitempty"`
+	BlobsSome         *BlobWhereInput          `json:"blobs_some,omitempty"`
+	BlobsNone         *BlobWhereInput          `json:"blobs_none,omitempty"`
+	ImagesEvery       *ImageWhereInput         `json:"images_every,omitempty"`
+	ImagesSome        *ImageWhereInput         `json:"images_some,omitempty"`
+	ImagesNone        *ImageWhereInput         `json:"images_none,omitempty"`
+	And               []OrganizationWhereInput `json:"AND,omitempty"`
+	Or                []OrganizationWhereInput `json:"OR,omitempty"`
+	Not               []OrganizationWhereInput `json:"NOT,omitempty"`
+}
+
+type RepositoryUpdateWithoutBlobsDataInput struct {
+	Name     *string                                         `json:"name,omitempty"`
+	FullName *string                                         `json:"fullName,omitempty"`
+	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
+	Images   *ImageUpdateManyWithoutRepoInput                `json:"images,omitempty"`
+}
+
+type RepositoryUpsertWithWhereUniqueWithoutOrgInput struct {
+	Where  RepositoryWhereUniqueInput          `json:"where"`
+	Update RepositoryUpdateWithoutOrgDataInput `json:"update"`
+	Create RepositoryCreateWithoutOrgInput     `json:"create"`
+}
+
+type OrganizationUpdateOneRequiredWithoutReposInput struct {
+	Create  *OrganizationCreateWithoutReposInput     `json:"create,omitempty"`
+	Update  *OrganizationUpdateWithoutReposDataInput `json:"update,omitempty"`
+	Upsert  *OrganizationUpsertWithoutReposInput     `json:"upsert,omitempty"`
+	Connect *OrganizationWhereUniqueInput            `json:"connect,omitempty"`
+}
+
+type TagScalarWhereInput struct {
+	ID               *string               `json:"id,omitempty"`
+	IDNot            *string               `json:"id_not,omitempty"`
+	IDIn             []string              `json:"id_in,omitempty"`
+	IDNotIn          []string              `json:"id_not_in,omitempty"`
+	IDLt             *string               `json:"id_lt,omitempty"`
+	IDLte            *string               `json:"id_lte,omitempty"`
+	IDGt             *string               `json:"id_gt,omitempty"`
+	IDGte            *string               `json:"id_gte,omitempty"`
+	IDContains       *string               `json:"id_contains,omitempty"`
+	IDNotContains    *string               `json:"id_not_contains,omitempty"`
+	IDStartsWith     *string               `json:"id_starts_with,omitempty"`
+	IDNotStartsWith  *string               `json:"id_not_starts_with,omitempty"`
+	IDEndsWith       *string               `json:"id_ends_with,omitempty"`
+	IDNotEndsWith    *string               `json:"id_not_ends_with,omitempty"`
+	CreatedAt        *string               `json:"createdAt,omitempty"`
+	CreatedAtNot     *string               `json:"createdAt_not,omitempty"`
+	CreatedAtIn      []string              `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn   []string              `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt      *string               `json:"createdAt_lt,omitempty"`
+	CreatedAtLte     *string               `json:"createdAt_lte,omitempty"`
+	CreatedAtGt      *string               `json:"createdAt_gt,omitempty"`
+	CreatedAtGte     *string               `json:"createdAt_gte,omitempty"`
+	UpdatedAt        *string               `json:"updatedAt,omitempty"`
+	UpdatedAtNot     *string               `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn      []string              `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn   []string              `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt      *string               `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte     *string               `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt      *string               `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte     *string               `json:"updatedAt_gte,omitempty"`
+	Ref              *string               `json:"ref,omitempty"`
+	RefNot           *string               `json:"ref_not,omitempty"`
+	RefIn            []string              `json:"ref_in,omitempty"`
+	RefNotIn         []string              `json:"ref_not_in,omitempty"`
+	RefLt            *string               `json:"ref_lt,omitempty"`
+	RefLte           *string               `json:"ref_lte,omitempty"`
+	RefGt            *string               `json:"ref_gt,omitempty"`
+	RefGte           *string               `json:"ref_gte,omitempty"`
+	RefContains      *string               `json:"ref_contains,omitempty"`
+	RefNotContains   *string               `json:"ref_not_contains,omitempty"`
+	RefStartsWith    *string               `json:"ref_starts_with,omitempty"`
+	RefNotStartsWith *string               `json:"ref_not_starts_with,omitempty"`
+	RefEndsWith      *string               `json:"ref_ends_with,omitempty"`
+	RefNotEndsWith   *string               `json:"ref_not_ends_with,omitempty"`
+	And              []TagScalarWhereInput `json:"AND,omitempty"`
+	Or               []TagScalarWhereInput `json:"OR,omitempty"`
+	Not              []TagScalarWhereInput `json:"NOT,omitempty"`
+}
+
+type OrganizationUpdateWithoutReposDataInput struct {
+	Name   *string               `json:"name,omitempty"`
+	Blobs  *BlobUpdateManyInput  `json:"blobs,omitempty"`
+	Images *ImageUpdateManyInput `json:"images,omitempty"`
+}
+
+type TagSubscriptionWhereInput struct {
+	MutationIn                 []MutationType              `json:"mutation_in,omitempty"`
+	UpdatedFieldsContains      *string                     `json:"updatedFields_contains,omitempty"`
+	UpdatedFieldsContainsEvery []string                    `json:"updatedFields_contains_every,omitempty"`
+	UpdatedFieldsContainsSome  []string                    `json:"updatedFields_contains_some,omitempty"`
+	Node                       *TagWhereInput              `json:"node,omitempty"`
+	And                        []TagSubscriptionWhereInput `json:"AND,omitempty"`
+	Or                         []TagSubscriptionWhereInput `json:"OR,omitempty"`
+	Not                        []TagSubscriptionWhereInput `json:"NOT,omitempty"`
+}
+
+type BlobUpdateManyInput struct {
+	Create     []BlobCreateInput                      `json:"create,omitempty"`
+	Update     []BlobUpdateWithWhereUniqueNestedInput `json:"update,omitempty"`
+	Upsert     []BlobUpsertWithWhereUniqueNestedInput `json:"upsert,omitempty"`
+	Delete     []BlobWhereUniqueInput                 `json:"delete,omitempty"`
+	Connect    []BlobWhereUniqueInput                 `json:"connect,omitempty"`
+	Set        []BlobWhereUniqueInput                 `json:"set,omitempty"`
+	Disconnect []BlobWhereUniqueInput                 `json:"disconnect,omitempty"`
+	DeleteMany []BlobScalarWhereInput                 `json:"deleteMany,omitempty"`
+	UpdateMany []BlobUpdateManyWithWhereNestedInput   `json:"updateMany,omitempty"`
+}
+
+type OrganizationSubscriptionWhereInput struct {
+	MutationIn                 []MutationType                       `json:"mutation_in,omitempty"`
+	UpdatedFieldsContains      *string                              `json:"updatedFields_contains,omitempty"`
+	UpdatedFieldsContainsEvery []string                             `json:"updatedFields_contains_every,omitempty"`
+	UpdatedFieldsContainsSome  []string                             `json:"updatedFields_contains_some,omitempty"`
+	Node                       *OrganizationWhereInput              `json:"node,omitempty"`
+	And                        []OrganizationSubscriptionWhereInput `json:"AND,omitempty"`
+	Or                         []OrganizationSubscriptionWhereInput `json:"OR,omitempty"`
+	Not                        []OrganizationSubscriptionWhereInput `json:"NOT,omitempty"`
+}
+
+type BlobUpdateWithWhereUniqueNestedInput struct {
+	Where BlobWhereUniqueInput `json:"where"`
+	Data  BlobUpdateDataInput  `json:"data"`
+}
+
+type ChunkSubscriptionWhereInput struct {
+	MutationIn                 []MutationType                `json:"mutation_in,omitempty"`
+	UpdatedFieldsContains      *string                       `json:"updatedFields_contains,omitempty"`
+	UpdatedFieldsContainsEvery []string                      `json:"updatedFields_contains_every,omitempty"`
+	UpdatedFieldsContainsSome  []string                      `json:"updatedFields_contains_some,omitempty"`
+	Node                       *ChunkWhereInput              `json:"node,omitempty"`
+	And                        []ChunkSubscriptionWhereInput `json:"AND,omitempty"`
+	Or                         []ChunkSubscriptionWhereInput `json:"OR,omitempty"`
+	Not                        []ChunkSubscriptionWhereInput `json:"NOT,omitempty"`
+}
+
+type BlobUpdateDataInput struct {
+	Digest *string                                       `json:"digest,omitempty"`
+	Repo   *RepositoryUpdateOneRequiredWithoutBlobsInput `json:"repo,omitempty"`
+}
+
+type BlobSubscriptionWhereInput struct {
+	MutationIn                 []MutationType               `json:"mutation_in,omitempty"`
+	UpdatedFieldsContains      *string                      `json:"updatedFields_contains,omitempty"`
+	UpdatedFieldsContainsEvery []string                     `json:"updatedFields_contains_every,omitempty"`
+	UpdatedFieldsContainsSome  []string                     `json:"updatedFields_contains_some,omitempty"`
+	Node                       *BlobWhereInput              `json:"node,omitempty"`
+	And                        []BlobSubscriptionWhereInput `json:"AND,omitempty"`
+	Or                         []BlobSubscriptionWhereInput `json:"OR,omitempty"`
+	Not                        []BlobSubscriptionWhereInput `json:"NOT,omitempty"`
+}
+
+type BlobUpsertWithWhereUniqueNestedInput struct {
+	Where  BlobWhereUniqueInput `json:"where"`
+	Update BlobUpdateDataInput  `json:"update"`
+	Create BlobCreateInput      `json:"create"`
 }
 
 type ChunkWhereInput struct {
@@ -1520,240 +1562,6 @@ type ChunkWhereInput struct {
 	Not             []ChunkWhereInput `json:"NOT,omitempty"`
 }
 
-type UploadWhereInput struct {
-	ID                *string            `json:"id,omitempty"`
-	IDNot             *string            `json:"id_not,omitempty"`
-	IDIn              []string           `json:"id_in,omitempty"`
-	IDNotIn           []string           `json:"id_not_in,omitempty"`
-	IDLt              *string            `json:"id_lt,omitempty"`
-	IDLte             *string            `json:"id_lte,omitempty"`
-	IDGt              *string            `json:"id_gt,omitempty"`
-	IDGte             *string            `json:"id_gte,omitempty"`
-	IDContains        *string            `json:"id_contains,omitempty"`
-	IDNotContains     *string            `json:"id_not_contains,omitempty"`
-	IDStartsWith      *string            `json:"id_starts_with,omitempty"`
-	IDNotStartsWith   *string            `json:"id_not_starts_with,omitempty"`
-	IDEndsWith        *string            `json:"id_ends_with,omitempty"`
-	IDNotEndsWith     *string            `json:"id_not_ends_with,omitempty"`
-	CreatedAt         *string            `json:"createdAt,omitempty"`
-	CreatedAtNot      *string            `json:"createdAt_not,omitempty"`
-	CreatedAtIn       []string           `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn    []string           `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt       *string            `json:"createdAt_lt,omitempty"`
-	CreatedAtLte      *string            `json:"createdAt_lte,omitempty"`
-	CreatedAtGt       *string            `json:"createdAt_gt,omitempty"`
-	CreatedAtGte      *string            `json:"createdAt_gte,omitempty"`
-	UpdatedAt         *string            `json:"updatedAt,omitempty"`
-	UpdatedAtNot      *string            `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn       []string           `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn    []string           `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt       *string            `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte      *string            `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt       *string            `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte      *string            `json:"updatedAt_gte,omitempty"`
-	Uuid              *string            `json:"uuid,omitempty"`
-	UuidNot           *string            `json:"uuid_not,omitempty"`
-	UuidIn            []string           `json:"uuid_in,omitempty"`
-	UuidNotIn         []string           `json:"uuid_not_in,omitempty"`
-	UuidLt            *string            `json:"uuid_lt,omitempty"`
-	UuidLte           *string            `json:"uuid_lte,omitempty"`
-	UuidGt            *string            `json:"uuid_gt,omitempty"`
-	UuidGte           *string            `json:"uuid_gte,omitempty"`
-	UuidContains      *string            `json:"uuid_contains,omitempty"`
-	UuidNotContains   *string            `json:"uuid_not_contains,omitempty"`
-	UuidStartsWith    *string            `json:"uuid_starts_with,omitempty"`
-	UuidNotStartsWith *string            `json:"uuid_not_starts_with,omitempty"`
-	UuidEndsWith      *string            `json:"uuid_ends_with,omitempty"`
-	UuidNotEndsWith   *string            `json:"uuid_not_ends_with,omitempty"`
-	Done              *bool              `json:"done,omitempty"`
-	DoneNot           *bool              `json:"done_not,omitempty"`
-	ChunksEvery       *ChunkWhereInput   `json:"chunks_every,omitempty"`
-	ChunksSome        *ChunkWhereInput   `json:"chunks_some,omitempty"`
-	ChunksNone        *ChunkWhereInput   `json:"chunks_none,omitempty"`
-	And               []UploadWhereInput `json:"AND,omitempty"`
-	Or                []UploadWhereInput `json:"OR,omitempty"`
-	Not               []UploadWhereInput `json:"NOT,omitempty"`
-}
-
-type ImageWhereUniqueInput struct {
-	ID     *string `json:"id,omitempty"`
-	Digest *string `json:"digest,omitempty"`
-}
-
-type OrganizationWhereUniqueInput struct {
-	ID   *string `json:"id,omitempty"`
-	Name *string `json:"name,omitempty"`
-}
-
-type RepositoryWhereUniqueInput struct {
-	ID *string `json:"id,omitempty"`
-}
-
-type TagWhereUniqueInput struct {
-	ID *string `json:"id,omitempty"`
-}
-
-type UploadWhereUniqueInput struct {
-	ID   *string `json:"id,omitempty"`
-	Uuid *string `json:"uuid,omitempty"`
-}
-
-type BlobCreateInput struct {
-	ID     *string                              `json:"id,omitempty"`
-	Digest string                               `json:"digest"`
-	Repo   RepositoryCreateOneWithoutBlobsInput `json:"repo"`
-}
-
-type RepositoryCreateOneWithoutBlobsInput struct {
-	Create  *RepositoryCreateWithoutBlobsInput `json:"create,omitempty"`
-	Connect *RepositoryWhereUniqueInput        `json:"connect,omitempty"`
-}
-
-type RepositoryCreateWithoutBlobsInput struct {
-	ID       *string                                `json:"id,omitempty"`
-	Name     string                                 `json:"name"`
-	FullName string                                 `json:"fullName"`
-	Org      OrganizationCreateOneWithoutReposInput `json:"org"`
-	Images   *ImageCreateManyWithoutRepoInput       `json:"images,omitempty"`
-}
-
-type OrganizationCreateOneWithoutReposInput struct {
-	Create  *OrganizationCreateWithoutReposInput `json:"create,omitempty"`
-	Connect *OrganizationWhereUniqueInput        `json:"connect,omitempty"`
-}
-
-type OrganizationCreateWithoutReposInput struct {
-	ID     *string               `json:"id,omitempty"`
-	Name   string                `json:"name"`
-	Blobs  *BlobCreateManyInput  `json:"blobs,omitempty"`
-	Images *ImageCreateManyInput `json:"images,omitempty"`
-}
-
-type BlobCreateManyInput struct {
-	Create  []BlobCreateInput      `json:"create,omitempty"`
-	Connect []BlobWhereUniqueInput `json:"connect,omitempty"`
-}
-
-type ImageCreateManyInput struct {
-	Create  []ImageCreateInput      `json:"create,omitempty"`
-	Connect []ImageWhereUniqueInput `json:"connect,omitempty"`
-}
-
-type ImageCreateInput struct {
-	ID           *string                               `json:"id,omitempty"`
-	Repo         RepositoryCreateOneWithoutImagesInput `json:"repo"`
-	Digest       string                                `json:"digest"`
-	Manifest     string                                `json:"manifest"`
-	ManifestType string                                `json:"manifestType"`
-	Tags         *TagCreateManyWithoutImageInput       `json:"tags,omitempty"`
-}
-
-type RepositoryCreateOneWithoutImagesInput struct {
-	Create  *RepositoryCreateWithoutImagesInput `json:"create,omitempty"`
-	Connect *RepositoryWhereUniqueInput         `json:"connect,omitempty"`
-}
-
-type RepositoryCreateWithoutImagesInput struct {
-	ID       *string                                `json:"id,omitempty"`
-	Name     string                                 `json:"name"`
-	FullName string                                 `json:"fullName"`
-	Org      OrganizationCreateOneWithoutReposInput `json:"org"`
-	Blobs    *BlobCreateManyWithoutRepoInput        `json:"blobs,omitempty"`
-}
-
-type BlobCreateManyWithoutRepoInput struct {
-	Create  []BlobCreateWithoutRepoInput `json:"create,omitempty"`
-	Connect []BlobWhereUniqueInput       `json:"connect,omitempty"`
-}
-
-type BlobCreateWithoutRepoInput struct {
-	ID     *string `json:"id,omitempty"`
-	Digest string  `json:"digest"`
-}
-
-type TagCreateManyWithoutImageInput struct {
-	Create  []TagCreateWithoutImageInput `json:"create,omitempty"`
-	Connect []TagWhereUniqueInput        `json:"connect,omitempty"`
-}
-
-type TagCreateWithoutImageInput struct {
-	ID  *string `json:"id,omitempty"`
-	Ref string  `json:"ref"`
-}
-
-type ImageCreateManyWithoutRepoInput struct {
-	Create  []ImageCreateWithoutRepoInput `json:"create,omitempty"`
-	Connect []ImageWhereUniqueInput       `json:"connect,omitempty"`
-}
-
-type ImageCreateWithoutRepoInput struct {
-	ID           *string                         `json:"id,omitempty"`
-	Digest       string                          `json:"digest"`
-	Manifest     string                          `json:"manifest"`
-	ManifestType string                          `json:"manifestType"`
-	Tags         *TagCreateManyWithoutImageInput `json:"tags,omitempty"`
-}
-
-type BlobUpdateInput struct {
-	Digest *string                                       `json:"digest,omitempty"`
-	Repo   *RepositoryUpdateOneRequiredWithoutBlobsInput `json:"repo,omitempty"`
-}
-
-type RepositoryUpdateOneRequiredWithoutBlobsInput struct {
-	Create  *RepositoryCreateWithoutBlobsInput     `json:"create,omitempty"`
-	Update  *RepositoryUpdateWithoutBlobsDataInput `json:"update,omitempty"`
-	Upsert  *RepositoryUpsertWithoutBlobsInput     `json:"upsert,omitempty"`
-	Connect *RepositoryWhereUniqueInput            `json:"connect,omitempty"`
-}
-
-type RepositoryUpdateWithoutBlobsDataInput struct {
-	Name     *string                                         `json:"name,omitempty"`
-	FullName *string                                         `json:"fullName,omitempty"`
-	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
-	Images   *ImageUpdateManyWithoutRepoInput                `json:"images,omitempty"`
-}
-
-type OrganizationUpdateOneRequiredWithoutReposInput struct {
-	Create  *OrganizationCreateWithoutReposInput     `json:"create,omitempty"`
-	Update  *OrganizationUpdateWithoutReposDataInput `json:"update,omitempty"`
-	Upsert  *OrganizationUpsertWithoutReposInput     `json:"upsert,omitempty"`
-	Connect *OrganizationWhereUniqueInput            `json:"connect,omitempty"`
-}
-
-type OrganizationUpdateWithoutReposDataInput struct {
-	Name   *string               `json:"name,omitempty"`
-	Blobs  *BlobUpdateManyInput  `json:"blobs,omitempty"`
-	Images *ImageUpdateManyInput `json:"images,omitempty"`
-}
-
-type BlobUpdateManyInput struct {
-	Create     []BlobCreateInput                      `json:"create,omitempty"`
-	Update     []BlobUpdateWithWhereUniqueNestedInput `json:"update,omitempty"`
-	Upsert     []BlobUpsertWithWhereUniqueNestedInput `json:"upsert,omitempty"`
-	Delete     []BlobWhereUniqueInput                 `json:"delete,omitempty"`
-	Connect    []BlobWhereUniqueInput                 `json:"connect,omitempty"`
-	Set        []BlobWhereUniqueInput                 `json:"set,omitempty"`
-	Disconnect []BlobWhereUniqueInput                 `json:"disconnect,omitempty"`
-	DeleteMany []BlobScalarWhereInput                 `json:"deleteMany,omitempty"`
-	UpdateMany []BlobUpdateManyWithWhereNestedInput   `json:"updateMany,omitempty"`
-}
-
-type BlobUpdateWithWhereUniqueNestedInput struct {
-	Where BlobWhereUniqueInput `json:"where"`
-	Data  BlobUpdateDataInput  `json:"data"`
-}
-
-type BlobUpdateDataInput struct {
-	Digest *string                                       `json:"digest,omitempty"`
-	Repo   *RepositoryUpdateOneRequiredWithoutBlobsInput `json:"repo,omitempty"`
-}
-
-type BlobUpsertWithWhereUniqueNestedInput struct {
-	Where  BlobWhereUniqueInput `json:"where"`
-	Update BlobUpdateDataInput  `json:"update"`
-	Create BlobCreateInput      `json:"create"`
-}
-
 type BlobScalarWhereInput struct {
 	ID                  *string                `json:"id,omitempty"`
 	IDNot               *string                `json:"id_not,omitempty"`
@@ -1804,12 +1612,74 @@ type BlobScalarWhereInput struct {
 	Not                 []BlobScalarWhereInput `json:"NOT,omitempty"`
 }
 
+type ChunkUpdateManyDataInput struct {
+	RangeStart *int32 `json:"rangeStart,omitempty"`
+	RangeEnd   *int32 `json:"rangeEnd,omitempty"`
+}
+
 type BlobUpdateManyWithWhereNestedInput struct {
 	Where BlobScalarWhereInput    `json:"where"`
 	Data  BlobUpdateManyDataInput `json:"data"`
 }
 
+type ChunkScalarWhereInput struct {
+	ID              *string                 `json:"id,omitempty"`
+	IDNot           *string                 `json:"id_not,omitempty"`
+	IDIn            []string                `json:"id_in,omitempty"`
+	IDNotIn         []string                `json:"id_not_in,omitempty"`
+	IDLt            *string                 `json:"id_lt,omitempty"`
+	IDLte           *string                 `json:"id_lte,omitempty"`
+	IDGt            *string                 `json:"id_gt,omitempty"`
+	IDGte           *string                 `json:"id_gte,omitempty"`
+	IDContains      *string                 `json:"id_contains,omitempty"`
+	IDNotContains   *string                 `json:"id_not_contains,omitempty"`
+	IDStartsWith    *string                 `json:"id_starts_with,omitempty"`
+	IDNotStartsWith *string                 `json:"id_not_starts_with,omitempty"`
+	IDEndsWith      *string                 `json:"id_ends_with,omitempty"`
+	IDNotEndsWith   *string                 `json:"id_not_ends_with,omitempty"`
+	CreatedAt       *string                 `json:"createdAt,omitempty"`
+	CreatedAtNot    *string                 `json:"createdAt_not,omitempty"`
+	CreatedAtIn     []string                `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn  []string                `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt     *string                 `json:"createdAt_lt,omitempty"`
+	CreatedAtLte    *string                 `json:"createdAt_lte,omitempty"`
+	CreatedAtGt     *string                 `json:"createdAt_gt,omitempty"`
+	CreatedAtGte    *string                 `json:"createdAt_gte,omitempty"`
+	UpdatedAt       *string                 `json:"updatedAt,omitempty"`
+	UpdatedAtNot    *string                 `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn     []string                `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn  []string                `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt     *string                 `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte    *string                 `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt     *string                 `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte    *string                 `json:"updatedAt_gte,omitempty"`
+	RangeStart      *int32                  `json:"rangeStart,omitempty"`
+	RangeStartNot   *int32                  `json:"rangeStart_not,omitempty"`
+	RangeStartIn    []int32                 `json:"rangeStart_in,omitempty"`
+	RangeStartNotIn []int32                 `json:"rangeStart_not_in,omitempty"`
+	RangeStartLt    *int32                  `json:"rangeStart_lt,omitempty"`
+	RangeStartLte   *int32                  `json:"rangeStart_lte,omitempty"`
+	RangeStartGt    *int32                  `json:"rangeStart_gt,omitempty"`
+	RangeStartGte   *int32                  `json:"rangeStart_gte,omitempty"`
+	RangeEnd        *int32                  `json:"rangeEnd,omitempty"`
+	RangeEndNot     *int32                  `json:"rangeEnd_not,omitempty"`
+	RangeEndIn      []int32                 `json:"rangeEnd_in,omitempty"`
+	RangeEndNotIn   []int32                 `json:"rangeEnd_not_in,omitempty"`
+	RangeEndLt      *int32                  `json:"rangeEnd_lt,omitempty"`
+	RangeEndLte     *int32                  `json:"rangeEnd_lte,omitempty"`
+	RangeEndGt      *int32                  `json:"rangeEnd_gt,omitempty"`
+	RangeEndGte     *int32                  `json:"rangeEnd_gte,omitempty"`
+	And             []ChunkScalarWhereInput `json:"AND,omitempty"`
+	Or              []ChunkScalarWhereInput `json:"OR,omitempty"`
+	Not             []ChunkScalarWhereInput `json:"NOT,omitempty"`
+}
+
 type BlobUpdateManyDataInput struct {
+	Digest *string `json:"digest,omitempty"`
+}
+
+type ImageWhereUniqueInput struct {
+	ID     *string `json:"id,omitempty"`
 	Digest *string `json:"digest,omitempty"`
 }
 
@@ -1825,9 +1695,19 @@ type ImageUpdateManyInput struct {
 	UpdateMany []ImageUpdateManyWithWhereNestedInput   `json:"updateMany,omitempty"`
 }
 
+type ChunkUpdateWithWhereUniqueWithoutUploadInput struct {
+	Where ChunkWhereUniqueInput             `json:"where"`
+	Data  ChunkUpdateWithoutUploadDataInput `json:"data"`
+}
+
 type ImageUpdateWithWhereUniqueNestedInput struct {
 	Where ImageWhereUniqueInput `json:"where"`
 	Data  ImageUpdateDataInput  `json:"data"`
+}
+
+type OrganizationWhereUniqueInput struct {
+	ID   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
 }
 
 type ImageUpdateDataInput struct {
@@ -1838,6 +1718,12 @@ type ImageUpdateDataInput struct {
 	Tags         *TagUpdateManyWithoutImageInput                `json:"tags,omitempty"`
 }
 
+type ChunkCreateWithoutUploadInput struct {
+	ID         *string `json:"id,omitempty"`
+	RangeStart int32   `json:"rangeStart"`
+	RangeEnd   int32   `json:"rangeEnd"`
+}
+
 type RepositoryUpdateOneRequiredWithoutImagesInput struct {
 	Create  *RepositoryCreateWithoutImagesInput     `json:"create,omitempty"`
 	Update  *RepositoryUpdateWithoutImagesDataInput `json:"update,omitempty"`
@@ -1845,11 +1731,22 @@ type RepositoryUpdateOneRequiredWithoutImagesInput struct {
 	Connect *RepositoryWhereUniqueInput             `json:"connect,omitempty"`
 }
 
+type UploadCreateInput struct {
+	ID     *string                            `json:"id,omitempty"`
+	Uuid   string                             `json:"uuid"`
+	Done   *bool                              `json:"done,omitempty"`
+	Chunks *ChunkCreateManyWithoutUploadInput `json:"chunks,omitempty"`
+}
+
 type RepositoryUpdateWithoutImagesDataInput struct {
 	Name     *string                                         `json:"name,omitempty"`
 	FullName *string                                         `json:"fullName,omitempty"`
 	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
 	Blobs    *BlobUpdateManyWithoutRepoInput                 `json:"blobs,omitempty"`
+}
+
+type TagUpdateManyMutationInput struct {
+	Ref *string `json:"ref,omitempty"`
 }
 
 type BlobUpdateManyWithoutRepoInput struct {
@@ -1864,13 +1761,39 @@ type BlobUpdateManyWithoutRepoInput struct {
 	UpdateMany []BlobUpdateManyWithWhereNestedInput        `json:"updateMany,omitempty"`
 }
 
-type BlobUpdateWithWhereUniqueWithoutRepoInput struct {
-	Where BlobWhereUniqueInput           `json:"where"`
-	Data  BlobUpdateWithoutRepoDataInput `json:"data"`
+type ImageUpdateWithoutTagsDataInput struct {
+	Repo         *RepositoryUpdateOneRequiredWithoutImagesInput `json:"repo,omitempty"`
+	Digest       *string                                        `json:"digest,omitempty"`
+	Manifest     *string                                        `json:"manifest,omitempty"`
+	ManifestType *string                                        `json:"manifestType,omitempty"`
+}
+
+type RepositoryCreateInput struct {
+	ID       *string                                `json:"id,omitempty"`
+	Name     string                                 `json:"name"`
+	FullName string                                 `json:"fullName"`
+	Org      OrganizationCreateOneWithoutReposInput `json:"org"`
+	Blobs    *BlobCreateManyWithoutRepoInput        `json:"blobs,omitempty"`
+	Images   *ImageCreateManyWithoutRepoInput       `json:"images,omitempty"`
+}
+
+type ImageUpdateOneRequiredWithoutTagsInput struct {
+	Create  *ImageCreateWithoutTagsInput     `json:"create,omitempty"`
+	Update  *ImageUpdateWithoutTagsDataInput `json:"update,omitempty"`
+	Upsert  *ImageUpsertWithoutTagsInput     `json:"upsert,omitempty"`
+	Connect *ImageWhereUniqueInput           `json:"connect,omitempty"`
 }
 
 type BlobUpdateWithoutRepoDataInput struct {
 	Digest *string `json:"digest,omitempty"`
+}
+
+type ImageCreateWithoutTagsInput struct {
+	ID           *string                               `json:"id,omitempty"`
+	Repo         RepositoryCreateOneWithoutImagesInput `json:"repo"`
+	Digest       string                                `json:"digest"`
+	Manifest     string                                `json:"manifest"`
+	ManifestType string                                `json:"manifestType"`
 }
 
 type BlobUpsertWithWhereUniqueWithoutRepoInput struct {
@@ -1879,9 +1802,19 @@ type BlobUpsertWithWhereUniqueWithoutRepoInput struct {
 	Create BlobCreateWithoutRepoInput     `json:"create"`
 }
 
+type ImageCreateOneWithoutTagsInput struct {
+	Create  *ImageCreateWithoutTagsInput `json:"create,omitempty"`
+	Connect *ImageWhereUniqueInput       `json:"connect,omitempty"`
+}
+
 type RepositoryUpsertWithoutImagesInput struct {
 	Update RepositoryUpdateWithoutImagesDataInput `json:"update"`
 	Create RepositoryCreateWithoutImagesInput     `json:"create"`
+}
+
+type RepositoryUpdateManyMutationInput struct {
+	Name     *string `json:"name,omitempty"`
+	FullName *string `json:"fullName,omitempty"`
 }
 
 type TagUpdateManyWithoutImageInput struct {
@@ -1896,69 +1829,167 @@ type TagUpdateManyWithoutImageInput struct {
 	UpdateMany []TagUpdateManyWithWhereNestedInput         `json:"updateMany,omitempty"`
 }
 
-type TagUpdateWithWhereUniqueWithoutImageInput struct {
-	Where TagWhereUniqueInput            `json:"where"`
-	Data  TagUpdateWithoutImageDataInput `json:"data"`
+type RepositoryCreateOneWithoutBlobsInput struct {
+	Create  *RepositoryCreateWithoutBlobsInput `json:"create,omitempty"`
+	Connect *RepositoryWhereUniqueInput        `json:"connect,omitempty"`
 }
 
-type TagUpdateWithoutImageDataInput struct {
-	Ref *string `json:"ref,omitempty"`
+type TagWhereInput struct {
+	ID               *string          `json:"id,omitempty"`
+	IDNot            *string          `json:"id_not,omitempty"`
+	IDIn             []string         `json:"id_in,omitempty"`
+	IDNotIn          []string         `json:"id_not_in,omitempty"`
+	IDLt             *string          `json:"id_lt,omitempty"`
+	IDLte            *string          `json:"id_lte,omitempty"`
+	IDGt             *string          `json:"id_gt,omitempty"`
+	IDGte            *string          `json:"id_gte,omitempty"`
+	IDContains       *string          `json:"id_contains,omitempty"`
+	IDNotContains    *string          `json:"id_not_contains,omitempty"`
+	IDStartsWith     *string          `json:"id_starts_with,omitempty"`
+	IDNotStartsWith  *string          `json:"id_not_starts_with,omitempty"`
+	IDEndsWith       *string          `json:"id_ends_with,omitempty"`
+	IDNotEndsWith    *string          `json:"id_not_ends_with,omitempty"`
+	CreatedAt        *string          `json:"createdAt,omitempty"`
+	CreatedAtNot     *string          `json:"createdAt_not,omitempty"`
+	CreatedAtIn      []string         `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn   []string         `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt      *string          `json:"createdAt_lt,omitempty"`
+	CreatedAtLte     *string          `json:"createdAt_lte,omitempty"`
+	CreatedAtGt      *string          `json:"createdAt_gt,omitempty"`
+	CreatedAtGte     *string          `json:"createdAt_gte,omitempty"`
+	UpdatedAt        *string          `json:"updatedAt,omitempty"`
+	UpdatedAtNot     *string          `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn      []string         `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn   []string         `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt      *string          `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte     *string          `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt      *string          `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte     *string          `json:"updatedAt_gte,omitempty"`
+	Ref              *string          `json:"ref,omitempty"`
+	RefNot           *string          `json:"ref_not,omitempty"`
+	RefIn            []string         `json:"ref_in,omitempty"`
+	RefNotIn         []string         `json:"ref_not_in,omitempty"`
+	RefLt            *string          `json:"ref_lt,omitempty"`
+	RefLte           *string          `json:"ref_lte,omitempty"`
+	RefGt            *string          `json:"ref_gt,omitempty"`
+	RefGte           *string          `json:"ref_gte,omitempty"`
+	RefContains      *string          `json:"ref_contains,omitempty"`
+	RefNotContains   *string          `json:"ref_not_contains,omitempty"`
+	RefStartsWith    *string          `json:"ref_starts_with,omitempty"`
+	RefNotStartsWith *string          `json:"ref_not_starts_with,omitempty"`
+	RefEndsWith      *string          `json:"ref_ends_with,omitempty"`
+	RefNotEndsWith   *string          `json:"ref_not_ends_with,omitempty"`
+	Image            *ImageWhereInput `json:"image,omitempty"`
+	And              []TagWhereInput  `json:"AND,omitempty"`
+	Or               []TagWhereInput  `json:"OR,omitempty"`
+	Not              []TagWhereInput  `json:"NOT,omitempty"`
 }
 
-type TagUpsertWithWhereUniqueWithoutImageInput struct {
-	Where  TagWhereUniqueInput            `json:"where"`
-	Update TagUpdateWithoutImageDataInput `json:"update"`
-	Create TagCreateWithoutImageInput     `json:"create"`
+type OrganizationCreateOneWithoutReposInput struct {
+	Create  *OrganizationCreateWithoutReposInput `json:"create,omitempty"`
+	Connect *OrganizationWhereUniqueInput        `json:"connect,omitempty"`
 }
 
-type TagScalarWhereInput struct {
-	ID               *string               `json:"id,omitempty"`
-	IDNot            *string               `json:"id_not,omitempty"`
-	IDIn             []string              `json:"id_in,omitempty"`
-	IDNotIn          []string              `json:"id_not_in,omitempty"`
-	IDLt             *string               `json:"id_lt,omitempty"`
-	IDLte            *string               `json:"id_lte,omitempty"`
-	IDGt             *string               `json:"id_gt,omitempty"`
-	IDGte            *string               `json:"id_gte,omitempty"`
-	IDContains       *string               `json:"id_contains,omitempty"`
-	IDNotContains    *string               `json:"id_not_contains,omitempty"`
-	IDStartsWith     *string               `json:"id_starts_with,omitempty"`
-	IDNotStartsWith  *string               `json:"id_not_starts_with,omitempty"`
-	IDEndsWith       *string               `json:"id_ends_with,omitempty"`
-	IDNotEndsWith    *string               `json:"id_not_ends_with,omitempty"`
-	CreatedAt        *string               `json:"createdAt,omitempty"`
-	CreatedAtNot     *string               `json:"createdAt_not,omitempty"`
-	CreatedAtIn      []string              `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn   []string              `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt      *string               `json:"createdAt_lt,omitempty"`
-	CreatedAtLte     *string               `json:"createdAt_lte,omitempty"`
-	CreatedAtGt      *string               `json:"createdAt_gt,omitempty"`
-	CreatedAtGte     *string               `json:"createdAt_gte,omitempty"`
-	UpdatedAt        *string               `json:"updatedAt,omitempty"`
-	UpdatedAtNot     *string               `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn      []string              `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn   []string              `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt      *string               `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte     *string               `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt      *string               `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte     *string               `json:"updatedAt_gte,omitempty"`
-	Ref              *string               `json:"ref,omitempty"`
-	RefNot           *string               `json:"ref_not,omitempty"`
-	RefIn            []string              `json:"ref_in,omitempty"`
-	RefNotIn         []string              `json:"ref_not_in,omitempty"`
-	RefLt            *string               `json:"ref_lt,omitempty"`
-	RefLte           *string               `json:"ref_lte,omitempty"`
-	RefGt            *string               `json:"ref_gt,omitempty"`
-	RefGte           *string               `json:"ref_gte,omitempty"`
-	RefContains      *string               `json:"ref_contains,omitempty"`
-	RefNotContains   *string               `json:"ref_not_contains,omitempty"`
-	RefStartsWith    *string               `json:"ref_starts_with,omitempty"`
-	RefNotStartsWith *string               `json:"ref_not_starts_with,omitempty"`
-	RefEndsWith      *string               `json:"ref_ends_with,omitempty"`
-	RefNotEndsWith   *string               `json:"ref_not_ends_with,omitempty"`
-	And              []TagScalarWhereInput `json:"AND,omitempty"`
-	Or               []TagScalarWhereInput `json:"OR,omitempty"`
-	Not              []TagScalarWhereInput `json:"NOT,omitempty"`
+type OrganizationUpdateManyMutationInput struct {
+	Name *string `json:"name,omitempty"`
+}
+
+type BlobCreateManyInput struct {
+	Create  []BlobCreateInput      `json:"create,omitempty"`
+	Connect []BlobWhereUniqueInput `json:"connect,omitempty"`
+}
+
+type RepositoryWhereInput struct {
+	ID                    *string                 `json:"id,omitempty"`
+	IDNot                 *string                 `json:"id_not,omitempty"`
+	IDIn                  []string                `json:"id_in,omitempty"`
+	IDNotIn               []string                `json:"id_not_in,omitempty"`
+	IDLt                  *string                 `json:"id_lt,omitempty"`
+	IDLte                 *string                 `json:"id_lte,omitempty"`
+	IDGt                  *string                 `json:"id_gt,omitempty"`
+	IDGte                 *string                 `json:"id_gte,omitempty"`
+	IDContains            *string                 `json:"id_contains,omitempty"`
+	IDNotContains         *string                 `json:"id_not_contains,omitempty"`
+	IDStartsWith          *string                 `json:"id_starts_with,omitempty"`
+	IDNotStartsWith       *string                 `json:"id_not_starts_with,omitempty"`
+	IDEndsWith            *string                 `json:"id_ends_with,omitempty"`
+	IDNotEndsWith         *string                 `json:"id_not_ends_with,omitempty"`
+	CreatedAt             *string                 `json:"createdAt,omitempty"`
+	CreatedAtNot          *string                 `json:"createdAt_not,omitempty"`
+	CreatedAtIn           []string                `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn        []string                `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt           *string                 `json:"createdAt_lt,omitempty"`
+	CreatedAtLte          *string                 `json:"createdAt_lte,omitempty"`
+	CreatedAtGt           *string                 `json:"createdAt_gt,omitempty"`
+	CreatedAtGte          *string                 `json:"createdAt_gte,omitempty"`
+	UpdatedAt             *string                 `json:"updatedAt,omitempty"`
+	UpdatedAtNot          *string                 `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn           []string                `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn        []string                `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt           *string                 `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte          *string                 `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt           *string                 `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte          *string                 `json:"updatedAt_gte,omitempty"`
+	Name                  *string                 `json:"name,omitempty"`
+	NameNot               *string                 `json:"name_not,omitempty"`
+	NameIn                []string                `json:"name_in,omitempty"`
+	NameNotIn             []string                `json:"name_not_in,omitempty"`
+	NameLt                *string                 `json:"name_lt,omitempty"`
+	NameLte               *string                 `json:"name_lte,omitempty"`
+	NameGt                *string                 `json:"name_gt,omitempty"`
+	NameGte               *string                 `json:"name_gte,omitempty"`
+	NameContains          *string                 `json:"name_contains,omitempty"`
+	NameNotContains       *string                 `json:"name_not_contains,omitempty"`
+	NameStartsWith        *string                 `json:"name_starts_with,omitempty"`
+	NameNotStartsWith     *string                 `json:"name_not_starts_with,omitempty"`
+	NameEndsWith          *string                 `json:"name_ends_with,omitempty"`
+	NameNotEndsWith       *string                 `json:"name_not_ends_with,omitempty"`
+	FullName              *string                 `json:"fullName,omitempty"`
+	FullNameNot           *string                 `json:"fullName_not,omitempty"`
+	FullNameIn            []string                `json:"fullName_in,omitempty"`
+	FullNameNotIn         []string                `json:"fullName_not_in,omitempty"`
+	FullNameLt            *string                 `json:"fullName_lt,omitempty"`
+	FullNameLte           *string                 `json:"fullName_lte,omitempty"`
+	FullNameGt            *string                 `json:"fullName_gt,omitempty"`
+	FullNameGte           *string                 `json:"fullName_gte,omitempty"`
+	FullNameContains      *string                 `json:"fullName_contains,omitempty"`
+	FullNameNotContains   *string                 `json:"fullName_not_contains,omitempty"`
+	FullNameStartsWith    *string                 `json:"fullName_starts_with,omitempty"`
+	FullNameNotStartsWith *string                 `json:"fullName_not_starts_with,omitempty"`
+	FullNameEndsWith      *string                 `json:"fullName_ends_with,omitempty"`
+	FullNameNotEndsWith   *string                 `json:"fullName_not_ends_with,omitempty"`
+	Org                   *OrganizationWhereInput `json:"org,omitempty"`
+	BlobsEvery            *BlobWhereInput         `json:"blobs_every,omitempty"`
+	BlobsSome             *BlobWhereInput         `json:"blobs_some,omitempty"`
+	BlobsNone             *BlobWhereInput         `json:"blobs_none,omitempty"`
+	ImagesEvery           *ImageWhereInput        `json:"images_every,omitempty"`
+	ImagesSome            *ImageWhereInput        `json:"images_some,omitempty"`
+	ImagesNone            *ImageWhereInput        `json:"images_none,omitempty"`
+	And                   []RepositoryWhereInput  `json:"AND,omitempty"`
+	Or                    []RepositoryWhereInput  `json:"OR,omitempty"`
+	Not                   []RepositoryWhereInput  `json:"NOT,omitempty"`
+}
+
+type ImageCreateInput struct {
+	ID           *string                               `json:"id,omitempty"`
+	Repo         RepositoryCreateOneWithoutImagesInput `json:"repo"`
+	Digest       string                                `json:"digest"`
+	Manifest     string                                `json:"manifest"`
+	ManifestType string                                `json:"manifestType"`
+	Tags         *TagCreateManyWithoutImageInput       `json:"tags,omitempty"`
+}
+
+type RepositoryUpdateManyDataInput struct {
+	Name     *string `json:"name,omitempty"`
+	FullName *string `json:"fullName,omitempty"`
+}
+
+type RepositoryCreateWithoutImagesInput struct {
+	ID       *string                                `json:"id,omitempty"`
+	Name     string                                 `json:"name"`
+	FullName string                                 `json:"fullName"`
+	Org      OrganizationCreateOneWithoutReposInput `json:"org"`
+	Blobs    *BlobCreateManyWithoutRepoInput        `json:"blobs,omitempty"`
 }
 
 type TagUpdateManyWithWhereNestedInput struct {
@@ -1966,14 +1997,32 @@ type TagUpdateManyWithWhereNestedInput struct {
 	Data  TagUpdateManyDataInput `json:"data"`
 }
 
+type BlobCreateWithoutRepoInput struct {
+	ID     *string `json:"id,omitempty"`
+	Digest string  `json:"digest"`
+}
+
 type TagUpdateManyDataInput struct {
 	Ref *string `json:"ref,omitempty"`
+}
+
+type TagCreateWithoutImageInput struct {
+	ID  *string `json:"id,omitempty"`
+	Ref string  `json:"ref"`
 }
 
 type ImageUpsertWithWhereUniqueNestedInput struct {
 	Where  ImageWhereUniqueInput `json:"where"`
 	Update ImageUpdateDataInput  `json:"update"`
 	Create ImageCreateInput      `json:"create"`
+}
+
+type ImageCreateWithoutRepoInput struct {
+	ID           *string                         `json:"id,omitempty"`
+	Digest       string                          `json:"digest"`
+	Manifest     string                          `json:"manifest"`
+	ManifestType string                          `json:"manifestType"`
+	Tags         *TagCreateManyWithoutImageInput `json:"tags,omitempty"`
 }
 
 type ImageScalarWhereInput struct {
@@ -2054,9 +2103,27 @@ type ImageScalarWhereInput struct {
 	Not                       []ImageScalarWhereInput `json:"NOT,omitempty"`
 }
 
+type RepositoryUpdateOneRequiredWithoutBlobsInput struct {
+	Create  *RepositoryCreateWithoutBlobsInput     `json:"create,omitempty"`
+	Update  *RepositoryUpdateWithoutBlobsDataInput `json:"update,omitempty"`
+	Upsert  *RepositoryUpsertWithoutBlobsInput     `json:"upsert,omitempty"`
+	Connect *RepositoryWhereUniqueInput            `json:"connect,omitempty"`
+}
+
 type ImageUpdateManyWithWhereNestedInput struct {
 	Where ImageScalarWhereInput    `json:"where"`
 	Data  ImageUpdateManyDataInput `json:"data"`
+}
+
+type RepositorySubscriptionWhereInput struct {
+	MutationIn                 []MutationType                     `json:"mutation_in,omitempty"`
+	UpdatedFieldsContains      *string                            `json:"updatedFields_contains,omitempty"`
+	UpdatedFieldsContainsEvery []string                           `json:"updatedFields_contains_every,omitempty"`
+	UpdatedFieldsContainsSome  []string                           `json:"updatedFields_contains_some,omitempty"`
+	Node                       *RepositoryWhereInput              `json:"node,omitempty"`
+	And                        []RepositorySubscriptionWhereInput `json:"AND,omitempty"`
+	Or                         []RepositorySubscriptionWhereInput `json:"OR,omitempty"`
+	Not                        []RepositorySubscriptionWhereInput `json:"NOT,omitempty"`
 }
 
 type ImageUpdateManyDataInput struct {
@@ -2065,9 +2132,68 @@ type ImageUpdateManyDataInput struct {
 	ManifestType *string `json:"manifestType,omitempty"`
 }
 
+type ChunkWhereUniqueInput struct {
+	ID *string `json:"id,omitempty"`
+}
+
 type OrganizationUpsertWithoutReposInput struct {
 	Update OrganizationUpdateWithoutReposDataInput `json:"update"`
 	Create OrganizationCreateWithoutReposInput     `json:"create"`
+}
+
+type UploadWhereInput struct {
+	ID                *string            `json:"id,omitempty"`
+	IDNot             *string            `json:"id_not,omitempty"`
+	IDIn              []string           `json:"id_in,omitempty"`
+	IDNotIn           []string           `json:"id_not_in,omitempty"`
+	IDLt              *string            `json:"id_lt,omitempty"`
+	IDLte             *string            `json:"id_lte,omitempty"`
+	IDGt              *string            `json:"id_gt,omitempty"`
+	IDGte             *string            `json:"id_gte,omitempty"`
+	IDContains        *string            `json:"id_contains,omitempty"`
+	IDNotContains     *string            `json:"id_not_contains,omitempty"`
+	IDStartsWith      *string            `json:"id_starts_with,omitempty"`
+	IDNotStartsWith   *string            `json:"id_not_starts_with,omitempty"`
+	IDEndsWith        *string            `json:"id_ends_with,omitempty"`
+	IDNotEndsWith     *string            `json:"id_not_ends_with,omitempty"`
+	CreatedAt         *string            `json:"createdAt,omitempty"`
+	CreatedAtNot      *string            `json:"createdAt_not,omitempty"`
+	CreatedAtIn       []string           `json:"createdAt_in,omitempty"`
+	CreatedAtNotIn    []string           `json:"createdAt_not_in,omitempty"`
+	CreatedAtLt       *string            `json:"createdAt_lt,omitempty"`
+	CreatedAtLte      *string            `json:"createdAt_lte,omitempty"`
+	CreatedAtGt       *string            `json:"createdAt_gt,omitempty"`
+	CreatedAtGte      *string            `json:"createdAt_gte,omitempty"`
+	UpdatedAt         *string            `json:"updatedAt,omitempty"`
+	UpdatedAtNot      *string            `json:"updatedAt_not,omitempty"`
+	UpdatedAtIn       []string           `json:"updatedAt_in,omitempty"`
+	UpdatedAtNotIn    []string           `json:"updatedAt_not_in,omitempty"`
+	UpdatedAtLt       *string            `json:"updatedAt_lt,omitempty"`
+	UpdatedAtLte      *string            `json:"updatedAt_lte,omitempty"`
+	UpdatedAtGt       *string            `json:"updatedAt_gt,omitempty"`
+	UpdatedAtGte      *string            `json:"updatedAt_gte,omitempty"`
+	Uuid              *string            `json:"uuid,omitempty"`
+	UuidNot           *string            `json:"uuid_not,omitempty"`
+	UuidIn            []string           `json:"uuid_in,omitempty"`
+	UuidNotIn         []string           `json:"uuid_not_in,omitempty"`
+	UuidLt            *string            `json:"uuid_lt,omitempty"`
+	UuidLte           *string            `json:"uuid_lte,omitempty"`
+	UuidGt            *string            `json:"uuid_gt,omitempty"`
+	UuidGte           *string            `json:"uuid_gte,omitempty"`
+	UuidContains      *string            `json:"uuid_contains,omitempty"`
+	UuidNotContains   *string            `json:"uuid_not_contains,omitempty"`
+	UuidStartsWith    *string            `json:"uuid_starts_with,omitempty"`
+	UuidNotStartsWith *string            `json:"uuid_not_starts_with,omitempty"`
+	UuidEndsWith      *string            `json:"uuid_ends_with,omitempty"`
+	UuidNotEndsWith   *string            `json:"uuid_not_ends_with,omitempty"`
+	Done              *bool              `json:"done,omitempty"`
+	DoneNot           *bool              `json:"done_not,omitempty"`
+	ChunksEvery       *ChunkWhereInput   `json:"chunks_every,omitempty"`
+	ChunksSome        *ChunkWhereInput   `json:"chunks_some,omitempty"`
+	ChunksNone        *ChunkWhereInput   `json:"chunks_none,omitempty"`
+	And               []UploadWhereInput `json:"AND,omitempty"`
+	Or                []UploadWhereInput `json:"OR,omitempty"`
+	Not               []UploadWhereInput `json:"NOT,omitempty"`
 }
 
 type ImageUpdateManyWithoutRepoInput struct {
@@ -2082,9 +2208,27 @@ type ImageUpdateManyWithoutRepoInput struct {
 	UpdateMany []ImageUpdateManyWithWhereNestedInput        `json:"updateMany,omitempty"`
 }
 
+type ChunkUpsertWithWhereUniqueWithoutUploadInput struct {
+	Where  ChunkWhereUniqueInput             `json:"where"`
+	Update ChunkUpdateWithoutUploadDataInput `json:"update"`
+	Create ChunkCreateWithoutUploadInput     `json:"create"`
+}
+
 type ImageUpdateWithWhereUniqueWithoutRepoInput struct {
 	Where ImageWhereUniqueInput           `json:"where"`
 	Data  ImageUpdateWithoutRepoDataInput `json:"data"`
+}
+
+type ChunkUpdateManyWithoutUploadInput struct {
+	Create     []ChunkCreateWithoutUploadInput                `json:"create,omitempty"`
+	Delete     []ChunkWhereUniqueInput                        `json:"delete,omitempty"`
+	Connect    []ChunkWhereUniqueInput                        `json:"connect,omitempty"`
+	Set        []ChunkWhereUniqueInput                        `json:"set,omitempty"`
+	Disconnect []ChunkWhereUniqueInput                        `json:"disconnect,omitempty"`
+	Update     []ChunkUpdateWithWhereUniqueWithoutUploadInput `json:"update,omitempty"`
+	Upsert     []ChunkUpsertWithWhereUniqueWithoutUploadInput `json:"upsert,omitempty"`
+	DeleteMany []ChunkScalarWhereInput                        `json:"deleteMany,omitempty"`
+	UpdateMany []ChunkUpdateManyWithWhereNestedInput          `json:"updateMany,omitempty"`
 }
 
 type ImageUpdateWithoutRepoDataInput struct {
@@ -2094,10 +2238,20 @@ type ImageUpdateWithoutRepoDataInput struct {
 	Tags         *TagUpdateManyWithoutImageInput `json:"tags,omitempty"`
 }
 
+type ChunkCreateManyWithoutUploadInput struct {
+	Create  []ChunkCreateWithoutUploadInput `json:"create,omitempty"`
+	Connect []ChunkWhereUniqueInput         `json:"connect,omitempty"`
+}
+
 type ImageUpsertWithWhereUniqueWithoutRepoInput struct {
 	Where  ImageWhereUniqueInput           `json:"where"`
 	Update ImageUpdateWithoutRepoDataInput `json:"update"`
 	Create ImageCreateWithoutRepoInput     `json:"create"`
+}
+
+type ImageUpsertWithoutTagsInput struct {
+	Update ImageUpdateWithoutTagsDataInput `json:"update"`
+	Create ImageCreateWithoutTagsInput     `json:"create"`
 }
 
 type RepositoryUpsertWithoutBlobsInput struct {
@@ -2105,126 +2259,30 @@ type RepositoryUpsertWithoutBlobsInput struct {
 	Create RepositoryCreateWithoutBlobsInput     `json:"create"`
 }
 
+type TagUpdateInput struct {
+	Ref   *string                                 `json:"ref,omitempty"`
+	Image *ImageUpdateOneRequiredWithoutTagsInput `json:"image,omitempty"`
+}
+
 type BlobUpdateManyMutationInput struct {
 	Digest *string `json:"digest,omitempty"`
 }
 
-type ChunkCreateInput struct {
-	ID         *string                           `json:"id,omitempty"`
-	Upload     UploadCreateOneWithoutChunksInput `json:"upload"`
-	RangeStart int32                             `json:"rangeStart"`
-	RangeEnd   int32                             `json:"rangeEnd"`
+type TagCreateInput struct {
+	ID    *string                        `json:"id,omitempty"`
+	Ref   string                         `json:"ref"`
+	Image ImageCreateOneWithoutTagsInput `json:"image"`
 }
 
-type UploadCreateOneWithoutChunksInput struct {
-	Create  *UploadCreateWithoutChunksInput `json:"create,omitempty"`
-	Connect *UploadWhereUniqueInput         `json:"connect,omitempty"`
+type RepositoryUpdateManyWithWhereNestedInput struct {
+	Where RepositoryScalarWhereInput    `json:"where"`
+	Data  RepositoryUpdateManyDataInput `json:"data"`
 }
 
-type UploadCreateWithoutChunksInput struct {
-	ID   *string `json:"id,omitempty"`
-	Uuid string  `json:"uuid"`
-	Done *bool   `json:"done,omitempty"`
-}
-
-type ChunkUpdateInput struct {
-	Upload     *UploadUpdateOneRequiredWithoutChunksInput `json:"upload,omitempty"`
-	RangeStart *int32                                     `json:"rangeStart,omitempty"`
-	RangeEnd   *int32                                     `json:"rangeEnd,omitempty"`
-}
-
-type UploadUpdateOneRequiredWithoutChunksInput struct {
-	Create  *UploadCreateWithoutChunksInput     `json:"create,omitempty"`
-	Update  *UploadUpdateWithoutChunksDataInput `json:"update,omitempty"`
-	Upsert  *UploadUpsertWithoutChunksInput     `json:"upsert,omitempty"`
-	Connect *UploadWhereUniqueInput             `json:"connect,omitempty"`
-}
-
-type UploadUpdateWithoutChunksDataInput struct {
-	Uuid *string `json:"uuid,omitempty"`
-	Done *bool   `json:"done,omitempty"`
-}
-
-type UploadUpsertWithoutChunksInput struct {
-	Update UploadUpdateWithoutChunksDataInput `json:"update"`
-	Create UploadCreateWithoutChunksInput     `json:"create"`
-}
-
-type ChunkUpdateManyMutationInput struct {
-	RangeStart *int32 `json:"rangeStart,omitempty"`
-	RangeEnd   *int32 `json:"rangeEnd,omitempty"`
-}
-
-type ImageUpdateInput struct {
-	Repo         *RepositoryUpdateOneRequiredWithoutImagesInput `json:"repo,omitempty"`
-	Digest       *string                                        `json:"digest,omitempty"`
-	Manifest     *string                                        `json:"manifest,omitempty"`
-	ManifestType *string                                        `json:"manifestType,omitempty"`
-	Tags         *TagUpdateManyWithoutImageInput                `json:"tags,omitempty"`
-}
-
-type ImageUpdateManyMutationInput struct {
-	Digest       *string `json:"digest,omitempty"`
-	Manifest     *string `json:"manifest,omitempty"`
-	ManifestType *string `json:"manifestType,omitempty"`
-}
-
-type OrganizationCreateInput struct {
+type BlobCreateInput struct {
 	ID     *string                              `json:"id,omitempty"`
-	Name   string                               `json:"name"`
-	Repos  *RepositoryCreateManyWithoutOrgInput `json:"repos,omitempty"`
-	Blobs  *BlobCreateManyInput                 `json:"blobs,omitempty"`
-	Images *ImageCreateManyInput                `json:"images,omitempty"`
-}
-
-type RepositoryCreateManyWithoutOrgInput struct {
-	Create  []RepositoryCreateWithoutOrgInput `json:"create,omitempty"`
-	Connect []RepositoryWhereUniqueInput      `json:"connect,omitempty"`
-}
-
-type RepositoryCreateWithoutOrgInput struct {
-	ID       *string                          `json:"id,omitempty"`
-	Name     string                           `json:"name"`
-	FullName string                           `json:"fullName"`
-	Blobs    *BlobCreateManyWithoutRepoInput  `json:"blobs,omitempty"`
-	Images   *ImageCreateManyWithoutRepoInput `json:"images,omitempty"`
-}
-
-type OrganizationUpdateInput struct {
-	Name   *string                              `json:"name,omitempty"`
-	Repos  *RepositoryUpdateManyWithoutOrgInput `json:"repos,omitempty"`
-	Blobs  *BlobUpdateManyInput                 `json:"blobs,omitempty"`
-	Images *ImageUpdateManyInput                `json:"images,omitempty"`
-}
-
-type RepositoryUpdateManyWithoutOrgInput struct {
-	Create     []RepositoryCreateWithoutOrgInput                `json:"create,omitempty"`
-	Delete     []RepositoryWhereUniqueInput                     `json:"delete,omitempty"`
-	Connect    []RepositoryWhereUniqueInput                     `json:"connect,omitempty"`
-	Set        []RepositoryWhereUniqueInput                     `json:"set,omitempty"`
-	Disconnect []RepositoryWhereUniqueInput                     `json:"disconnect,omitempty"`
-	Update     []RepositoryUpdateWithWhereUniqueWithoutOrgInput `json:"update,omitempty"`
-	Upsert     []RepositoryUpsertWithWhereUniqueWithoutOrgInput `json:"upsert,omitempty"`
-	DeleteMany []RepositoryScalarWhereInput                     `json:"deleteMany,omitempty"`
-	UpdateMany []RepositoryUpdateManyWithWhereNestedInput       `json:"updateMany,omitempty"`
-}
-
-type RepositoryUpdateWithWhereUniqueWithoutOrgInput struct {
-	Where RepositoryWhereUniqueInput          `json:"where"`
-	Data  RepositoryUpdateWithoutOrgDataInput `json:"data"`
-}
-
-type RepositoryUpdateWithoutOrgDataInput struct {
-	Name     *string                          `json:"name,omitempty"`
-	FullName *string                          `json:"fullName,omitempty"`
-	Blobs    *BlobUpdateManyWithoutRepoInput  `json:"blobs,omitempty"`
-	Images   *ImageUpdateManyWithoutRepoInput `json:"images,omitempty"`
-}
-
-type RepositoryUpsertWithWhereUniqueWithoutOrgInput struct {
-	Where  RepositoryWhereUniqueInput          `json:"where"`
-	Update RepositoryUpdateWithoutOrgDataInput `json:"update"`
-	Create RepositoryCreateWithoutOrgInput     `json:"create"`
+	Digest string                               `json:"digest"`
+	Repo   RepositoryCreateOneWithoutBlobsInput `json:"repo"`
 }
 
 type RepositoryScalarWhereInput struct {
@@ -2291,228 +2349,50 @@ type RepositoryScalarWhereInput struct {
 	Not                   []RepositoryScalarWhereInput `json:"NOT,omitempty"`
 }
 
-type RepositoryUpdateManyWithWhereNestedInput struct {
-	Where RepositoryScalarWhereInput    `json:"where"`
-	Data  RepositoryUpdateManyDataInput `json:"data"`
+type OrganizationCreateWithoutReposInput struct {
+	ID     *string               `json:"id,omitempty"`
+	Name   string                `json:"name"`
+	Blobs  *BlobCreateManyInput  `json:"blobs,omitempty"`
+	Images *ImageCreateManyInput `json:"images,omitempty"`
 }
 
-type RepositoryUpdateManyDataInput struct {
-	Name     *string `json:"name,omitempty"`
-	FullName *string `json:"fullName,omitempty"`
+type ChunkCreateInput struct {
+	ID         *string                           `json:"id,omitempty"`
+	Upload     UploadCreateOneWithoutChunksInput `json:"upload"`
+	RangeStart int32                             `json:"rangeStart"`
+	RangeEnd   int32                             `json:"rangeEnd"`
 }
 
-type OrganizationUpdateManyMutationInput struct {
-	Name *string `json:"name,omitempty"`
+type RepositoryCreateOneWithoutImagesInput struct {
+	Create  *RepositoryCreateWithoutImagesInput `json:"create,omitempty"`
+	Connect *RepositoryWhereUniqueInput         `json:"connect,omitempty"`
 }
 
-type RepositoryCreateInput struct {
-	ID       *string                                `json:"id,omitempty"`
-	Name     string                                 `json:"name"`
-	FullName string                                 `json:"fullName"`
-	Org      OrganizationCreateOneWithoutReposInput `json:"org"`
-	Blobs    *BlobCreateManyWithoutRepoInput        `json:"blobs,omitempty"`
-	Images   *ImageCreateManyWithoutRepoInput       `json:"images,omitempty"`
+type UploadCreateOneWithoutChunksInput struct {
+	Create  *UploadCreateWithoutChunksInput `json:"create,omitempty"`
+	Connect *UploadWhereUniqueInput         `json:"connect,omitempty"`
 }
 
-type RepositoryUpdateInput struct {
-	Name     *string                                         `json:"name,omitempty"`
-	FullName *string                                         `json:"fullName,omitempty"`
-	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
-	Blobs    *BlobUpdateManyWithoutRepoInput                 `json:"blobs,omitempty"`
-	Images   *ImageUpdateManyWithoutRepoInput                `json:"images,omitempty"`
+type TagCreateManyWithoutImageInput struct {
+	Create  []TagCreateWithoutImageInput `json:"create,omitempty"`
+	Connect []TagWhereUniqueInput        `json:"connect,omitempty"`
 }
 
-type RepositoryUpdateManyMutationInput struct {
-	Name     *string `json:"name,omitempty"`
-	FullName *string `json:"fullName,omitempty"`
-}
-
-type TagCreateInput struct {
-	ID    *string                        `json:"id,omitempty"`
-	Ref   string                         `json:"ref"`
-	Image ImageCreateOneWithoutTagsInput `json:"image"`
-}
-
-type ImageCreateOneWithoutTagsInput struct {
-	Create  *ImageCreateWithoutTagsInput `json:"create,omitempty"`
-	Connect *ImageWhereUniqueInput       `json:"connect,omitempty"`
-}
-
-type ImageCreateWithoutTagsInput struct {
-	ID           *string                               `json:"id,omitempty"`
-	Repo         RepositoryCreateOneWithoutImagesInput `json:"repo"`
-	Digest       string                                `json:"digest"`
-	Manifest     string                                `json:"manifest"`
-	ManifestType string                                `json:"manifestType"`
-}
-
-type TagUpdateInput struct {
-	Ref   *string                                 `json:"ref,omitempty"`
-	Image *ImageUpdateOneRequiredWithoutTagsInput `json:"image,omitempty"`
-}
-
-type ImageUpdateOneRequiredWithoutTagsInput struct {
-	Create  *ImageCreateWithoutTagsInput     `json:"create,omitempty"`
-	Update  *ImageUpdateWithoutTagsDataInput `json:"update,omitempty"`
-	Upsert  *ImageUpsertWithoutTagsInput     `json:"upsert,omitempty"`
-	Connect *ImageWhereUniqueInput           `json:"connect,omitempty"`
-}
-
-type ImageUpdateWithoutTagsDataInput struct {
-	Repo         *RepositoryUpdateOneRequiredWithoutImagesInput `json:"repo,omitempty"`
-	Digest       *string                                        `json:"digest,omitempty"`
-	Manifest     *string                                        `json:"manifest,omitempty"`
-	ManifestType *string                                        `json:"manifestType,omitempty"`
-}
-
-type ImageUpsertWithoutTagsInput struct {
-	Update ImageUpdateWithoutTagsDataInput `json:"update"`
-	Create ImageCreateWithoutTagsInput     `json:"create"`
-}
-
-type TagUpdateManyMutationInput struct {
-	Ref *string `json:"ref,omitempty"`
-}
-
-type UploadCreateInput struct {
-	ID     *string                            `json:"id,omitempty"`
-	Uuid   string                             `json:"uuid"`
-	Done   *bool                              `json:"done,omitempty"`
-	Chunks *ChunkCreateManyWithoutUploadInput `json:"chunks,omitempty"`
-}
-
-type ChunkCreateManyWithoutUploadInput struct {
-	Create  []ChunkCreateWithoutUploadInput `json:"create,omitempty"`
-	Connect []ChunkWhereUniqueInput         `json:"connect,omitempty"`
-}
-
-type ChunkCreateWithoutUploadInput struct {
-	ID         *string `json:"id,omitempty"`
-	RangeStart int32   `json:"rangeStart"`
-	RangeEnd   int32   `json:"rangeEnd"`
-}
-
-type UploadUpdateInput struct {
-	Uuid   *string                            `json:"uuid,omitempty"`
-	Done   *bool                              `json:"done,omitempty"`
-	Chunks *ChunkUpdateManyWithoutUploadInput `json:"chunks,omitempty"`
-}
-
-type ChunkUpdateManyWithoutUploadInput struct {
-	Create     []ChunkCreateWithoutUploadInput                `json:"create,omitempty"`
-	Delete     []ChunkWhereUniqueInput                        `json:"delete,omitempty"`
-	Connect    []ChunkWhereUniqueInput                        `json:"connect,omitempty"`
-	Set        []ChunkWhereUniqueInput                        `json:"set,omitempty"`
-	Disconnect []ChunkWhereUniqueInput                        `json:"disconnect,omitempty"`
-	Update     []ChunkUpdateWithWhereUniqueWithoutUploadInput `json:"update,omitempty"`
-	Upsert     []ChunkUpsertWithWhereUniqueWithoutUploadInput `json:"upsert,omitempty"`
-	DeleteMany []ChunkScalarWhereInput                        `json:"deleteMany,omitempty"`
-	UpdateMany []ChunkUpdateManyWithWhereNestedInput          `json:"updateMany,omitempty"`
-}
-
-type ChunkUpdateWithWhereUniqueWithoutUploadInput struct {
-	Where ChunkWhereUniqueInput             `json:"where"`
-	Data  ChunkUpdateWithoutUploadDataInput `json:"data"`
-}
-
-type ChunkUpdateWithoutUploadDataInput struct {
-	RangeStart *int32 `json:"rangeStart,omitempty"`
-	RangeEnd   *int32 `json:"rangeEnd,omitempty"`
-}
-
-type ChunkUpsertWithWhereUniqueWithoutUploadInput struct {
-	Where  ChunkWhereUniqueInput             `json:"where"`
-	Update ChunkUpdateWithoutUploadDataInput `json:"update"`
-	Create ChunkCreateWithoutUploadInput     `json:"create"`
-}
-
-type ChunkScalarWhereInput struct {
-	ID              *string                 `json:"id,omitempty"`
-	IDNot           *string                 `json:"id_not,omitempty"`
-	IDIn            []string                `json:"id_in,omitempty"`
-	IDNotIn         []string                `json:"id_not_in,omitempty"`
-	IDLt            *string                 `json:"id_lt,omitempty"`
-	IDLte           *string                 `json:"id_lte,omitempty"`
-	IDGt            *string                 `json:"id_gt,omitempty"`
-	IDGte           *string                 `json:"id_gte,omitempty"`
-	IDContains      *string                 `json:"id_contains,omitempty"`
-	IDNotContains   *string                 `json:"id_not_contains,omitempty"`
-	IDStartsWith    *string                 `json:"id_starts_with,omitempty"`
-	IDNotStartsWith *string                 `json:"id_not_starts_with,omitempty"`
-	IDEndsWith      *string                 `json:"id_ends_with,omitempty"`
-	IDNotEndsWith   *string                 `json:"id_not_ends_with,omitempty"`
-	CreatedAt       *string                 `json:"createdAt,omitempty"`
-	CreatedAtNot    *string                 `json:"createdAt_not,omitempty"`
-	CreatedAtIn     []string                `json:"createdAt_in,omitempty"`
-	CreatedAtNotIn  []string                `json:"createdAt_not_in,omitempty"`
-	CreatedAtLt     *string                 `json:"createdAt_lt,omitempty"`
-	CreatedAtLte    *string                 `json:"createdAt_lte,omitempty"`
-	CreatedAtGt     *string                 `json:"createdAt_gt,omitempty"`
-	CreatedAtGte    *string                 `json:"createdAt_gte,omitempty"`
-	UpdatedAt       *string                 `json:"updatedAt,omitempty"`
-	UpdatedAtNot    *string                 `json:"updatedAt_not,omitempty"`
-	UpdatedAtIn     []string                `json:"updatedAt_in,omitempty"`
-	UpdatedAtNotIn  []string                `json:"updatedAt_not_in,omitempty"`
-	UpdatedAtLt     *string                 `json:"updatedAt_lt,omitempty"`
-	UpdatedAtLte    *string                 `json:"updatedAt_lte,omitempty"`
-	UpdatedAtGt     *string                 `json:"updatedAt_gt,omitempty"`
-	UpdatedAtGte    *string                 `json:"updatedAt_gte,omitempty"`
-	RangeStart      *int32                  `json:"rangeStart,omitempty"`
-	RangeStartNot   *int32                  `json:"rangeStart_not,omitempty"`
-	RangeStartIn    []int32                 `json:"rangeStart_in,omitempty"`
-	RangeStartNotIn []int32                 `json:"rangeStart_not_in,omitempty"`
-	RangeStartLt    *int32                  `json:"rangeStart_lt,omitempty"`
-	RangeStartLte   *int32                  `json:"rangeStart_lte,omitempty"`
-	RangeStartGt    *int32                  `json:"rangeStart_gt,omitempty"`
-	RangeStartGte   *int32                  `json:"rangeStart_gte,omitempty"`
-	RangeEnd        *int32                  `json:"rangeEnd,omitempty"`
-	RangeEndNot     *int32                  `json:"rangeEnd_not,omitempty"`
-	RangeEndIn      []int32                 `json:"rangeEnd_in,omitempty"`
-	RangeEndNotIn   []int32                 `json:"rangeEnd_not_in,omitempty"`
-	RangeEndLt      *int32                  `json:"rangeEnd_lt,omitempty"`
-	RangeEndLte     *int32                  `json:"rangeEnd_lte,omitempty"`
-	RangeEndGt      *int32                  `json:"rangeEnd_gt,omitempty"`
-	RangeEndGte     *int32                  `json:"rangeEnd_gte,omitempty"`
-	And             []ChunkScalarWhereInput `json:"AND,omitempty"`
-	Or              []ChunkScalarWhereInput `json:"OR,omitempty"`
-	Not             []ChunkScalarWhereInput `json:"NOT,omitempty"`
-}
-
-type ChunkUpdateManyWithWhereNestedInput struct {
-	Where ChunkScalarWhereInput    `json:"where"`
-	Data  ChunkUpdateManyDataInput `json:"data"`
-}
-
-type ChunkUpdateManyDataInput struct {
-	RangeStart *int32 `json:"rangeStart,omitempty"`
-	RangeEnd   *int32 `json:"rangeEnd,omitempty"`
-}
-
-type UploadUpdateManyMutationInput struct {
-	Uuid *string `json:"uuid,omitempty"`
+type UploadCreateWithoutChunksInput struct {
+	ID   *string `json:"id,omitempty"`
+	Uuid string  `json:"uuid"`
 	Done *bool   `json:"done,omitempty"`
 }
 
-type BlobSubscriptionWhereInput struct {
-	MutationIn                 []MutationType               `json:"mutation_in,omitempty"`
-	UpdatedFieldsContains      *string                      `json:"updatedFields_contains,omitempty"`
-	UpdatedFieldsContainsEvery []string                     `json:"updatedFields_contains_every,omitempty"`
-	UpdatedFieldsContainsSome  []string                     `json:"updatedFields_contains_some,omitempty"`
-	Node                       *BlobWhereInput              `json:"node,omitempty"`
-	And                        []BlobSubscriptionWhereInput `json:"AND,omitempty"`
-	Or                         []BlobSubscriptionWhereInput `json:"OR,omitempty"`
-	Not                        []BlobSubscriptionWhereInput `json:"NOT,omitempty"`
+type BlobUpdateInput struct {
+	Digest *string                                       `json:"digest,omitempty"`
+	Repo   *RepositoryUpdateOneRequiredWithoutBlobsInput `json:"repo,omitempty"`
 }
 
-type ChunkSubscriptionWhereInput struct {
-	MutationIn                 []MutationType                `json:"mutation_in,omitempty"`
-	UpdatedFieldsContains      *string                       `json:"updatedFields_contains,omitempty"`
-	UpdatedFieldsContainsEvery []string                      `json:"updatedFields_contains_every,omitempty"`
-	UpdatedFieldsContainsSome  []string                      `json:"updatedFields_contains_some,omitempty"`
-	Node                       *ChunkWhereInput              `json:"node,omitempty"`
-	And                        []ChunkSubscriptionWhereInput `json:"AND,omitempty"`
-	Or                         []ChunkSubscriptionWhereInput `json:"OR,omitempty"`
-	Not                        []ChunkSubscriptionWhereInput `json:"NOT,omitempty"`
+type ChunkUpdateInput struct {
+	Upload     *UploadUpdateOneRequiredWithoutChunksInput `json:"upload,omitempty"`
+	RangeStart *int32                                     `json:"rangeStart,omitempty"`
+	RangeEnd   *int32                                     `json:"rangeEnd,omitempty"`
 }
 
 type ImageSubscriptionWhereInput struct {
@@ -2526,37 +2406,157 @@ type ImageSubscriptionWhereInput struct {
 	Not                        []ImageSubscriptionWhereInput `json:"NOT,omitempty"`
 }
 
-type OrganizationSubscriptionWhereInput struct {
-	MutationIn                 []MutationType                       `json:"mutation_in,omitempty"`
-	UpdatedFieldsContains      *string                              `json:"updatedFields_contains,omitempty"`
-	UpdatedFieldsContainsEvery []string                             `json:"updatedFields_contains_every,omitempty"`
-	UpdatedFieldsContainsSome  []string                             `json:"updatedFields_contains_some,omitempty"`
-	Node                       *OrganizationWhereInput              `json:"node,omitempty"`
-	And                        []OrganizationSubscriptionWhereInput `json:"AND,omitempty"`
-	Or                         []OrganizationSubscriptionWhereInput `json:"OR,omitempty"`
-	Not                        []OrganizationSubscriptionWhereInput `json:"NOT,omitempty"`
+type UploadUpdateOneRequiredWithoutChunksInput struct {
+	Create  *UploadCreateWithoutChunksInput     `json:"create,omitempty"`
+	Update  *UploadUpdateWithoutChunksDataInput `json:"update,omitempty"`
+	Upsert  *UploadUpsertWithoutChunksInput     `json:"upsert,omitempty"`
+	Connect *UploadWhereUniqueInput             `json:"connect,omitempty"`
 }
 
-type RepositorySubscriptionWhereInput struct {
-	MutationIn                 []MutationType                     `json:"mutation_in,omitempty"`
-	UpdatedFieldsContains      *string                            `json:"updatedFields_contains,omitempty"`
-	UpdatedFieldsContainsEvery []string                           `json:"updatedFields_contains_every,omitempty"`
-	UpdatedFieldsContainsSome  []string                           `json:"updatedFields_contains_some,omitempty"`
-	Node                       *RepositoryWhereInput              `json:"node,omitempty"`
-	And                        []RepositorySubscriptionWhereInput `json:"AND,omitempty"`
-	Or                         []RepositorySubscriptionWhereInput `json:"OR,omitempty"`
-	Not                        []RepositorySubscriptionWhereInput `json:"NOT,omitempty"`
+type ChunkUpdateManyWithWhereNestedInput struct {
+	Where ChunkScalarWhereInput    `json:"where"`
+	Data  ChunkUpdateManyDataInput `json:"data"`
 }
 
-type TagSubscriptionWhereInput struct {
-	MutationIn                 []MutationType              `json:"mutation_in,omitempty"`
-	UpdatedFieldsContains      *string                     `json:"updatedFields_contains,omitempty"`
-	UpdatedFieldsContainsEvery []string                    `json:"updatedFields_contains_every,omitempty"`
-	UpdatedFieldsContainsSome  []string                    `json:"updatedFields_contains_some,omitempty"`
-	Node                       *TagWhereInput              `json:"node,omitempty"`
-	And                        []TagSubscriptionWhereInput `json:"AND,omitempty"`
-	Or                         []TagSubscriptionWhereInput `json:"OR,omitempty"`
-	Not                        []TagSubscriptionWhereInput `json:"NOT,omitempty"`
+type UploadUpdateWithoutChunksDataInput struct {
+	Uuid *string `json:"uuid,omitempty"`
+	Done *bool   `json:"done,omitempty"`
+}
+
+type UploadUpdateInput struct {
+	Uuid   *string                            `json:"uuid,omitempty"`
+	Done   *bool                              `json:"done,omitempty"`
+	Chunks *ChunkUpdateManyWithoutUploadInput `json:"chunks,omitempty"`
+}
+
+type UploadUpsertWithoutChunksInput struct {
+	Update UploadUpdateWithoutChunksDataInput `json:"update"`
+	Create UploadCreateWithoutChunksInput     `json:"create"`
+}
+
+type TagWhereUniqueInput struct {
+	ID *string `json:"id,omitempty"`
+}
+
+type ChunkUpdateManyMutationInput struct {
+	RangeStart *int32 `json:"rangeStart,omitempty"`
+	RangeEnd   *int32 `json:"rangeEnd,omitempty"`
+}
+
+type RepositoryUpdateInput struct {
+	Name     *string                                         `json:"name,omitempty"`
+	FullName *string                                         `json:"fullName,omitempty"`
+	Org      *OrganizationUpdateOneRequiredWithoutReposInput `json:"org,omitempty"`
+	Blobs    *BlobUpdateManyWithoutRepoInput                 `json:"blobs,omitempty"`
+	Images   *ImageUpdateManyWithoutRepoInput                `json:"images,omitempty"`
+}
+
+type ImageUpdateInput struct {
+	Repo         *RepositoryUpdateOneRequiredWithoutImagesInput `json:"repo,omitempty"`
+	Digest       *string                                        `json:"digest,omitempty"`
+	Manifest     *string                                        `json:"manifest,omitempty"`
+	ManifestType *string                                        `json:"manifestType,omitempty"`
+	Tags         *TagUpdateManyWithoutImageInput                `json:"tags,omitempty"`
+}
+
+type ImageCreateManyInput struct {
+	Create  []ImageCreateInput      `json:"create,omitempty"`
+	Connect []ImageWhereUniqueInput `json:"connect,omitempty"`
+}
+
+type ImageUpdateManyMutationInput struct {
+	Digest       *string `json:"digest,omitempty"`
+	Manifest     *string `json:"manifest,omitempty"`
+	ManifestType *string `json:"manifestType,omitempty"`
+}
+
+type ImageCreateManyWithoutRepoInput struct {
+	Create  []ImageCreateWithoutRepoInput `json:"create,omitempty"`
+	Connect []ImageWhereUniqueInput       `json:"connect,omitempty"`
+}
+
+type OrganizationCreateInput struct {
+	ID     *string                              `json:"id,omitempty"`
+	Name   string                               `json:"name"`
+	Repos  *RepositoryCreateManyWithoutOrgInput `json:"repos,omitempty"`
+	Blobs  *BlobCreateManyInput                 `json:"blobs,omitempty"`
+	Images *ImageCreateManyInput                `json:"images,omitempty"`
+}
+
+type UploadUpdateManyMutationInput struct {
+	Uuid *string `json:"uuid,omitempty"`
+	Done *bool   `json:"done,omitempty"`
+}
+
+type RepositoryCreateManyWithoutOrgInput struct {
+	Create  []RepositoryCreateWithoutOrgInput `json:"create,omitempty"`
+	Connect []RepositoryWhereUniqueInput      `json:"connect,omitempty"`
+}
+
+type RepositoryWhereUniqueInput struct {
+	ID *string `json:"id,omitempty"`
+}
+
+type RepositoryCreateWithoutOrgInput struct {
+	ID       *string                          `json:"id,omitempty"`
+	Name     string                           `json:"name"`
+	FullName string                           `json:"fullName"`
+	Blobs    *BlobCreateManyWithoutRepoInput  `json:"blobs,omitempty"`
+	Images   *ImageCreateManyWithoutRepoInput `json:"images,omitempty"`
+}
+
+type RepositoryCreateWithoutBlobsInput struct {
+	ID       *string                                `json:"id,omitempty"`
+	Name     string                                 `json:"name"`
+	FullName string                                 `json:"fullName"`
+	Org      OrganizationCreateOneWithoutReposInput `json:"org"`
+	Images   *ImageCreateManyWithoutRepoInput       `json:"images,omitempty"`
+}
+
+type RepositoryUpdateWithoutOrgDataInput struct {
+	Name     *string                          `json:"name,omitempty"`
+	FullName *string                          `json:"fullName,omitempty"`
+	Blobs    *BlobUpdateManyWithoutRepoInput  `json:"blobs,omitempty"`
+	Images   *ImageUpdateManyWithoutRepoInput `json:"images,omitempty"`
+}
+
+type RepositoryUpdateWithWhereUniqueWithoutOrgInput struct {
+	Where RepositoryWhereUniqueInput          `json:"where"`
+	Data  RepositoryUpdateWithoutOrgDataInput `json:"data"`
+}
+
+type RepositoryUpdateManyWithoutOrgInput struct {
+	Create     []RepositoryCreateWithoutOrgInput                `json:"create,omitempty"`
+	Delete     []RepositoryWhereUniqueInput                     `json:"delete,omitempty"`
+	Connect    []RepositoryWhereUniqueInput                     `json:"connect,omitempty"`
+	Set        []RepositoryWhereUniqueInput                     `json:"set,omitempty"`
+	Disconnect []RepositoryWhereUniqueInput                     `json:"disconnect,omitempty"`
+	Update     []RepositoryUpdateWithWhereUniqueWithoutOrgInput `json:"update,omitempty"`
+	Upsert     []RepositoryUpsertWithWhereUniqueWithoutOrgInput `json:"upsert,omitempty"`
+	DeleteMany []RepositoryScalarWhereInput                     `json:"deleteMany,omitempty"`
+	UpdateMany []RepositoryUpdateManyWithWhereNestedInput       `json:"updateMany,omitempty"`
+}
+
+type OrganizationUpdateInput struct {
+	Name   *string                              `json:"name,omitempty"`
+	Repos  *RepositoryUpdateManyWithoutOrgInput `json:"repos,omitempty"`
+	Blobs  *BlobUpdateManyInput                 `json:"blobs,omitempty"`
+	Images *ImageUpdateManyInput                `json:"images,omitempty"`
+}
+
+type BlobCreateManyWithoutRepoInput struct {
+	Create  []BlobCreateWithoutRepoInput `json:"create,omitempty"`
+	Connect []BlobWhereUniqueInput       `json:"connect,omitempty"`
+}
+
+type UploadWhereUniqueInput struct {
+	ID   *string `json:"id,omitempty"`
+	Uuid *string `json:"uuid,omitempty"`
+}
+
+type ChunkUpdateWithoutUploadDataInput struct {
+	RangeStart *int32 `json:"rangeStart,omitempty"`
+	RangeEnd   *int32 `json:"rangeEnd,omitempty"`
 }
 
 type UploadSubscriptionWhereInput struct {
@@ -2570,23 +2570,12 @@ type UploadSubscriptionWhereInput struct {
 	Not                        []UploadSubscriptionWhereInput `json:"NOT,omitempty"`
 }
 
-type BlobExec struct {
+type UploadPreviousValuesExec struct {
 	exec *prisma.Exec
 }
 
-func (instance *BlobExec) Repo() *RepositoryExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Repository"},
-		"repo",
-		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
-
-	return &RepositoryExec{ret}
-}
-
-func (instance BlobExec) Exec(ctx context.Context) (*Blob, error) {
-	var v Blob
+func (instance UploadPreviousValuesExec) Exec(ctx context.Context) (*UploadPreviousValues, error) {
+	var v UploadPreviousValues
 	ok, err := instance.exec.Exec(ctx, &v)
 	if err != nil {
 		return nil, err
@@ -2597,25 +2586,178 @@ func (instance BlobExec) Exec(ctx context.Context) (*Blob, error) {
 	return &v, nil
 }
 
-func (instance BlobExec) Exists(ctx context.Context) (bool, error) {
+func (instance UploadPreviousValuesExec) Exists(ctx context.Context) (bool, error) {
 	return instance.exec.Exists(ctx)
 }
 
-type BlobExecArray struct {
+type UploadPreviousValuesExecArray struct {
 	exec *prisma.Exec
 }
 
-func (instance BlobExecArray) Exec(ctx context.Context) ([]Blob, error) {
-	var v []Blob
+func (instance UploadPreviousValuesExecArray) Exec(ctx context.Context) ([]UploadPreviousValues, error) {
+	var v []UploadPreviousValues
 	err := instance.exec.ExecArray(ctx, &v)
 	return v, err
 }
 
-type Blob struct {
+type UploadPreviousValues struct {
 	ID        string `json:"id"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
-	Digest    string `json:"digest"`
+	Uuid      string `json:"uuid"`
+	Done      bool   `json:"done"`
+}
+
+type ChunkConnectionExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *ChunkConnectionExec) PageInfo() *PageInfoExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "PageInfo"},
+		"pageInfo",
+		[]string{"hasNextPage", "hasPreviousPage", "startCursor", "endCursor"})
+
+	return &PageInfoExec{ret}
+}
+
+func (instance *ChunkConnectionExec) Edges() *ChunkEdgeExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "ChunkEdge"},
+		"edges",
+		[]string{"cursor"})
+
+	return &ChunkEdgeExec{ret}
+}
+
+func (instance *ChunkConnectionExec) Aggregate(ctx context.Context) (Aggregate, error) {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "AggregateChunk"},
+		"aggregate",
+		[]string{"count"})
+
+	var v Aggregate
+	_, err := ret.Exec(ctx, &v)
+	return v, err
+}
+
+func (instance ChunkConnectionExec) Exec(ctx context.Context) (*ChunkConnection, error) {
+	var v ChunkConnection
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance ChunkConnectionExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type ChunkConnectionExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance ChunkConnectionExecArray) Exec(ctx context.Context) ([]ChunkConnection, error) {
+	var v []ChunkConnection
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type ChunkConnection struct {
+}
+
+type ImageExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *ImageExec) Repo() *RepositoryExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Repository"},
+		"repo",
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
+
+	return &RepositoryExec{ret}
+}
+
+type TagsParamsExec struct {
+	Where   *TagWhereInput
+	OrderBy *TagOrderByInput
+	Skip    *int32
+	After   *string
+	Before  *string
+	First   *int32
+	Last    *int32
+}
+
+func (instance *ImageExec) Tags(params *TagsParamsExec) *TagExecArray {
+	var wparams *prisma.WhereParams
+	if params != nil {
+		wparams = &prisma.WhereParams{
+			Where:   params.Where,
+			OrderBy: (*string)(params.OrderBy),
+			Skip:    params.Skip,
+			After:   params.After,
+			Before:  params.Before,
+			First:   params.First,
+			Last:    params.Last,
+		}
+	}
+
+	ret := instance.exec.Client.GetMany(
+		instance.exec,
+		wparams,
+		[3]string{"TagWhereInput", "TagOrderByInput", "Tag"},
+		"tags",
+		[]string{"id", "createdAt", "updatedAt", "ref"})
+
+	return &TagExecArray{ret}
+}
+
+func (instance ImageExec) Exec(ctx context.Context) (*Image, error) {
+	var v Image
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance ImageExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type ImageExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance ImageExecArray) Exec(ctx context.Context) ([]Image, error) {
+	var v []Image
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type Image struct {
+	ID           string `json:"id"`
+	CreatedAt    string `json:"createdAt"`
+	UpdatedAt    string `json:"updatedAt"`
+	Digest       string `json:"digest"`
+	Manifest     string `json:"manifest"`
+	ManifestType string `json:"manifestType"`
 }
 
 type RepositoryExec struct {
@@ -2854,138 +2996,6 @@ type Organization struct {
 	Name      string `json:"name"`
 }
 
-type ImageExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *ImageExec) Repo() *RepositoryExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Repository"},
-		"repo",
-		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
-
-	return &RepositoryExec{ret}
-}
-
-type TagsParamsExec struct {
-	Where   *TagWhereInput
-	OrderBy *TagOrderByInput
-	Skip    *int32
-	After   *string
-	Before  *string
-	First   *int32
-	Last    *int32
-}
-
-func (instance *ImageExec) Tags(params *TagsParamsExec) *TagExecArray {
-	var wparams *prisma.WhereParams
-	if params != nil {
-		wparams = &prisma.WhereParams{
-			Where:   params.Where,
-			OrderBy: (*string)(params.OrderBy),
-			Skip:    params.Skip,
-			After:   params.After,
-			Before:  params.Before,
-			First:   params.First,
-			Last:    params.Last,
-		}
-	}
-
-	ret := instance.exec.Client.GetMany(
-		instance.exec,
-		wparams,
-		[3]string{"TagWhereInput", "TagOrderByInput", "Tag"},
-		"tags",
-		[]string{"id", "createdAt", "updatedAt", "ref"})
-
-	return &TagExecArray{ret}
-}
-
-func (instance ImageExec) Exec(ctx context.Context) (*Image, error) {
-	var v Image
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance ImageExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type ImageExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance ImageExecArray) Exec(ctx context.Context) ([]Image, error) {
-	var v []Image
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type Image struct {
-	ID           string `json:"id"`
-	CreatedAt    string `json:"createdAt"`
-	UpdatedAt    string `json:"updatedAt"`
-	Digest       string `json:"digest"`
-	Manifest     string `json:"manifest"`
-	ManifestType string `json:"manifestType"`
-}
-
-type TagExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *TagExec) Image() *ImageExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Image"},
-		"image",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
-
-	return &ImageExec{ret}
-}
-
-func (instance TagExec) Exec(ctx context.Context) (*Tag, error) {
-	var v Tag
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance TagExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type TagExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance TagExecArray) Exec(ctx context.Context) ([]Tag, error) {
-	var v []Tag
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type Tag struct {
-	ID        string `json:"id"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
-	Ref       string `json:"ref"`
-}
-
 type BlobConnectionExec struct {
 	exec *prisma.Exec
 }
@@ -3054,60 +3064,23 @@ func (instance BlobConnectionExecArray) Exec(ctx context.Context) ([]BlobConnect
 type BlobConnection struct {
 }
 
-type PageInfoExec struct {
+type TagExec struct {
 	exec *prisma.Exec
 }
 
-func (instance PageInfoExec) Exec(ctx context.Context) (*PageInfo, error) {
-	var v PageInfo
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance PageInfoExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type PageInfoExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance PageInfoExecArray) Exec(ctx context.Context) ([]PageInfo, error) {
-	var v []PageInfo
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type PageInfo struct {
-	HasNextPage     bool    `json:"hasNextPage"`
-	HasPreviousPage bool    `json:"hasPreviousPage"`
-	StartCursor     *string `json:"startCursor,omitempty"`
-	EndCursor       *string `json:"endCursor,omitempty"`
-}
-
-type BlobEdgeExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *BlobEdgeExec) Node() *BlobExec {
+func (instance *TagExec) Image() *ImageExec {
 	ret := instance.exec.Client.GetOne(
 		instance.exec,
 		nil,
-		[2]string{"", "Blob"},
-		"node",
-		[]string{"id", "createdAt", "updatedAt", "digest"})
+		[2]string{"", "Image"},
+		"image",
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
 
-	return &BlobExec{ret}
+	return &ImageExec{ret}
 }
 
-func (instance BlobEdgeExec) Exec(ctx context.Context) (*BlobEdge, error) {
-	var v BlobEdge
+func (instance TagExec) Exec(ctx context.Context) (*Tag, error) {
+	var v Tag
 	ok, err := instance.exec.Exec(ctx, &v)
 	if err != nil {
 		return nil, err
@@ -3118,71 +3091,25 @@ func (instance BlobEdgeExec) Exec(ctx context.Context) (*BlobEdge, error) {
 	return &v, nil
 }
 
-func (instance BlobEdgeExec) Exists(ctx context.Context) (bool, error) {
+func (instance TagExec) Exists(ctx context.Context) (bool, error) {
 	return instance.exec.Exists(ctx)
 }
 
-type BlobEdgeExecArray struct {
+type TagExecArray struct {
 	exec *prisma.Exec
 }
 
-func (instance BlobEdgeExecArray) Exec(ctx context.Context) ([]BlobEdge, error) {
-	var v []BlobEdge
+func (instance TagExecArray) Exec(ctx context.Context) ([]Tag, error) {
+	var v []Tag
 	err := instance.exec.ExecArray(ctx, &v)
 	return v, err
 }
 
-type BlobEdge struct {
-	Cursor string `json:"cursor"`
-}
-
-type ChunkExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *ChunkExec) Upload() *UploadExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Upload"},
-		"upload",
-		[]string{"id", "createdAt", "updatedAt", "uuid", "done"})
-
-	return &UploadExec{ret}
-}
-
-func (instance ChunkExec) Exec(ctx context.Context) (*Chunk, error) {
-	var v Chunk
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance ChunkExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type ChunkExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance ChunkExecArray) Exec(ctx context.Context) ([]Chunk, error) {
-	var v []Chunk
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type Chunk struct {
-	ID         string `json:"id"`
-	CreatedAt  string `json:"createdAt"`
-	UpdatedAt  string `json:"updatedAt"`
-	RangeStart int32  `json:"rangeStart"`
-	RangeEnd   int32  `json:"rangeEnd"`
+type Tag struct {
+	ID        string `json:"id"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+	Ref       string `json:"ref"`
 }
 
 type UploadExec struct {
@@ -3257,11 +3184,11 @@ type Upload struct {
 	Done      bool   `json:"done"`
 }
 
-type ChunkConnectionExec struct {
+type UploadConnectionExec struct {
 	exec *prisma.Exec
 }
 
-func (instance *ChunkConnectionExec) PageInfo() *PageInfoExec {
+func (instance *UploadConnectionExec) PageInfo() *PageInfoExec {
 	ret := instance.exec.Client.GetOne(
 		instance.exec,
 		nil,
@@ -3272,22 +3199,22 @@ func (instance *ChunkConnectionExec) PageInfo() *PageInfoExec {
 	return &PageInfoExec{ret}
 }
 
-func (instance *ChunkConnectionExec) Edges() *ChunkEdgeExec {
+func (instance *UploadConnectionExec) Edges() *UploadEdgeExec {
 	ret := instance.exec.Client.GetOne(
 		instance.exec,
 		nil,
-		[2]string{"", "ChunkEdge"},
+		[2]string{"", "UploadEdge"},
 		"edges",
 		[]string{"cursor"})
 
-	return &ChunkEdgeExec{ret}
+	return &UploadEdgeExec{ret}
 }
 
-func (instance *ChunkConnectionExec) Aggregate(ctx context.Context) (Aggregate, error) {
+func (instance *UploadConnectionExec) Aggregate(ctx context.Context) (Aggregate, error) {
 	ret := instance.exec.Client.GetOne(
 		instance.exec,
 		nil,
-		[2]string{"", "AggregateChunk"},
+		[2]string{"", "AggregateUpload"},
 		"aggregate",
 		[]string{"count"})
 
@@ -3296,8 +3223,8 @@ func (instance *ChunkConnectionExec) Aggregate(ctx context.Context) (Aggregate, 
 	return v, err
 }
 
-func (instance ChunkConnectionExec) Exec(ctx context.Context) (*ChunkConnection, error) {
-	var v ChunkConnection
+func (instance UploadConnectionExec) Exec(ctx context.Context) (*UploadConnection, error) {
+	var v UploadConnection
 	ok, err := instance.exec.Exec(ctx, &v)
 	if err != nil {
 		return nil, err
@@ -3308,40 +3235,40 @@ func (instance ChunkConnectionExec) Exec(ctx context.Context) (*ChunkConnection,
 	return &v, nil
 }
 
-func (instance ChunkConnectionExec) Exists(ctx context.Context) (bool, error) {
+func (instance UploadConnectionExec) Exists(ctx context.Context) (bool, error) {
 	return instance.exec.Exists(ctx)
 }
 
-type ChunkConnectionExecArray struct {
+type UploadConnectionExecArray struct {
 	exec *prisma.Exec
 }
 
-func (instance ChunkConnectionExecArray) Exec(ctx context.Context) ([]ChunkConnection, error) {
-	var v []ChunkConnection
+func (instance UploadConnectionExecArray) Exec(ctx context.Context) ([]UploadConnection, error) {
+	var v []UploadConnection
 	err := instance.exec.ExecArray(ctx, &v)
 	return v, err
 }
 
-type ChunkConnection struct {
+type UploadConnection struct {
 }
 
-type ChunkEdgeExec struct {
+type ChunkExec struct {
 	exec *prisma.Exec
 }
 
-func (instance *ChunkEdgeExec) Node() *ChunkExec {
+func (instance *ChunkExec) Upload() *UploadExec {
 	ret := instance.exec.Client.GetOne(
 		instance.exec,
 		nil,
-		[2]string{"", "Chunk"},
-		"node",
-		[]string{"id", "createdAt", "updatedAt", "rangeStart", "rangeEnd"})
+		[2]string{"", "Upload"},
+		"upload",
+		[]string{"id", "createdAt", "updatedAt", "uuid", "done"})
 
-	return &ChunkExec{ret}
+	return &UploadExec{ret}
 }
 
-func (instance ChunkEdgeExec) Exec(ctx context.Context) (*ChunkEdge, error) {
-	var v ChunkEdge
+func (instance ChunkExec) Exec(ctx context.Context) (*Chunk, error) {
+	var v Chunk
 	ok, err := instance.exec.Exec(ctx, &v)
 	if err != nil {
 		return nil, err
@@ -3352,65 +3279,34 @@ func (instance ChunkEdgeExec) Exec(ctx context.Context) (*ChunkEdge, error) {
 	return &v, nil
 }
 
-func (instance ChunkEdgeExec) Exists(ctx context.Context) (bool, error) {
+func (instance ChunkExec) Exists(ctx context.Context) (bool, error) {
 	return instance.exec.Exists(ctx)
 }
 
-type ChunkEdgeExecArray struct {
+type ChunkExecArray struct {
 	exec *prisma.Exec
 }
 
-func (instance ChunkEdgeExecArray) Exec(ctx context.Context) ([]ChunkEdge, error) {
-	var v []ChunkEdge
+func (instance ChunkExecArray) Exec(ctx context.Context) ([]Chunk, error) {
+	var v []Chunk
 	err := instance.exec.ExecArray(ctx, &v)
 	return v, err
 }
 
-type ChunkEdge struct {
-	Cursor string `json:"cursor"`
+type Chunk struct {
+	ID         string `json:"id"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt  string `json:"updatedAt"`
+	RangeStart int32  `json:"rangeStart"`
+	RangeEnd   int32  `json:"rangeEnd"`
 }
 
-type ImageConnectionExec struct {
+type TagPreviousValuesExec struct {
 	exec *prisma.Exec
 }
 
-func (instance *ImageConnectionExec) PageInfo() *PageInfoExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "PageInfo"},
-		"pageInfo",
-		[]string{"hasNextPage", "hasPreviousPage", "startCursor", "endCursor"})
-
-	return &PageInfoExec{ret}
-}
-
-func (instance *ImageConnectionExec) Edges() *ImageEdgeExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "ImageEdge"},
-		"edges",
-		[]string{"cursor"})
-
-	return &ImageEdgeExec{ret}
-}
-
-func (instance *ImageConnectionExec) Aggregate(ctx context.Context) (Aggregate, error) {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "AggregateImage"},
-		"aggregate",
-		[]string{"count"})
-
-	var v Aggregate
-	_, err := ret.Exec(ctx, &v)
-	return v, err
-}
-
-func (instance ImageConnectionExec) Exec(ctx context.Context) (*ImageConnection, error) {
-	var v ImageConnection
+func (instance TagPreviousValuesExec) Exec(ctx context.Context) (*TagPreviousValues, error) {
+	var v TagPreviousValues
 	ok, err := instance.exec.Exec(ctx, &v)
 	if err != nil {
 		return nil, err
@@ -3421,292 +3317,25 @@ func (instance ImageConnectionExec) Exec(ctx context.Context) (*ImageConnection,
 	return &v, nil
 }
 
-func (instance ImageConnectionExec) Exists(ctx context.Context) (bool, error) {
+func (instance TagPreviousValuesExec) Exists(ctx context.Context) (bool, error) {
 	return instance.exec.Exists(ctx)
 }
 
-type ImageConnectionExecArray struct {
+type TagPreviousValuesExecArray struct {
 	exec *prisma.Exec
 }
 
-func (instance ImageConnectionExecArray) Exec(ctx context.Context) ([]ImageConnection, error) {
-	var v []ImageConnection
+func (instance TagPreviousValuesExecArray) Exec(ctx context.Context) ([]TagPreviousValues, error) {
+	var v []TagPreviousValues
 	err := instance.exec.ExecArray(ctx, &v)
 	return v, err
 }
 
-type ImageConnection struct {
-}
-
-type ImageEdgeExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *ImageEdgeExec) Node() *ImageExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Image"},
-		"node",
-		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
-
-	return &ImageExec{ret}
-}
-
-func (instance ImageEdgeExec) Exec(ctx context.Context) (*ImageEdge, error) {
-	var v ImageEdge
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance ImageEdgeExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type ImageEdgeExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance ImageEdgeExecArray) Exec(ctx context.Context) ([]ImageEdge, error) {
-	var v []ImageEdge
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type ImageEdge struct {
-	Cursor string `json:"cursor"`
-}
-
-type OrganizationConnectionExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *OrganizationConnectionExec) PageInfo() *PageInfoExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "PageInfo"},
-		"pageInfo",
-		[]string{"hasNextPage", "hasPreviousPage", "startCursor", "endCursor"})
-
-	return &PageInfoExec{ret}
-}
-
-func (instance *OrganizationConnectionExec) Edges() *OrganizationEdgeExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "OrganizationEdge"},
-		"edges",
-		[]string{"cursor"})
-
-	return &OrganizationEdgeExec{ret}
-}
-
-func (instance *OrganizationConnectionExec) Aggregate(ctx context.Context) (Aggregate, error) {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "AggregateOrganization"},
-		"aggregate",
-		[]string{"count"})
-
-	var v Aggregate
-	_, err := ret.Exec(ctx, &v)
-	return v, err
-}
-
-func (instance OrganizationConnectionExec) Exec(ctx context.Context) (*OrganizationConnection, error) {
-	var v OrganizationConnection
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance OrganizationConnectionExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type OrganizationConnectionExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance OrganizationConnectionExecArray) Exec(ctx context.Context) ([]OrganizationConnection, error) {
-	var v []OrganizationConnection
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type OrganizationConnection struct {
-}
-
-type OrganizationEdgeExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *OrganizationEdgeExec) Node() *OrganizationExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Organization"},
-		"node",
-		[]string{"id", "createdAt", "updatedAt", "name"})
-
-	return &OrganizationExec{ret}
-}
-
-func (instance OrganizationEdgeExec) Exec(ctx context.Context) (*OrganizationEdge, error) {
-	var v OrganizationEdge
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance OrganizationEdgeExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type OrganizationEdgeExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance OrganizationEdgeExecArray) Exec(ctx context.Context) ([]OrganizationEdge, error) {
-	var v []OrganizationEdge
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type OrganizationEdge struct {
-	Cursor string `json:"cursor"`
-}
-
-type RepositoryConnectionExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *RepositoryConnectionExec) PageInfo() *PageInfoExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "PageInfo"},
-		"pageInfo",
-		[]string{"hasNextPage", "hasPreviousPage", "startCursor", "endCursor"})
-
-	return &PageInfoExec{ret}
-}
-
-func (instance *RepositoryConnectionExec) Edges() *RepositoryEdgeExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "RepositoryEdge"},
-		"edges",
-		[]string{"cursor"})
-
-	return &RepositoryEdgeExec{ret}
-}
-
-func (instance *RepositoryConnectionExec) Aggregate(ctx context.Context) (Aggregate, error) {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "AggregateRepository"},
-		"aggregate",
-		[]string{"count"})
-
-	var v Aggregate
-	_, err := ret.Exec(ctx, &v)
-	return v, err
-}
-
-func (instance RepositoryConnectionExec) Exec(ctx context.Context) (*RepositoryConnection, error) {
-	var v RepositoryConnection
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance RepositoryConnectionExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type RepositoryConnectionExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance RepositoryConnectionExecArray) Exec(ctx context.Context) ([]RepositoryConnection, error) {
-	var v []RepositoryConnection
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type RepositoryConnection struct {
-}
-
-type RepositoryEdgeExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *RepositoryEdgeExec) Node() *RepositoryExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Repository"},
-		"node",
-		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
-
-	return &RepositoryExec{ret}
-}
-
-func (instance RepositoryEdgeExec) Exec(ctx context.Context) (*RepositoryEdge, error) {
-	var v RepositoryEdge
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance RepositoryEdgeExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type RepositoryEdgeExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance RepositoryEdgeExecArray) Exec(ctx context.Context) ([]RepositoryEdge, error) {
-	var v []RepositoryEdge
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type RepositoryEdge struct {
-	Cursor string `json:"cursor"`
+type TagPreviousValues struct {
+	ID        string `json:"id"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+	Ref       string `json:"ref"`
 }
 
 type TagConnectionExec struct {
@@ -3777,164 +3406,6 @@ func (instance TagConnectionExecArray) Exec(ctx context.Context) ([]TagConnectio
 type TagConnection struct {
 }
 
-type TagEdgeExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *TagEdgeExec) Node() *TagExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Tag"},
-		"node",
-		[]string{"id", "createdAt", "updatedAt", "ref"})
-
-	return &TagExec{ret}
-}
-
-func (instance TagEdgeExec) Exec(ctx context.Context) (*TagEdge, error) {
-	var v TagEdge
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance TagEdgeExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type TagEdgeExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance TagEdgeExecArray) Exec(ctx context.Context) ([]TagEdge, error) {
-	var v []TagEdge
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type TagEdge struct {
-	Cursor string `json:"cursor"`
-}
-
-type UploadConnectionExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *UploadConnectionExec) PageInfo() *PageInfoExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "PageInfo"},
-		"pageInfo",
-		[]string{"hasNextPage", "hasPreviousPage", "startCursor", "endCursor"})
-
-	return &PageInfoExec{ret}
-}
-
-func (instance *UploadConnectionExec) Edges() *UploadEdgeExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "UploadEdge"},
-		"edges",
-		[]string{"cursor"})
-
-	return &UploadEdgeExec{ret}
-}
-
-func (instance *UploadConnectionExec) Aggregate(ctx context.Context) (Aggregate, error) {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "AggregateUpload"},
-		"aggregate",
-		[]string{"count"})
-
-	var v Aggregate
-	_, err := ret.Exec(ctx, &v)
-	return v, err
-}
-
-func (instance UploadConnectionExec) Exec(ctx context.Context) (*UploadConnection, error) {
-	var v UploadConnection
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance UploadConnectionExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type UploadConnectionExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance UploadConnectionExecArray) Exec(ctx context.Context) ([]UploadConnection, error) {
-	var v []UploadConnection
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type UploadConnection struct {
-}
-
-type UploadEdgeExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *UploadEdgeExec) Node() *UploadExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Upload"},
-		"node",
-		[]string{"id", "createdAt", "updatedAt", "uuid", "done"})
-
-	return &UploadExec{ret}
-}
-
-func (instance UploadEdgeExec) Exec(ctx context.Context) (*UploadEdge, error) {
-	var v UploadEdge
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance UploadEdgeExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type UploadEdgeExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance UploadEdgeExecArray) Exec(ctx context.Context) ([]UploadEdge, error) {
-	var v []UploadEdge
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type UploadEdge struct {
-	Cursor string `json:"cursor"`
-}
-
 type BlobSubscriptionPayloadExec struct {
 	exec *prisma.Exec
 }
@@ -3992,6 +3463,51 @@ type BlobSubscriptionPayload struct {
 	UpdatedFields []string     `json:"updatedFields,omitempty"`
 }
 
+type RepositoryEdgeExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *RepositoryEdgeExec) Node() *RepositoryExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Repository"},
+		"node",
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
+
+	return &RepositoryExec{ret}
+}
+
+func (instance RepositoryEdgeExec) Exec(ctx context.Context) (*RepositoryEdge, error) {
+	var v RepositoryEdge
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance RepositoryEdgeExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type RepositoryEdgeExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance RepositoryEdgeExecArray) Exec(ctx context.Context) ([]RepositoryEdge, error) {
+	var v []RepositoryEdge
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type RepositoryEdge struct {
+	Cursor string `json:"cursor"`
+}
+
 type BlobPreviousValuesExec struct {
 	exec *prisma.Exec
 }
@@ -4027,6 +3543,74 @@ type BlobPreviousValues struct {
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 	Digest    string `json:"digest"`
+}
+
+type OrganizationConnectionExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *OrganizationConnectionExec) PageInfo() *PageInfoExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "PageInfo"},
+		"pageInfo",
+		[]string{"hasNextPage", "hasPreviousPage", "startCursor", "endCursor"})
+
+	return &PageInfoExec{ret}
+}
+
+func (instance *OrganizationConnectionExec) Edges() *OrganizationEdgeExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "OrganizationEdge"},
+		"edges",
+		[]string{"cursor"})
+
+	return &OrganizationEdgeExec{ret}
+}
+
+func (instance *OrganizationConnectionExec) Aggregate(ctx context.Context) (Aggregate, error) {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "AggregateOrganization"},
+		"aggregate",
+		[]string{"count"})
+
+	var v Aggregate
+	_, err := ret.Exec(ctx, &v)
+	return v, err
+}
+
+func (instance OrganizationConnectionExec) Exec(ctx context.Context) (*OrganizationConnection, error) {
+	var v OrganizationConnection
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance OrganizationConnectionExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type OrganizationConnectionExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance OrganizationConnectionExecArray) Exec(ctx context.Context) ([]OrganizationConnection, error) {
+	var v []OrganizationConnection
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type OrganizationConnection struct {
 }
 
 type ChunkSubscriptionPayloadExec struct {
@@ -4124,6 +3708,164 @@ type ChunkPreviousValues struct {
 	RangeEnd   int32  `json:"rangeEnd"`
 }
 
+type ImageConnectionExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *ImageConnectionExec) PageInfo() *PageInfoExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "PageInfo"},
+		"pageInfo",
+		[]string{"hasNextPage", "hasPreviousPage", "startCursor", "endCursor"})
+
+	return &PageInfoExec{ret}
+}
+
+func (instance *ImageConnectionExec) Edges() *ImageEdgeExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "ImageEdge"},
+		"edges",
+		[]string{"cursor"})
+
+	return &ImageEdgeExec{ret}
+}
+
+func (instance *ImageConnectionExec) Aggregate(ctx context.Context) (Aggregate, error) {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "AggregateImage"},
+		"aggregate",
+		[]string{"count"})
+
+	var v Aggregate
+	_, err := ret.Exec(ctx, &v)
+	return v, err
+}
+
+func (instance ImageConnectionExec) Exec(ctx context.Context) (*ImageConnection, error) {
+	var v ImageConnection
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance ImageConnectionExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type ImageConnectionExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance ImageConnectionExecArray) Exec(ctx context.Context) ([]ImageConnection, error) {
+	var v []ImageConnection
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type ImageConnection struct {
+}
+
+type BlobEdgeExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *BlobEdgeExec) Node() *BlobExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Blob"},
+		"node",
+		[]string{"id", "createdAt", "updatedAt", "digest"})
+
+	return &BlobExec{ret}
+}
+
+func (instance BlobEdgeExec) Exec(ctx context.Context) (*BlobEdge, error) {
+	var v BlobEdge
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance BlobEdgeExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type BlobEdgeExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance BlobEdgeExecArray) Exec(ctx context.Context) ([]BlobEdge, error) {
+	var v []BlobEdge
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type BlobEdge struct {
+	Cursor string `json:"cursor"`
+}
+
+type ChunkEdgeExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *ChunkEdgeExec) Node() *ChunkExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Chunk"},
+		"node",
+		[]string{"id", "createdAt", "updatedAt", "rangeStart", "rangeEnd"})
+
+	return &ChunkExec{ret}
+}
+
+func (instance ChunkEdgeExec) Exec(ctx context.Context) (*ChunkEdge, error) {
+	var v ChunkEdge
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance ChunkEdgeExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type ChunkEdgeExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance ChunkEdgeExecArray) Exec(ctx context.Context) ([]ChunkEdge, error) {
+	var v []ChunkEdge
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type ChunkEdge struct {
+	Cursor string `json:"cursor"`
+}
+
 type ImageSubscriptionPayloadExec struct {
 	exec *prisma.Exec
 }
@@ -4181,6 +3923,54 @@ type ImageSubscriptionPayload struct {
 	UpdatedFields []string     `json:"updatedFields,omitempty"`
 }
 
+type BlobExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *BlobExec) Repo() *RepositoryExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Repository"},
+		"repo",
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
+
+	return &RepositoryExec{ret}
+}
+
+func (instance BlobExec) Exec(ctx context.Context) (*Blob, error) {
+	var v Blob
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance BlobExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type BlobExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance BlobExecArray) Exec(ctx context.Context) ([]Blob, error) {
+	var v []Blob
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type Blob struct {
+	ID        string `json:"id"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+	Digest    string `json:"digest"`
+}
+
 type ImagePreviousValuesExec struct {
 	exec *prisma.Exec
 }
@@ -4218,195 +4008,6 @@ type ImagePreviousValues struct {
 	Digest       string `json:"digest"`
 	Manifest     string `json:"manifest"`
 	ManifestType string `json:"manifestType"`
-}
-
-type OrganizationSubscriptionPayloadExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *OrganizationSubscriptionPayloadExec) Node() *OrganizationExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Organization"},
-		"node",
-		[]string{"id", "createdAt", "updatedAt", "name"})
-
-	return &OrganizationExec{ret}
-}
-
-func (instance *OrganizationSubscriptionPayloadExec) PreviousValues() *OrganizationPreviousValuesExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "OrganizationPreviousValues"},
-		"previousValues",
-		[]string{"id", "createdAt", "updatedAt", "name"})
-
-	return &OrganizationPreviousValuesExec{ret}
-}
-
-func (instance OrganizationSubscriptionPayloadExec) Exec(ctx context.Context) (*OrganizationSubscriptionPayload, error) {
-	var v OrganizationSubscriptionPayload
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance OrganizationSubscriptionPayloadExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type OrganizationSubscriptionPayloadExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance OrganizationSubscriptionPayloadExecArray) Exec(ctx context.Context) ([]OrganizationSubscriptionPayload, error) {
-	var v []OrganizationSubscriptionPayload
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type OrganizationSubscriptionPayload struct {
-	Mutation      MutationType `json:"mutation"`
-	UpdatedFields []string     `json:"updatedFields,omitempty"`
-}
-
-type OrganizationPreviousValuesExec struct {
-	exec *prisma.Exec
-}
-
-func (instance OrganizationPreviousValuesExec) Exec(ctx context.Context) (*OrganizationPreviousValues, error) {
-	var v OrganizationPreviousValues
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance OrganizationPreviousValuesExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type OrganizationPreviousValuesExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance OrganizationPreviousValuesExecArray) Exec(ctx context.Context) ([]OrganizationPreviousValues, error) {
-	var v []OrganizationPreviousValues
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type OrganizationPreviousValues struct {
-	ID        string `json:"id"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
-	Name      string `json:"name"`
-}
-
-type RepositorySubscriptionPayloadExec struct {
-	exec *prisma.Exec
-}
-
-func (instance *RepositorySubscriptionPayloadExec) Node() *RepositoryExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "Repository"},
-		"node",
-		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
-
-	return &RepositoryExec{ret}
-}
-
-func (instance *RepositorySubscriptionPayloadExec) PreviousValues() *RepositoryPreviousValuesExec {
-	ret := instance.exec.Client.GetOne(
-		instance.exec,
-		nil,
-		[2]string{"", "RepositoryPreviousValues"},
-		"previousValues",
-		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
-
-	return &RepositoryPreviousValuesExec{ret}
-}
-
-func (instance RepositorySubscriptionPayloadExec) Exec(ctx context.Context) (*RepositorySubscriptionPayload, error) {
-	var v RepositorySubscriptionPayload
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance RepositorySubscriptionPayloadExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type RepositorySubscriptionPayloadExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance RepositorySubscriptionPayloadExecArray) Exec(ctx context.Context) ([]RepositorySubscriptionPayload, error) {
-	var v []RepositorySubscriptionPayload
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type RepositorySubscriptionPayload struct {
-	Mutation      MutationType `json:"mutation"`
-	UpdatedFields []string     `json:"updatedFields,omitempty"`
-}
-
-type RepositoryPreviousValuesExec struct {
-	exec *prisma.Exec
-}
-
-func (instance RepositoryPreviousValuesExec) Exec(ctx context.Context) (*RepositoryPreviousValues, error) {
-	var v RepositoryPreviousValues
-	ok, err := instance.exec.Exec(ctx, &v)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, ErrNoResult
-	}
-	return &v, nil
-}
-
-func (instance RepositoryPreviousValuesExec) Exists(ctx context.Context) (bool, error) {
-	return instance.exec.Exists(ctx)
-}
-
-type RepositoryPreviousValuesExecArray struct {
-	exec *prisma.Exec
-}
-
-func (instance RepositoryPreviousValuesExecArray) Exec(ctx context.Context) ([]RepositoryPreviousValues, error) {
-	var v []RepositoryPreviousValues
-	err := instance.exec.ExecArray(ctx, &v)
-	return v, err
-}
-
-type RepositoryPreviousValues struct {
-	ID        string `json:"id"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
-	Name      string `json:"name"`
-	FullName  string `json:"fullName"`
 }
 
 type TagSubscriptionPayloadExec struct {
@@ -4466,12 +4067,23 @@ type TagSubscriptionPayload struct {
 	UpdatedFields []string     `json:"updatedFields,omitempty"`
 }
 
-type TagPreviousValuesExec struct {
+type OrganizationEdgeExec struct {
 	exec *prisma.Exec
 }
 
-func (instance TagPreviousValuesExec) Exec(ctx context.Context) (*TagPreviousValues, error) {
-	var v TagPreviousValues
+func (instance *OrganizationEdgeExec) Node() *OrganizationExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Organization"},
+		"node",
+		[]string{"id", "createdAt", "updatedAt", "name"})
+
+	return &OrganizationExec{ret}
+}
+
+func (instance OrganizationEdgeExec) Exec(ctx context.Context) (*OrganizationEdge, error) {
+	var v OrganizationEdge
 	ok, err := instance.exec.Exec(ctx, &v)
 	if err != nil {
 		return nil, err
@@ -4482,25 +4094,383 @@ func (instance TagPreviousValuesExec) Exec(ctx context.Context) (*TagPreviousVal
 	return &v, nil
 }
 
-func (instance TagPreviousValuesExec) Exists(ctx context.Context) (bool, error) {
+func (instance OrganizationEdgeExec) Exists(ctx context.Context) (bool, error) {
 	return instance.exec.Exists(ctx)
 }
 
-type TagPreviousValuesExecArray struct {
+type OrganizationEdgeExecArray struct {
 	exec *prisma.Exec
 }
 
-func (instance TagPreviousValuesExecArray) Exec(ctx context.Context) ([]TagPreviousValues, error) {
-	var v []TagPreviousValues
+func (instance OrganizationEdgeExecArray) Exec(ctx context.Context) ([]OrganizationEdge, error) {
+	var v []OrganizationEdge
 	err := instance.exec.ExecArray(ctx, &v)
 	return v, err
 }
 
-type TagPreviousValues struct {
+type OrganizationEdge struct {
+	Cursor string `json:"cursor"`
+}
+
+type OrganizationSubscriptionPayloadExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *OrganizationSubscriptionPayloadExec) Node() *OrganizationExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Organization"},
+		"node",
+		[]string{"id", "createdAt", "updatedAt", "name"})
+
+	return &OrganizationExec{ret}
+}
+
+func (instance *OrganizationSubscriptionPayloadExec) PreviousValues() *OrganizationPreviousValuesExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "OrganizationPreviousValues"},
+		"previousValues",
+		[]string{"id", "createdAt", "updatedAt", "name"})
+
+	return &OrganizationPreviousValuesExec{ret}
+}
+
+func (instance OrganizationSubscriptionPayloadExec) Exec(ctx context.Context) (*OrganizationSubscriptionPayload, error) {
+	var v OrganizationSubscriptionPayload
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance OrganizationSubscriptionPayloadExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type OrganizationSubscriptionPayloadExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance OrganizationSubscriptionPayloadExecArray) Exec(ctx context.Context) ([]OrganizationSubscriptionPayload, error) {
+	var v []OrganizationSubscriptionPayload
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type OrganizationSubscriptionPayload struct {
+	Mutation      MutationType `json:"mutation"`
+	UpdatedFields []string     `json:"updatedFields,omitempty"`
+}
+
+type ImageEdgeExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *ImageEdgeExec) Node() *ImageExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Image"},
+		"node",
+		[]string{"id", "createdAt", "updatedAt", "digest", "manifest", "manifestType"})
+
+	return &ImageExec{ret}
+}
+
+func (instance ImageEdgeExec) Exec(ctx context.Context) (*ImageEdge, error) {
+	var v ImageEdge
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance ImageEdgeExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type ImageEdgeExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance ImageEdgeExecArray) Exec(ctx context.Context) ([]ImageEdge, error) {
+	var v []ImageEdge
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type ImageEdge struct {
+	Cursor string `json:"cursor"`
+}
+
+type UploadEdgeExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *UploadEdgeExec) Node() *UploadExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Upload"},
+		"node",
+		[]string{"id", "createdAt", "updatedAt", "uuid", "done"})
+
+	return &UploadExec{ret}
+}
+
+func (instance UploadEdgeExec) Exec(ctx context.Context) (*UploadEdge, error) {
+	var v UploadEdge
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance UploadEdgeExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type UploadEdgeExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance UploadEdgeExecArray) Exec(ctx context.Context) ([]UploadEdge, error) {
+	var v []UploadEdge
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type UploadEdge struct {
+	Cursor string `json:"cursor"`
+}
+
+type RepositoryPreviousValuesExec struct {
+	exec *prisma.Exec
+}
+
+func (instance RepositoryPreviousValuesExec) Exec(ctx context.Context) (*RepositoryPreviousValues, error) {
+	var v RepositoryPreviousValues
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance RepositoryPreviousValuesExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type RepositoryPreviousValuesExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance RepositoryPreviousValuesExecArray) Exec(ctx context.Context) ([]RepositoryPreviousValues, error) {
+	var v []RepositoryPreviousValues
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type RepositoryPreviousValues struct {
 	ID        string `json:"id"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
-	Ref       string `json:"ref"`
+	Name      string `json:"name"`
+	FullName  string `json:"fullName"`
+}
+
+type RepositorySubscriptionPayloadExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *RepositorySubscriptionPayloadExec) Node() *RepositoryExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Repository"},
+		"node",
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
+
+	return &RepositoryExec{ret}
+}
+
+func (instance *RepositorySubscriptionPayloadExec) PreviousValues() *RepositoryPreviousValuesExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "RepositoryPreviousValues"},
+		"previousValues",
+		[]string{"id", "createdAt", "updatedAt", "name", "fullName"})
+
+	return &RepositoryPreviousValuesExec{ret}
+}
+
+func (instance RepositorySubscriptionPayloadExec) Exec(ctx context.Context) (*RepositorySubscriptionPayload, error) {
+	var v RepositorySubscriptionPayload
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance RepositorySubscriptionPayloadExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type RepositorySubscriptionPayloadExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance RepositorySubscriptionPayloadExecArray) Exec(ctx context.Context) ([]RepositorySubscriptionPayload, error) {
+	var v []RepositorySubscriptionPayload
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type RepositorySubscriptionPayload struct {
+	Mutation      MutationType `json:"mutation"`
+	UpdatedFields []string     `json:"updatedFields,omitempty"`
+}
+
+type PageInfoExec struct {
+	exec *prisma.Exec
+}
+
+func (instance PageInfoExec) Exec(ctx context.Context) (*PageInfo, error) {
+	var v PageInfo
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance PageInfoExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type PageInfoExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance PageInfoExecArray) Exec(ctx context.Context) ([]PageInfo, error) {
+	var v []PageInfo
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type PageInfo struct {
+	HasNextPage     bool    `json:"hasNextPage"`
+	HasPreviousPage bool    `json:"hasPreviousPage"`
+	StartCursor     *string `json:"startCursor,omitempty"`
+	EndCursor       *string `json:"endCursor,omitempty"`
+}
+
+type OrganizationPreviousValuesExec struct {
+	exec *prisma.Exec
+}
+
+func (instance OrganizationPreviousValuesExec) Exec(ctx context.Context) (*OrganizationPreviousValues, error) {
+	var v OrganizationPreviousValues
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance OrganizationPreviousValuesExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type OrganizationPreviousValuesExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance OrganizationPreviousValuesExecArray) Exec(ctx context.Context) ([]OrganizationPreviousValues, error) {
+	var v []OrganizationPreviousValues
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type OrganizationPreviousValues struct {
+	ID        string `json:"id"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+	Name      string `json:"name"`
+}
+
+type TagEdgeExec struct {
+	exec *prisma.Exec
+}
+
+func (instance *TagEdgeExec) Node() *TagExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "Tag"},
+		"node",
+		[]string{"id", "createdAt", "updatedAt", "ref"})
+
+	return &TagExec{ret}
+}
+
+func (instance TagEdgeExec) Exec(ctx context.Context) (*TagEdge, error) {
+	var v TagEdge
+	ok, err := instance.exec.Exec(ctx, &v)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, ErrNoResult
+	}
+	return &v, nil
+}
+
+func (instance TagEdgeExec) Exists(ctx context.Context) (bool, error) {
+	return instance.exec.Exists(ctx)
+}
+
+type TagEdgeExecArray struct {
+	exec *prisma.Exec
+}
+
+func (instance TagEdgeExecArray) Exec(ctx context.Context) ([]TagEdge, error) {
+	var v []TagEdge
+	err := instance.exec.ExecArray(ctx, &v)
+	return v, err
+}
+
+type TagEdge struct {
+	Cursor string `json:"cursor"`
 }
 
 type UploadSubscriptionPayloadExec struct {
@@ -4560,12 +4530,47 @@ type UploadSubscriptionPayload struct {
 	UpdatedFields []string     `json:"updatedFields,omitempty"`
 }
 
-type UploadPreviousValuesExec struct {
+type RepositoryConnectionExec struct {
 	exec *prisma.Exec
 }
 
-func (instance UploadPreviousValuesExec) Exec(ctx context.Context) (*UploadPreviousValues, error) {
-	var v UploadPreviousValues
+func (instance *RepositoryConnectionExec) PageInfo() *PageInfoExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "PageInfo"},
+		"pageInfo",
+		[]string{"hasNextPage", "hasPreviousPage", "startCursor", "endCursor"})
+
+	return &PageInfoExec{ret}
+}
+
+func (instance *RepositoryConnectionExec) Edges() *RepositoryEdgeExec {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "RepositoryEdge"},
+		"edges",
+		[]string{"cursor"})
+
+	return &RepositoryEdgeExec{ret}
+}
+
+func (instance *RepositoryConnectionExec) Aggregate(ctx context.Context) (Aggregate, error) {
+	ret := instance.exec.Client.GetOne(
+		instance.exec,
+		nil,
+		[2]string{"", "AggregateRepository"},
+		"aggregate",
+		[]string{"count"})
+
+	var v Aggregate
+	_, err := ret.Exec(ctx, &v)
+	return v, err
+}
+
+func (instance RepositoryConnectionExec) Exec(ctx context.Context) (*RepositoryConnection, error) {
+	var v RepositoryConnection
 	ok, err := instance.exec.Exec(ctx, &v)
 	if err != nil {
 		return nil, err
@@ -4576,24 +4581,19 @@ func (instance UploadPreviousValuesExec) Exec(ctx context.Context) (*UploadPrevi
 	return &v, nil
 }
 
-func (instance UploadPreviousValuesExec) Exists(ctx context.Context) (bool, error) {
+func (instance RepositoryConnectionExec) Exists(ctx context.Context) (bool, error) {
 	return instance.exec.Exists(ctx)
 }
 
-type UploadPreviousValuesExecArray struct {
+type RepositoryConnectionExecArray struct {
 	exec *prisma.Exec
 }
 
-func (instance UploadPreviousValuesExecArray) Exec(ctx context.Context) ([]UploadPreviousValues, error) {
-	var v []UploadPreviousValues
+func (instance RepositoryConnectionExecArray) Exec(ctx context.Context) ([]RepositoryConnection, error) {
+	var v []RepositoryConnection
 	err := instance.exec.ExecArray(ctx, &v)
 	return v, err
 }
 
-type UploadPreviousValues struct {
-	ID        string `json:"id"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
-	Uuid      string `json:"uuid"`
-	Done      bool   `json:"done"`
+type RepositoryConnection struct {
 }

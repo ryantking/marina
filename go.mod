@@ -13,6 +13,7 @@ require (
 	github.com/facebookgo/stats v0.0.0-20151006221625-1b76add642e4 // indirect
 	github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870 // indirect
 	github.com/go-ini/ini v1.42.0 // indirect
+	github.com/google/uuid v1.1.1
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.1.5 // indirect
 	github.com/machinebox/graphql v0.2.2
