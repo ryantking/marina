@@ -1,6 +1,7 @@
 package manifest
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -89,15 +90,7 @@ func Update(c echo.Context) error {
 		return err
 	}
 	if len(ref) != 71 || !strings.HasPrefix(ref, "sha256:") {
-		_, err := client.DeleteManyTags(&prisma.TagWhereInput{
-			Ref: &ref,
-			Image: &prisma.ImageWhereInput{
-				Repo: &prisma.RepositoryWhereInput{
-					Name: &repo,
-					Org:  &prisma.OrganizationWhereInput{Name: &org},
-				},
-			},
-		}).Exec(c.Request().Context())
+		err := deleteTag(c.Request().Context(), ref, repo, org)
 		if err != nil {
 			return err
 		}
@@ -130,15 +123,7 @@ func Delete(c echo.Context) error {
 
 	ref := c.Param("ref")
 	if len(ref) != 71 || !strings.HasPrefix(ref, "sha256:") {
-		_, err := client.DeleteManyTags(&prisma.TagWhereInput{
-			Ref: &ref,
-			Image: &prisma.ImageWhereInput{
-				Repo: &prisma.RepositoryWhereInput{
-					Name: &repo,
-					Org:  &prisma.OrganizationWhereInput{Name: &org},
-				},
-			},
-		}).Exec(c.Request().Context())
+		err := deleteTag(c.Request().Context(), ref, repo, org)
 		if err != nil {
 			return err
 		}
@@ -150,4 +135,17 @@ func Delete(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusAccepted)
+}
+
+func deleteTag(ctx context.Context, ref, repo, org string) error {
+	_, err := client.DeleteManyTags(&prisma.TagWhereInput{
+		Ref: &ref,
+		Image: &prisma.ImageWhereInput{
+			Repo: &prisma.RepositoryWhereInput{
+				Name: &repo,
+				Org:  &prisma.OrganizationWhereInput{Name: &org},
+			},
+		},
+	}).Exec(ctx)
+	return err
 }
