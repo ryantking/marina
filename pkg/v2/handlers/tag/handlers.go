@@ -28,15 +28,7 @@ func List(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if n == 0 {
-		return listAll(c, repo, org)
-	}
-
-	return listPaginated(c, repo, org, n, last)
-}
-
-func listAll(c echo.Context, repo, org string) error {
-	tags, err := client.Tags(&prisma.TagsParams{
+	tagsParams := &prisma.TagsParams{
 		OrderBy: &orderBy,
 		Where: &prisma.TagWhereInput{
 			Image: &prisma.ImageWhereInput{
@@ -46,38 +38,36 @@ func listAll(c echo.Context, repo, org string) error {
 				},
 			},
 		},
-	}).Exec(c.Request().Context())
-	if err != nil {
-		return err
 	}
-
-	return writeTags(c, repo, org, tags)
-}
-
-func listPaginated(c echo.Context, repo, org string, n int32, last string) error {
-	tags, err := client.Tags(&prisma.TagsParams{
-		OrderBy: &orderBy,
-		After:   &last,
-		First:   &n,
-		Where: &prisma.TagWhereInput{
-			Image: &prisma.ImageWhereInput{
-				Repo: &prisma.RepositoryWhereInput{
-					Name: &repo,
-					Org:  &prisma.OrganizationWhereInput{Name: &org},
+	if n != 0 {
+		tagsParams.First = &n
+	}
+	if last != "" {
+		tags, err := client.Tags(&prisma.TagsParams{
+			Where: &prisma.TagWhereInput{
+				Ref: &last,
+				Image: &prisma.ImageWhereInput{
+					Repo: &prisma.RepositoryWhereInput{
+						Name: &repo,
+						Org:  &prisma.OrganizationWhereInput{Name: &org},
+					},
 				},
 			},
-		},
-	}).Exec(c.Request().Context())
+		}).Exec(c.Request().Context())
+		if err != nil {
+			return err
+		}
+		tagsParams.After = &tags[0].ID
+	}
+	tags, err := client.Tags(tagsParams).Exec(c.Request().Context())
 	if err != nil {
 		return err
 	}
+	if n > 0 && len(tags) == int(n) {
+		link := fmt.Sprintf("/v2/%s/%s/tags/list?n=%d&last=%s", org, repo, n, tags[n-1].Ref)
+		c.Response().Header().Set(headerLink, link)
+	}
 
-	link := fmt.Sprintf("/v2/%s/%s/tags/list?n=%d&last=%s", org, repo, n, tags[len(tags)-1].Ref)
-	c.Response().Header().Set(headerLink, link)
-	return writeTags(c, repo, org, tags)
-}
-
-func writeTags(c echo.Context, repo, org string, tags []prisma.Tag) error {
 	tagRefs := make([]string, len(tags))
 	for i, tag := range tags {
 		tagRefs[i] = tag.Ref
