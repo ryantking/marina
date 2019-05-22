@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
+	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/docker"
 	"github.com/ryantking/marina/pkg/prisma"
 	"github.com/ryantking/marina/pkg/store"
@@ -66,7 +67,7 @@ func Start(c echo.Context) error {
 // Blob is used to save a chunk of data to a blob
 func Blob(c echo.Context) error {
 	defer c.Request().Body.Close()
-	repoName, orgName, uuid, err := parsePath(c)
+	uuid, repoName, orgName, err := parsePath(c)
 	if err != nil {
 		return err
 	}
@@ -78,7 +79,17 @@ func Blob(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	err = storeChunk(c, uuid, sz, start)
+	sz, err = storeChunk(uuid, c.Request().Body, sz, start)
+	if err != nil {
+		return err
+	}
+	_, err = client.CreateChunk(prisma.ChunkCreateInput{
+		RangeStart: start,
+		RangeEnd:   start + sz - 1,
+		Upload: prisma.UploadCreateOneWithoutChunksInput{
+			Connect: &prisma.UploadWhereUniqueInput{Uuid: &uuid},
+		},
+	}).Exec(c.Request().Context())
 	if err != nil {
 		return err
 	}
@@ -87,7 +98,7 @@ func Blob(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderLocation, loc)
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
 	c.Response().Header().Set(docker.HeaderUploadUUID, fmt.Sprint(uuid))
-	lastRange, err := chunk.GetLastRange(uuid)
+	lastRange, err := getLastRange(c.Request().Context(), uuid)
 	if err != nil {
 		return err
 	}
@@ -95,47 +106,53 @@ func Blob(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-// // Finish is used to signal when the upload has completed
-// func Finish(c echo.Context) error {
-// 	repoName, orgName, uuid, err := parsePath(c)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	digest := c.QueryParam("digest")
-// 	sz, err := parseLength(c)
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	if sz > 0 {
-// 		err = storeChunk(c, uuid, sz, 0)
-// 		if err != nil {
-// 			return err
-// 		}
-// 	}
-//
-// 	err = store.FinishUpload(digest, uuid, repoName, orgName)
-// 	if err != nil {
-// 		return errors.Wrap(err, "error finishing upload")
-// 	}
-//
-// 	err = upload.Finish(uuid)
-// 	if err != nil {
-// 		return errors.Wrap(err, "error updating upload status")
-// 	}
-//
-// 	err = blob.Create(digest, repoName, orgName)
-// 	if err != nil {
-// 		return errors.Wrap(err, "error creating new blob in database")
-// 	}
-//
-// 	loc := fmt.Sprintf("/v2/%s/%s/blobs/%s", orgName, repoName, digest)
-// 	c.Response().Header().Set(echo.HeaderLocation, loc)
-// 	c.Response().Header().Set(echo.HeaderContentLength, "0")
-// 	c.Response().Header().Set(docker.HeaderContentDigest, digest)
-// 	return c.NoContent(http.StatusCreated)
-// }
-//
+// Finish is used to signal when the upload has completed
+func Finish(c echo.Context) error {
+	repoName, orgName, uuid, err := parsePath(c)
+	if err != nil {
+		return err
+	}
+	digest := c.QueryParam("digest")
+	sz, err := parseLength(c)
+	if err != nil {
+		return err
+	}
+
+	if sz > 0 {
+		defer c.Request().Body.Close()
+		start, err := parseRange(c)
+		if err != nil {
+			return err
+		}
+
+		_, err = storeChunk(uuid, c.Request().Body, sz, start)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = store.FinishUpload(digest, uuid, repoName, orgName)
+	if err != nil {
+		return errors.Wrap(err, "error finishing upload")
+	}
+
+	_, err = client.UpdateUpload(prisma.UploadUpdateParams{
+		Where: prisma.UploadWhereUniqueInput{Uuid: &uuid},
+		Data:  prisma.UploadUpdateInput{Done: prisma.Bool(true)},
+	}).Exec(c.Request().Context())
+
+	_, err = client.CreateBlob(prisma.BlobCreateInput{Digest: digest}).Exec(c.Request().Context())
+	if err != nil {
+		return err
+	}
+
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/%s", orgName, repoName, digest)
+	c.Response().Header().Set(echo.HeaderLocation, loc)
+	c.Response().Header().Set(echo.HeaderContentLength, "0")
+	c.Response().Header().Set(docker.HeaderContentDigest, digest)
+	return c.NoContent(http.StatusCreated)
+}
+
 // // Cancel cancels a currently running upload
 // func Cancel(c echo.Context) error {
 // 	_, _, uuid, err := parsePath(c)

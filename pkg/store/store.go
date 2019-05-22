@@ -35,7 +35,7 @@ func DeleteBlob(digest, repoName, orgName string) error {
 }
 
 // CreateUpload creates a new upload from the given reader
-func UploadChunk(uuid string, r io.Reader, sz, start int64) (int64, error) {
+func UploadChunk(uuid string, r io.Reader, sz, start int32) (int32, error) {
 	c, err := getClient()
 	if err != nil {
 		return 0, err

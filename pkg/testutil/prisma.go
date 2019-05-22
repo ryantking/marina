@@ -135,6 +135,11 @@ func Seed(ctx context.Context) {
 	if err != nil {
 		panic(err.Error())
 	}
+
+	_, err = client.CreateUpload(prisma.UploadCreateInput{Uuid: "3f497dc6-9458-4c2d-8368-2e71d35c77e5"}).Exec(ctx)
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 func Clear(ctx context.Context) {

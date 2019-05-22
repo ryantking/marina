@@ -42,13 +42,13 @@ func (c *Client) Get(path string) (io.ReadCloser, error) {
 }
 
 // Put saves an object to the bucket
-func (c *Client) Put(path string, r io.Reader, sz int64) (int64, error) {
-	n, err := c.PutObject(c.bucket, path, r, sz, minio.PutObjectOptions{})
+func (c *Client) Put(path string, r io.Reader, sz int32) (int32, error) {
+	n, err := c.PutObject(c.bucket, path, r, int64(sz), minio.PutObjectOptions{})
 	if err != nil {
 		return 0, errors.Wrap(err, "error uploading object to S3")
 	}
 
-	return n, nil
+	return int32(n), nil
 }
 
 // Remove deletes an object from the bucket

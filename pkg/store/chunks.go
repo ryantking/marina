@@ -33,7 +33,7 @@ func mergeChunks(c Client, uuid string, chunks []prisma.Chunk, loc string) error
 		sz += chunk.RangeEnd - chunk.RangeStart + 1
 	}
 
-	_, err := c.Put(loc, io.MultiReader(readers...), int64(sz))
+	_, err := c.Put(loc, io.MultiReader(readers...), sz)
 	if err != nil {
 		return errors.Wrap(err, "error uploading blob")
 	}

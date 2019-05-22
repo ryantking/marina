@@ -98,7 +98,7 @@ func (suite *TagTestSuite) TestListPaginated() {
 	assert.Equal(link, rr.Header().Get(headerLink))
 }
 
-func TestBaseTestSuite(t *testing.T) {
+func TestTagTestSuite(t *testing.T) {
 	tests := new(TagTestSuite)
 	suite.Run(t, tests)
 }

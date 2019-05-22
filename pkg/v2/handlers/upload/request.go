@@ -54,22 +54,22 @@ func getLastRange(ctx context.Context, uuid string) (string, error) {
 	return fmt.Sprintf("%d-%d", chunks[0].RangeStart, chunks[0].RangeEnd), nil
 }
 
-func parseLength(c echo.Context) (int64, error) {
+func parseLength(c echo.Context) (int32, error) {
 	s := c.Request().Header.Get(echo.HeaderContentLength)
 	if s == "" {
 		return -1, nil
 	}
 
-	sz, err := strconv.ParseInt(s, 10, 64)
+	sz, err := strconv.ParseInt(s, 10, 32)
 	if err != nil {
 		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
 		return 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	return sz, nil
+	return int32(sz), nil
 }
 
-func parseRange(c echo.Context) (int64, error) {
+func parseRange(c echo.Context) (int32, error) {
 	s := c.Request().Header.Get("Content-Range")
 	if s == "" {
 		return 0, nil
@@ -79,11 +79,11 @@ func parseRange(c echo.Context) (int64, error) {
 		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
 		return 0, echo.NewHTTPError(http.StatusBadRequest, "invalid Content-Range header")
 	}
-	start, err := strconv.ParseInt(parts[0], 10, 64)
+	start, err := strconv.ParseInt(parts[0], 10, 32)
 	if err != nil {
 		c.Set("docker_err_code", "BLOB_UPLOAD_INVALID")
 		return 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	return start, nil
+	return int32(start), nil
 }
