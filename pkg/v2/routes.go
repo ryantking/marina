@@ -19,7 +19,7 @@ func RegisterRoutes(e *echo.Echo) {
 	v2.DELETE("/:org/:repo/blobs/:digest", blob.Delete)
 	v2.POST("/:org/:repo/blobs/uploads/", upload.Start)
 	v2.PUT("/:org/:repo/blobs/uploads/:uuid", upload.Finish)
-	v2.PATCH("/:org/:repo/blobs/uploads/:uuid", upload.Blob)
+	v2.PATCH("/:org/:repo/blobs/uploads/:uuid", upload.Chunk)
 	v2.HEAD("/:org/:repo/manifests/:ref", manifest.Exists)
 	v2.GET("/:org/:repo/manifests/:ref", manifest.Get)
 	v2.PUT("/:org/:repo/manifests/:ref", manifest.Update)

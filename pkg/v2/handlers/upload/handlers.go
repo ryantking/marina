@@ -20,7 +20,9 @@ const (
 var (
 	client = prisma.New(nil)
 
-	storeChunk = store.UploadChunk
+	storeChunk   = store.UploadChunk
+	finishUpload = store.FinishUpload
+	deleteUpload = store.DeleteUpload
 )
 
 // Get returns an upload
@@ -64,10 +66,10 @@ func Start(c echo.Context) error {
 	return c.NoContent(http.StatusAccepted)
 }
 
-// Blob is used to save a chunk of data to a blob
-func Blob(c echo.Context) error {
+// Chunk is used to save a chunk of data to a blob
+func Chunk(c echo.Context) error {
 	defer c.Request().Body.Close()
-	uuid, repoName, orgName, err := parsePath(c)
+	uuid, repo, org, err := parsePath(c)
 	if err != nil {
 		return err
 	}
@@ -94,7 +96,7 @@ func Blob(c echo.Context) error {
 		return err
 	}
 
-	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", orgName, repoName, uuid)
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", org, repo, uuid)
 	c.Response().Header().Set(echo.HeaderLocation, loc)
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
 	c.Response().Header().Set(docker.HeaderUploadUUID, fmt.Sprint(uuid))
@@ -108,7 +110,7 @@ func Blob(c echo.Context) error {
 
 // Finish is used to signal when the upload has completed
 func Finish(c echo.Context) error {
-	repoName, orgName, uuid, err := parsePath(c)
+	uuid, repo, org, err := parsePath(c)
 	if err != nil {
 		return err
 	}
@@ -129,9 +131,20 @@ func Finish(c echo.Context) error {
 		if err != nil {
 			return err
 		}
+
+		_, err = client.CreateChunk(prisma.ChunkCreateInput{
+			RangeStart: start,
+			RangeEnd:   start + sz - 1,
+			Upload: prisma.UploadCreateOneWithoutChunksInput{
+				Connect: &prisma.UploadWhereUniqueInput{Uuid: &uuid},
+			},
+		}).Exec(c.Request().Context())
+		if err != nil {
+			return err
+		}
 	}
 
-	err = store.FinishUpload(digest, uuid, repoName, orgName)
+	err = finishUpload(digest, uuid, repo, org)
 	if err != nil {
 		return errors.Wrap(err, "error finishing upload")
 	}
@@ -141,48 +154,48 @@ func Finish(c echo.Context) error {
 		Data:  prisma.UploadUpdateInput{Done: prisma.Bool(true)},
 	}).Exec(c.Request().Context())
 
-	_, err = client.CreateBlob(prisma.BlobCreateInput{Digest: digest}).Exec(c.Request().Context())
+	repos, err := client.Repositories(&prisma.RepositoriesParams{
+		Where: &prisma.RepositoryWhereInput{
+			Name: &repo,
+			Org:  &prisma.OrganizationWhereInput{Name: &org},
+		},
+	}).Exec(c.Request().Context())
+	if err != nil {
+		return err
+	}
+	_, err = client.CreateBlob(prisma.BlobCreateInput{
+		Digest: digest,
+		Repo: prisma.RepositoryCreateOneWithoutBlobsInput{
+			Connect: &prisma.RepositoryWhereUniqueInput{ID: &repos[0].ID},
+		},
+	}).Exec(c.Request().Context())
 	if err != nil {
 		return err
 	}
 
-	loc := fmt.Sprintf("/v2/%s/%s/blobs/%s", orgName, repoName, digest)
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/%s", org, repo, digest)
 	c.Response().Header().Set(echo.HeaderLocation, loc)
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
 	c.Response().Header().Set(docker.HeaderContentDigest, digest)
 	return c.NoContent(http.StatusCreated)
 }
 
-// // Cancel cancels a currently running upload
-// func Cancel(c echo.Context) error {
-// 	_, _, uuid, err := parsePath(c)
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	err = store.DeleteUpload(uuid)
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	err = upload.Delete(uuid)
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	return c.NoContent(http.StatusNoContent)
-// }
-//
-// func storeChunk(c echo.Context, uuid string, sz, start int64) error {
-// 	sz, err := store.UploadChunk(uuid, c.Request().Body, sz, start)
-// 	if err != nil {
-// 		return errors.Wrap(err, "error storing chunk")
-// 	}
-// 	end := start + sz - 1
-// 	err = chunk.New(uuid, start, end)
-// 	if err != nil {
-// 		return errors.Wrap(err, "error creating upload chunk")
-// 	}
-//
-// 	return nil
-// }
+// Cancel cancels a currently running upload
+func Cancel(c echo.Context) error {
+	uuid, _, _, err := parsePath(c)
+	if err != nil {
+		return err
+	}
+
+	err = deleteUpload(uuid)
+	if err != nil {
+		return err
+	}
+
+	_, err = client.DeleteUpload(prisma.UploadWhereUniqueInput{Uuid: &uuid}).Exec(c.Request().Context())
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}

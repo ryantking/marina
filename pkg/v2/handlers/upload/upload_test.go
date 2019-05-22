@@ -24,7 +24,9 @@ func (suite *UploadTestSuite) SetupSuite() {
 	e := echo.New()
 	e.GET("/v2/:org/:repo/blobs/uploads/:uuid", Get)
 	e.POST("/v2/:org/:repo/blobs/uploads", Start)
-	e.PATCH("/v2/:org/:repo/blobs/uploads/:uuid", Blob)
+	e.PATCH("/v2/:org/:repo/blobs/uploads/:uuid", Chunk)
+	e.PUT("/v2/:org/:repo/blobs/uploads/:uuid", Finish)
+	e.DELETE("/v2/:org/:repo/blobs/uploads/:uuid", Cancel)
 	suite.r = e
 }
 
@@ -67,7 +69,7 @@ func (suite *UploadTestSuite) TestStart() {
 	assert.Equal("0-0", rr.Header().Get(headerRange))
 }
 
-func (suite *UploadTestSuite) TestBlob() {
+func (suite *UploadTestSuite) TestChunk() {
 	assert := suite.Assert()
 	require := suite.Require()
 
@@ -90,6 +92,54 @@ func (suite *UploadTestSuite) TestBlob() {
 	assert.Equal(url, rr.Header().Get(echo.HeaderLocation))
 	assert.Equal(uuid, rr.Header().Get(docker.HeaderUploadUUID))
 	assert.Equal("0-5", rr.Header().Get(headerRange))
+}
+
+func (suite *UploadTestSuite) TestFinish() {
+	assert := suite.Assert()
+	require := suite.Require()
+
+	digest := "sha256:8a1a56c55249a7e7085ba7482de00d83083d4ebe0c1e782a8ce9d56dd7d3f0a0"
+	uuid := "3f497dc6-9458-4c2d-8368-2e71d35c77e5"
+	repo := "alpine"
+	org := "library"
+	r := bytes.NewReader([]byte("chunk1"))
+	storeChunk = func(uuid string, r io.Reader, sz, start int32) (int32, error) {
+		b, err := ioutil.ReadAll(r)
+		require.NoError(err)
+		assert.EqualValues("chunk1", b)
+		return 6, nil
+	}
+	finishUpload = func(digest, uuid, repo, org string) error {
+		return nil
+	}
+
+	url := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s?digest=%s", org, repo, uuid, digest)
+	req := httptest.NewRequest(http.MethodPut, url, r)
+	rr := httptest.NewRecorder()
+	suite.r.ServeHTTP(rr, req)
+	require.Equal(http.StatusCreated, rr.Code)
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/%s", org, repo, digest)
+	assert.Equal(loc, rr.Header().Get(echo.HeaderLocation))
+	assert.Equal(digest, rr.Header().Get(docker.HeaderContentDigest))
+}
+
+func (suite *UploadTestSuite) TestCancel() {
+	assert := suite.Assert()
+	require := suite.Require()
+
+	uuid := "3f497dc6-9458-4c2d-8368-2e71d35c77e5"
+	repo := "alpine"
+	org := "library"
+	deleteUpload = func(uuid string) error {
+		assert.Equal("3f497dc6-9458-4c2d-8368-2e71d35c77e5", uuid)
+		return nil
+	}
+
+	url := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", org, repo, uuid)
+	req := httptest.NewRequest(http.MethodDelete, url, nil)
+	rr := httptest.NewRecorder()
+	suite.r.ServeHTTP(rr, req)
+	require.Equal(http.StatusNoContent, rr.Code)
 }
 
 func TestUploadTestSuite(t *testing.T) {
