@@ -1,6 +1,7 @@
 package blob
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -10,15 +11,19 @@ import (
 	"testing"
 
 	"github.com/labstack/echo"
+	"github.com/ryantking/marina/pkg/config"
 	"github.com/ryantking/marina/pkg/docker"
 	"github.com/ryantking/marina/pkg/testutil"
 	"github.com/ryantking/marina/pkg/web"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/khaiql/dbcleaner.v2"
+	"gopkg.in/khaiql/dbcleaner.v2/engine"
 )
 
 type BlobTestSuite struct {
 	suite.Suite
-	r http.Handler
+	r       http.Handler
+	cleaner dbcleaner.DbCleaner
 }
 
 func (suite *BlobTestSuite) SetupSuite() {
@@ -28,14 +33,19 @@ func (suite *BlobTestSuite) SetupSuite() {
 	e.GET("/v2/:org/:repo/blobs/:digest", Get)
 	e.DELETE("/v2/:org/:repo/blobs/:digest", Delete)
 	suite.r = e
+	mysql := engine.NewMySQLEngine(config.Get().DB.DSN)
+	suite.cleaner = dbcleaner.New()
+	suite.cleaner.SetEngine(mysql)
 }
 
 func (suite *BlobTestSuite) SetupTest() {
-	testutil.Acquire("Blob", "Repository", "Organization")
+	suite.cleaner.Acquire("Blob", "Repository", "Organization")
+	testutil.Clear(context.Background())
+	testutil.Seed(context.Background())
 }
 
 func (suite *BlobTestSuite) TearDownTest() {
-	testutil.Clean("Blob", "Repository", "Organization")
+	suite.cleaner.Clean("Blob", "Repository", "Organization")
 }
 
 func (suite *BlobTestSuite) TestExists() {

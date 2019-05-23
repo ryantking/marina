@@ -66,7 +66,7 @@ func (suite *ConfigTestSuite) TestGetDefaults() {
 	assert.Equal("0.0.0.0:8080", cfg.Server.Address)
 	assert.Equal(time.Minute*5, cfg.Server.WriteTimeout)
 	assert.Equal(time.Minute*5, cfg.Server.ReadTimeout)
-	assert.Equal("marina:marina@tcp(localhost:3306)/marinatest", cfg.DB.DSN)
+	assert.Equal("root:marina@tcp(localhost:3306)/marina@dev", cfg.DB.DSN)
 	assert.Equal("mysql", cfg.DB.Type)
 	assert.Equal(time.Minute, cfg.DB.Timeout)
 	assert.Equal(200, cfg.DB.MaxConns)

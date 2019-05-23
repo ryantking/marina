@@ -2,49 +2,16 @@ package testutil
 
 import (
 	"context"
-	"sync"
 
 	"github.com/ryantking/marina/pkg/prisma"
+
+	// MySQL driver needed for tests
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
 	client = prisma.New(nil)
-	mus    = map[string]*sync.Mutex{}
-	musL   sync.Mutex
 )
-
-func lockTable(table string) {
-	musL.Lock()
-	defer musL.Unlock()
-
-	mu, ok := mus[table]
-	if !ok {
-		mu = new(sync.Mutex)
-		mus[table] = mu
-	}
-	mu.Lock()
-}
-
-func unlockTable(table string) {
-	musL.Lock()
-	defer musL.Unlock()
-	mus[table].Unlock()
-}
-
-func Acquire(tables ...string) {
-	for _, table := range tables {
-		lockTable(table)
-	}
-}
-
-func Clean(tables ...string) {
-	ctx := context.Background()
-	Clear(ctx)
-	Seed(ctx)
-	for _, table := range tables {
-		unlockTable(table)
-	}
-}
 
 func Seed(ctx context.Context) {
 	_, err := client.CreateOrganization(prisma.OrganizationCreateInput{

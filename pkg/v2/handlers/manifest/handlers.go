@@ -71,6 +71,9 @@ func Update(c echo.Context) error {
 			},
 		},
 	}).Exec(c.Request().Context())
+	if err != nil {
+		return err
+	}
 	image, err := client.UpsertImage(prisma.ImageUpsertParams{
 		Where: prisma.ImageWhereUniqueInput{Digest: prisma.Str(manifest.Digest())},
 		Update: prisma.ImageUpdateInput{
@@ -101,6 +104,9 @@ func Update(c echo.Context) error {
 				Connect: &prisma.ImageWhereUniqueInput{ID: &image.ID},
 			},
 		}).Exec(c.Request().Context())
+		if err != nil {
+			return err
+		}
 	}
 
 	loc := fmt.Sprintf("/v2/%s/%s/manifests/%s", org, repo, ref)
@@ -123,7 +129,7 @@ func Delete(c echo.Context) error {
 
 	ref := c.Param("ref")
 	if len(ref) != 71 || !strings.HasPrefix(ref, "sha256:") {
-		err := deleteTag(c.Request().Context(), ref, repo, org)
+		err = deleteTag(c.Request().Context(), ref, repo, org)
 		if err != nil {
 			return err
 		}

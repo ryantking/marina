@@ -2,6 +2,7 @@ package upload
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -10,14 +11,18 @@ import (
 	"testing"
 
 	"github.com/labstack/echo"
+	"github.com/ryantking/marina/pkg/config"
 	"github.com/ryantking/marina/pkg/docker"
 	"github.com/ryantking/marina/pkg/testutil"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/khaiql/dbcleaner.v2"
+	"gopkg.in/khaiql/dbcleaner.v2/engine"
 )
 
 type UploadTestSuite struct {
 	suite.Suite
-	r http.Handler
+	r       http.Handler
+	cleaner dbcleaner.DbCleaner
 }
 
 func (suite *UploadTestSuite) SetupSuite() {
@@ -28,14 +33,19 @@ func (suite *UploadTestSuite) SetupSuite() {
 	e.PUT("/v2/:org/:repo/blobs/uploads/:uuid", Finish)
 	e.DELETE("/v2/:org/:repo/blobs/uploads/:uuid", Cancel)
 	suite.r = e
+	mysql := engine.NewMySQLEngine(config.Get().DB.DSN)
+	suite.cleaner = dbcleaner.New()
+	suite.cleaner.SetEngine(mysql)
 }
 
 func (suite *UploadTestSuite) SetupTest() {
-	testutil.Acquire("Chunk", "Upload")
+	suite.cleaner.Acquire("Chunk", "Upload", "Layer", "Repository", "Organization")
+	testutil.Clear(context.Background())
+	testutil.Seed(context.Background())
 }
 
 func (suite *UploadTestSuite) TearDownTest() {
-	testutil.Clean("Chunk", "Upload")
+	suite.cleaner.Clean("Chunk", "Upload", "Layer", "Repository", "Organization")
 }
 
 func (suite *UploadTestSuite) TestGet() {

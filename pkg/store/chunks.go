@@ -24,8 +24,8 @@ func mergeChunks(c Client, uuid string, chunks []prisma.Chunk, loc string) error
 	var sz int32
 	readers := make([]io.Reader, len(chunks))
 	for i, chunk := range chunks {
-		loc := fmt.Sprintf("uploads/%s/%d.tar.gz", uuid, chunk.RangeStart)
-		obj, err := c.Get(loc)
+		chunkLoc := fmt.Sprintf("uploads/%s/%d.tar.gz", uuid, chunk.RangeStart)
+		obj, err := c.Get(chunkLoc)
 		if err != nil {
 			return err
 		}

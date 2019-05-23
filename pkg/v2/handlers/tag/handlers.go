@@ -43,7 +43,8 @@ func List(c echo.Context) error {
 		tagsParams.First = &n
 	}
 	if last != "" {
-		tags, err := client.Tags(&prisma.TagsParams{
+		var tags []prisma.Tag
+		tags, err = client.Tags(&prisma.TagsParams{
 			Where: &prisma.TagWhereInput{
 				Ref: &last,
 				Image: &prisma.ImageWhereInput{

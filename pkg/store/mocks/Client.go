@@ -34,18 +34,18 @@ func (_m *Client) Get(path string) (io.ReadCloser, error) {
 }
 
 // Put provides a mock function with given fields: path, r, sz
-func (_m *Client) Put(path string, r io.Reader, sz int64) (int64, error) {
+func (_m *Client) Put(path string, r io.Reader, sz int32) (int32, error) {
 	ret := _m.Called(path, r, sz)
 
-	var r0 int64
-	if rf, ok := ret.Get(0).(func(string, io.Reader, int64) int64); ok {
+	var r0 int32
+	if rf, ok := ret.Get(0).(func(string, io.Reader, int32) int32); ok {
 		r0 = rf(path, r, sz)
 	} else {
-		r0 = ret.Get(0).(int64)
+		r0 = ret.Get(0).(int32)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, io.Reader, int64) error); ok {
+	if rf, ok := ret.Get(1).(func(string, io.Reader, int32) error); ok {
 		r1 = rf(path, r, sz)
 	} else {
 		r1 = ret.Error(1)

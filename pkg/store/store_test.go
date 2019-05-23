@@ -2,30 +2,43 @@ package store
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"testing"
 
+	"github.com/ryantking/marina/pkg/config"
 	"github.com/ryantking/marina/pkg/store/mocks"
 	"github.com/ryantking/marina/pkg/testutil"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/khaiql/dbcleaner.v2"
+	"gopkg.in/khaiql/dbcleaner.v2/engine"
 )
 
 type StoreTestSuite struct {
 	suite.Suite
-	client *mocks.Client
+	client  *mocks.Client
+	cleaner dbcleaner.DbCleaner
+}
+
+func (suite *StoreTestSuite) SetupSuite() {
+	mysql := engine.NewMySQLEngine(config.Get().DB.DSN)
+	suite.cleaner = dbcleaner.New()
+	suite.cleaner.SetEngine(mysql)
 }
 
 func (suite *StoreTestSuite) SetupTest() {
 	suite.client = new(mocks.Client)
 	client = suite.client
-	testutil.Aquire("Chunk", "Upload")
+	suite.cleaner.Acquire("Chunk", "Upload")
+	testutil.Clear(context.Background())
+	testutil.Seed(context.Background())
 }
 
 func (suite *StoreTestSuite) TearDownTest() {
 	suite.client.AssertExpectations(suite.T())
-	testutil.Clean("Chunk", "Upload")
+	suite.cleaner.Clean("Chunk", "Upload")
 }
 
 func (suite *StoreTestSuite) TestGetBlob() {

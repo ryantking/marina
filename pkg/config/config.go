@@ -65,7 +65,7 @@ func Get() *Config {
 	v.SetDefault(serverReadTimeout, time.Minute*5)
 
 	// Database configuration
-	v.SetDefault(dbDSN, "marina:marina@tcp(localhost:3306)/marinatest")
+	v.SetDefault(dbDSN, "root:marina@tcp(localhost:3306)/marina@dev")
 	v.SetDefault(dbType, "mysql")
 	v.SetDefault(dbTimeout, time.Minute)
 	v.SetDefault(dbMaxConns, 200)

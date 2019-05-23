@@ -122,7 +122,8 @@ func Finish(c echo.Context) error {
 
 	if sz > 0 {
 		defer c.Request().Body.Close()
-		start, err := parseRange(c)
+		var start int32
+		start, err = parseRange(c)
 		if err != nil {
 			return err
 		}
@@ -153,6 +154,9 @@ func Finish(c echo.Context) error {
 		Where: prisma.UploadWhereUniqueInput{Uuid: &uuid},
 		Data:  prisma.UploadUpdateInput{Done: prisma.Bool(true)},
 	}).Exec(c.Request().Context())
+	if err != nil {
+		return err
+	}
 
 	repos, err := client.Repositories(&prisma.RepositoriesParams{
 		Where: &prisma.RepositoryWhereInput{
