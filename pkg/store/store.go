@@ -51,7 +51,7 @@ func UploadChunk(uuid string, r io.Reader, sz, start int32) (int32, error) {
 
 // FinishUpload finalizes an upload
 func FinishUpload(digest, uuid, repoName, orgName string) error {
-	c, err := getClient()
+	client, err := getClient()
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func FinishUpload(digest, uuid, repoName, orgName string) error {
 	}
 
 	loc := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
-	err = mergeChunks(c, uuid, chunks, loc)
+	err = mergeChunks(client, uuid, chunks, loc)
 	if err != nil {
 		return errors.Wrap(err, "error merging and uploading chunks")
 	}

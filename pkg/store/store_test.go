@@ -31,14 +31,14 @@ func (suite *StoreTestSuite) SetupSuite() {
 func (suite *StoreTestSuite) SetupTest() {
 	suite.client = new(mocks.Client)
 	client = suite.client
-	suite.cleaner.Acquire("Chunk", "Upload")
+	suite.cleaner.Acquire("Chunk", "Upload", "Repository", "Organization")
 	testutil.Clear(context.Background())
 	testutil.Seed(context.Background())
 }
 
 func (suite *StoreTestSuite) TearDownTest() {
 	suite.client.AssertExpectations(suite.T())
-	suite.cleaner.Clean("Chunk", "Upload")
+	suite.cleaner.Clean("Chunk", "Upload", "Repository", "Organization")
 }
 
 func (suite *StoreTestSuite) TestGetBlob() {
@@ -74,7 +74,7 @@ func (suite *StoreTestSuite) TestUploadChunk() {
 
 	r := bytes.NewBuffer([]byte("testChunk"))
 	uuid := "6b3c9a93-af5d-473f-a4ce-9710022185cd"
-	suite.client.On("Put", fmt.Sprintf("uploads/%s/0.tar.gz", uuid), mock.Anything, int64(20)).Return(int64(20), nil)
+	suite.client.On("Put", fmt.Sprintf("uploads/%s/0.tar.gz", uuid), mock.Anything, int32(20)).Return(int32(20), nil)
 
 	n, err := UploadChunk(uuid, r, 20, 0)
 	require.NoError(err)
@@ -93,7 +93,7 @@ func (suite *StoreTestSuite) TestFinishUpload() {
 	suite.client.On("Get", fmt.Sprintf("uploads/%s/0.tar.gz", uuid)).Return(r1, nil)
 	suite.client.On("Get", fmt.Sprintf("uploads/%s/1024.tar.gz", uuid)).Return(r2, nil)
 	suite.client.On("Put", fmt.Sprintf("blobs/%s/%s/%s.tar.gz", org, repo, digest),
-		mock.Anything, int64(2048)).Return(int64(2048), nil)
+		mock.Anything, int32(2048)).Return(int32(2048), nil)
 	suite.client.On("Remove", fmt.Sprintf("uploads/%s/0.tar.gz", uuid)).Return(nil)
 	suite.client.On("Remove", fmt.Sprintf("uploads/%s/1024.tar.gz", uuid)).Return(nil)
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/prisma"
@@ -20,12 +21,12 @@ func getChunks(uuid string) ([]prisma.Chunk, error) {
 	return chunks, nil
 }
 
-func mergeChunks(c Client, uuid string, chunks []prisma.Chunk, loc string) error {
+func mergeChunks(client Client, uuid string, chunks []prisma.Chunk, loc string) error {
 	var sz int32
 	readers := make([]io.Reader, len(chunks))
 	for i, chunk := range chunks {
 		chunkLoc := fmt.Sprintf("uploads/%s/%d.tar.gz", uuid, chunk.RangeStart)
-		obj, err := c.Get(chunkLoc)
+		obj, err := client.Get(chunkLoc)
 		if err != nil {
 			return err
 		}
@@ -33,12 +34,12 @@ func mergeChunks(c Client, uuid string, chunks []prisma.Chunk, loc string) error
 		sz += chunk.RangeEnd - chunk.RangeStart + 1
 	}
 
-	_, err := c.Put(loc, io.MultiReader(readers...), sz)
+	_, err := client.Put(loc, strings.NewReader("fucker"), sz)
 	if err != nil {
 		return errors.Wrap(err, "error uploading blob")
 	}
 
-	err = deleteChunks(c, uuid, chunks)
+	err = deleteChunks(client, uuid, chunks)
 	if err != nil {
 		return errors.Wrap(err, "error deleting chunks")
 	}
@@ -46,10 +47,10 @@ func mergeChunks(c Client, uuid string, chunks []prisma.Chunk, loc string) error
 	return nil
 }
 
-func deleteChunks(c Client, uuid string, chunks []prisma.Chunk) error {
+func deleteChunks(client Client, uuid string, chunks []prisma.Chunk) error {
 	for _, chunk := range chunks {
 		loc := fmt.Sprintf("uploads/%s/%d.tar.gz", uuid, chunk.RangeStart)
-		err := c.Remove(loc)
+		err := client.Remove(loc)
 		if err != nil {
 			return err
 		}
