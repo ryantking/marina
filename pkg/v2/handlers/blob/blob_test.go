@@ -82,14 +82,15 @@ func (suite *BlobTestSuite) TestExists() {
 		req := httptest.NewRequest(http.MethodHead, url, nil)
 		rr := httptest.NewRecorder()
 		suite.r.ServeHTTP(rr, req)
-		require.Equal(tt.code, rr.Code)
+		require.Equal(tt.code, rr.Code, "For: %s/%s", tt.org, tt.repo)
 		if tt.code == http.StatusOK {
-			assert.Equal(tt.digest, rr.Header().Get(docker.HeaderContentDigest))
-			assert.Equal(fmt.Sprint(len(tt.digest)), rr.Header().Get(echo.HeaderContentLength))
+			assert.Equal(tt.digest, rr.Header().Get(docker.HeaderContentDigest), "For: %s/%s", tt.org, tt.repo)
+			l := fmt.Sprint(len(tt.digest))
+			assert.Equal(l, rr.Header().Get(echo.HeaderContentLength), "For: %s/%s", tt.org, tt.repo)
 		} else {
 			b, err := ioutil.ReadAll(rr.Body)
-			require.NoError(err)
-			assert.JSONEq(tt.body, string(b))
+			require.NoError(err, "For: %s/%s", tt.org, tt.repo)
+			assert.JSONEq(tt.body, string(b), "For: %s/%s", tt.org, tt.repo)
 		}
 	}
 }
@@ -125,9 +126,9 @@ func (suite *BlobTestSuite) TestGet() {
 
 	for _, tt := range tests {
 		getBlob = func(digest, repo, org string) (io.ReadCloser, error) {
-			assert.Equal(tt.digest, digest)
-			assert.Equal(tt.repo, repo)
-			assert.Equal(tt.org, org)
+			assert.Equal(tt.digest, digest, "For: %s/%s", tt.org, tt.repo)
+			assert.Equal(tt.repo, repo, "For: %s/%s", tt.org, tt.repo)
+			assert.Equal(tt.org, org, "For: %s/%s", tt.org, tt.repo)
 			return ioutil.NopCloser(strings.NewReader(tt.body)), nil
 		}
 
@@ -135,14 +136,14 @@ func (suite *BlobTestSuite) TestGet() {
 		req := httptest.NewRequest(http.MethodGet, url, nil)
 		rr := httptest.NewRecorder()
 		suite.r.ServeHTTP(rr, req)
-		require.Equal(tt.code, rr.Code)
+		require.Equal(tt.code, rr.Code, "For: %s/%s", tt.org, tt.repo)
 		b, err := ioutil.ReadAll(rr.Body)
-		require.NoError(err)
+		require.NoError(err, "For: %s/%s", tt.org, tt.repo)
 		if tt.code == http.StatusOK {
-			assert.Equal(tt.digest, rr.Header().Get(docker.HeaderContentDigest))
-			assert.Equal(tt.body, string(b))
+			assert.Equal(tt.digest, rr.Header().Get(docker.HeaderContentDigest), "For: %s/%s", tt.org, tt.repo)
+			assert.Equal(tt.body, string(b), "For: %s/%s", tt.org, tt.repo)
 		} else {
-			assert.JSONEq(tt.body, string(b))
+			assert.JSONEq(tt.body, string(b), "For: %s/%s", tt.org, tt.repo)
 		}
 	}
 }
@@ -175,9 +176,9 @@ func (suite *BlobTestSuite) TestDelete() {
 
 	for _, tt := range tests {
 		deleteBlob = func(digest, repo, org string) error {
-			assert.Equal(tt.digest, digest)
-			assert.Equal(tt.repo, repo)
-			assert.Equal(tt.org, org)
+			assert.Equal(tt.digest, digest, "For: %s/%s", tt.org, tt.repo)
+			assert.Equal(tt.repo, repo, "For: %s/%s", tt.org, tt.repo)
+			assert.Equal(tt.org, org, "For: %s/%s", tt.org, tt.repo)
 			return nil
 		}
 
@@ -185,7 +186,7 @@ func (suite *BlobTestSuite) TestDelete() {
 		req := httptest.NewRequest(http.MethodDelete, url, nil)
 		rr := httptest.NewRecorder()
 		suite.r.ServeHTTP(rr, req)
-		require.Equal(tt.code, rr.Code)
+		require.Equal(tt.code, rr.Code, "For: %s/%s", tt.org, tt.repo)
 	}
 }
 
