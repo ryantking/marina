@@ -11,13 +11,16 @@ import (
 // Client is used for the storing and retrieval of files
 type Client interface {
 	// Get retrieves an object from the bucket
-	Get(path string) (io.ReadCloser, error)
+	Get(path string, start, end int64) (io.ReadCloser, error)
 
 	// Put saves a file to the store
 	Put(path string, r io.Reader, sz int32) (int32, error)
 
 	// Remove deletes an object from the store
 	Remove(path string) error
+
+	// Merge combines multiple objects into one
+	Merge(toPath string, fromPaths ...string) error
 }
 
 var (

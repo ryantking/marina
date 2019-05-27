@@ -3,8 +3,6 @@ package store
 import (
 	"context"
 	"fmt"
-	"io"
-	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/prisma"
@@ -22,21 +20,13 @@ func getChunks(uuid string) ([]prisma.Chunk, error) {
 }
 
 func mergeChunks(client Client, uuid string, chunks []prisma.Chunk, loc string) error {
-	var sz int32
-	readers := make([]io.Reader, len(chunks))
+	fromPaths := make([]string, len(chunks))
 	for i, chunk := range chunks {
-		chunkLoc := fmt.Sprintf("uploads/%s/%d.tar.gz", uuid, chunk.RangeStart)
-		obj, err := client.Get(chunkLoc)
-		if err != nil {
-			return err
-		}
-		readers[i] = obj
-		sz += chunk.RangeEnd - chunk.RangeStart + 1
+		fromPaths[i] = fmt.Sprintf("uploads/%s/%d.tar.gz", uuid, chunk.RangeStart)
 	}
-
-	_, err := client.Put(loc, strings.NewReader("fucker"), sz)
+	err := client.Merge(loc, fromPaths...)
 	if err != nil {
-		return errors.Wrap(err, "error uploading blob")
+		return err
 	}
 
 	err = deleteChunks(client, uuid, chunks)

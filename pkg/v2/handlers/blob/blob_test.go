@@ -125,7 +125,7 @@ func (suite *BlobTestSuite) TestGet() {
 	}
 
 	for _, tt := range tests {
-		getBlob = func(digest, repo, org string) (io.ReadCloser, error) {
+		getBlob = func(digest, repo, org string, start, end int64) (io.ReadCloser, error) {
 			assert.Equal(tt.digest, digest, "For: %s/%s", tt.org, tt.repo)
 			assert.Equal(tt.repo, repo, "For: %s/%s", tt.org, tt.repo)
 			assert.Equal(tt.org, org, "For: %s/%s", tt.org, tt.repo)

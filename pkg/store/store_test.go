@@ -16,6 +16,8 @@ import (
 	"gopkg.in/khaiql/dbcleaner.v2/engine"
 )
 
+var negOne int64 = -1
+
 type StoreTestSuite struct {
 	suite.Suite
 	client  *mocks.Client
@@ -49,9 +51,9 @@ func (suite *StoreTestSuite) TestGetBlob() {
 	digest := "sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9"
 	repo := "alpine"
 	org := "library"
-	suite.client.On("Get", fmt.Sprintf("blobs/%s/%s/%s.tar.gz", org, repo, digest)).Return(obj, nil)
+	suite.client.On("Get", fmt.Sprintf("blobs/%s/%s/%s.tar.gz", org, repo, digest), negOne, negOne).Return(obj, nil)
 
-	r, err := GetBlob(digest, repo, org)
+	r, err := GetBlob(digest, repo, org, -1, -1)
 	require.NoError(err)
 	assert.EqualValues(obj, r)
 }
@@ -88,12 +90,9 @@ func (suite *StoreTestSuite) TestFinishUpload() {
 	digest := "sha256:a464c54f93a9e88fc1d33df1e0e39cca427d60145a360962e8f19a1dbf900da9"
 	repo := "alpine"
 	org := "library"
-	r1 := ioutil.NopCloser(bytes.NewBuffer([]byte("chunk1")))
-	r2 := ioutil.NopCloser(bytes.NewBuffer([]byte("chunk2")))
-	suite.client.On("Get", fmt.Sprintf("uploads/%s/0.tar.gz", uuid)).Return(r1, nil)
-	suite.client.On("Get", fmt.Sprintf("uploads/%s/1024.tar.gz", uuid)).Return(r2, nil)
-	suite.client.On("Put", fmt.Sprintf("blobs/%s/%s/%s.tar.gz", org, repo, digest),
-		mock.Anything, int32(2048)).Return(int32(2048), nil)
+	to := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", org, repo, digest)
+	froms := []string{fmt.Sprintf("uploads/%s/0.tar.gz", uuid), fmt.Sprintf("uploads/%s/1024.tar.gz", uuid)}
+	suite.client.On("Merge", to, froms[0], froms[1]).Return(nil)
 	suite.client.On("Remove", fmt.Sprintf("uploads/%s/0.tar.gz", uuid)).Return(nil)
 	suite.client.On("Remove", fmt.Sprintf("uploads/%s/1024.tar.gz", uuid)).Return(nil)
 

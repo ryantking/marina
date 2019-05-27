@@ -44,8 +44,12 @@ func Get(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+	start, end, err := parseRange(c)
+	if err != nil {
+		return err
+	}
 
-	r, err := getBlob(blob.Digest, repo.Name, org.Name)
+	r, err := getBlob(blob.Digest, repo.Name, org.Name, start, end)
 	if err != nil {
 		return err
 	}

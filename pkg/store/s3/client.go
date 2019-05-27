@@ -32,8 +32,15 @@ func New() (*Client, error) {
 }
 
 // Get returns an object from a given path
-func (c *Client) Get(path string) (io.ReadCloser, error) {
-	obj, err := c.GetObject(c.bucket, path, minio.GetObjectOptions{})
+func (c *Client) Get(path string, start, end int64) (io.ReadCloser, error) {
+	var opts minio.GetObjectOptions
+	if start >= 0 && end > 0 {
+		err := opts.SetRange(start, end)
+		if err != nil {
+			return nil, err
+		}
+	}
+	obj, err := c.GetObject(c.bucket, path, opts)
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving object from S3")
 	}
@@ -54,4 +61,18 @@ func (c *Client) Put(path string, r io.Reader, sz int32) (int32, error) {
 // Remove deletes an object from the bucket
 func (c *Client) Remove(path string) error {
 	return c.RemoveObject(c.bucket, path)
+}
+
+// Merge combines multiple objects into a single one
+func (c *Client) Merge(toPath string, fromPaths ...string) error {
+	srcs := make([]minio.SourceInfo, len(fromPaths))
+	for i, fromPath := range fromPaths {
+		srcs[i] = minio.NewSourceInfo(c.bucket, fromPath, nil)
+	}
+	dst, err := minio.NewDestinationInfo(c.bucket, toPath, nil, nil)
+	if err != nil {
+		return err
+	}
+
+	return c.ComposeObject(dst, srcs)
 }

@@ -8,14 +8,14 @@ import (
 )
 
 // GetBlob returns the blob object as a reader interface
-func GetBlob(digest, repoName, orgName string) (io.ReadCloser, error) {
+func GetBlob(digest, repoName, orgName string, start, end int64) (io.ReadCloser, error) {
 	c, err := getClient()
 	if err != nil {
 		return nil, err
 	}
 
 	path := fmt.Sprintf("blobs/%s/%s/%s.tar.gz", orgName, repoName, digest)
-	obj, err := c.Get(path)
+	obj, err := c.Get(path, start, end)
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving object")
 	}

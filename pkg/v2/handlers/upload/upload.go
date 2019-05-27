@@ -36,10 +36,10 @@ func getLastRange(ctx context.Context, uuid string) (string, error) {
 	return fmt.Sprintf("%d-%d", chunks[0].RangeStart, chunks[0].RangeEnd), nil
 }
 
-func createChunk(ctx context.Context, uuid string, r io.Reader, sz, start int32) (int32, error) {
+func createChunk(ctx context.Context, uuid string, r io.Reader, sz, start int32) error {
 	sz, err := storeChunk(uuid, r, sz, start)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	_, err = client.CreateChunk(prisma.ChunkCreateInput{
 		RangeStart: start,
@@ -49,10 +49,10 @@ func createChunk(ctx context.Context, uuid string, r io.Reader, sz, start int32)
 		},
 	}).Exec(ctx)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	return sz, nil
+	return nil
 }
 
 func createBlob(ctx context.Context, repo *prisma.Repository, uuid, digest, orgName string) error {

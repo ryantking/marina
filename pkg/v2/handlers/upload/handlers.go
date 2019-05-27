@@ -79,7 +79,7 @@ func Chunk(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	sz, err = createChunk(c.Request().Context(), uuid, c.Request().Body, sz, start)
+	err = createChunk(c.Request().Context(), uuid, c.Request().Body, sz, start)
 	if err != nil {
 		return err
 	}
@@ -111,7 +111,7 @@ func Finish(c echo.Context) error {
 
 	if sz > 0 {
 		defer c.Request().Body.Close()
-		sz, err = createChunk(c.Request().Context(), uuid, c.Request().Body, sz, start)
+		err = createChunk(c.Request().Context(), uuid, c.Request().Body, sz, start)
 		if err != nil {
 			return err
 		}
