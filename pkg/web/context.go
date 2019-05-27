@@ -120,3 +120,31 @@ func ParsePagination(c echo.Context) (int32, string, error) {
 
 	return int32(n), c.QueryParam("last"), nil
 }
+
+// ParseLengthAndStart parses the length and range headers from a request
+func ParseLengthAndStart(c echo.Context) (int32, int32, error) {
+	s := c.Request().Header.Get(echo.HeaderContentLength)
+	if s == "" {
+		return -1, 0, nil
+	}
+
+	sz, err := strconv.ParseInt(s, 10, 32)
+	if err != nil {
+		return 0, 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	s = c.Request().Header.Get("Content-Range")
+	if s == "" {
+		return int32(sz), 0, nil
+	}
+	parts := strings.Split(s, "-")
+	if len(parts) != 2 {
+		return 0, 0, echo.NewHTTPError(http.StatusBadRequest, "invalid Content-Range header")
+	}
+	start, err := strconv.ParseInt(parts[0], 10, 32)
+	if err != nil {
+		return 0, 0, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	return int32(sz), int32(start), nil
+}

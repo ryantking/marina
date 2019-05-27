@@ -6,7 +6,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
-	"github.com/pkg/errors"
 	"github.com/ryantking/marina/pkg/docker"
 	"github.com/ryantking/marina/pkg/prisma"
 	"github.com/ryantking/marina/pkg/store"
@@ -20,18 +19,18 @@ const (
 var (
 	client = prisma.New(nil)
 
-	storeChunk   = store.UploadChunk
 	finishUpload = store.FinishUpload
 	deleteUpload = store.DeleteUpload
 )
 
 // Get returns an upload
 func Get(c echo.Context) error {
-	uuid, _, _, err := parsePath(c)
+	_, _, err := web.GetRepo(c)
 	if err != nil {
 		return err
 	}
 
+	uuid := c.Param("uuid")
 	lastRange, err := getLastRange(c.Request().Context(), uuid)
 	if err != nil {
 		return err
@@ -44,7 +43,7 @@ func Get(c echo.Context) error {
 
 // Start starts the process of uploading a new blob
 func Start(c echo.Context) error {
-	repo, org, err := web.ParsePath(c)
+	repo, org, err := web.GetRepo(c)
 	if err != nil {
 		return err
 	}
@@ -59,7 +58,7 @@ func Start(c echo.Context) error {
 		return err
 	}
 
-	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", org, repo, uuid)
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", org.Name, repo.Name, uuid)
 	c.Response().Header().Set(echo.HeaderLocation, loc)
 	c.Response().Header().Set(headerRange, lastRange)
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
@@ -69,34 +68,23 @@ func Start(c echo.Context) error {
 // Chunk is used to save a chunk of data to a blob
 func Chunk(c echo.Context) error {
 	defer c.Request().Body.Close()
-	uuid, repo, org, err := parsePath(c)
-	if err != nil {
-		return err
-	}
-	sz, err := parseLength(c)
-	if err != nil {
-		return err
-	}
-	start, err := parseRange(c)
-	if err != nil {
-		return err
-	}
-	sz, err = storeChunk(uuid, c.Request().Body, sz, start)
-	if err != nil {
-		return err
-	}
-	_, err = client.CreateChunk(prisma.ChunkCreateInput{
-		RangeStart: start,
-		RangeEnd:   start + sz - 1,
-		Upload: prisma.UploadCreateOneWithoutChunksInput{
-			Connect: &prisma.UploadWhereUniqueInput{Uuid: &uuid},
-		},
-	}).Exec(c.Request().Context())
+
+	repo, org, err := web.GetRepo(c)
 	if err != nil {
 		return err
 	}
 
-	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", org, repo, uuid)
+	uuid := c.Param("uuid")
+	sz, start, err := web.ParseLengthAndStart(c)
+	if err != nil {
+		return err
+	}
+	sz, err = createChunk(c.Request().Context(), uuid, c.Request().Body, sz, start)
+	if err != nil {
+		return err
+	}
+
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/uploads/%s", org.Name, repo.Name, uuid)
 	c.Response().Header().Set(echo.HeaderLocation, loc)
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
 	c.Response().Header().Set(docker.HeaderUploadUUID, fmt.Sprint(uuid))
@@ -110,74 +98,31 @@ func Chunk(c echo.Context) error {
 
 // Finish is used to signal when the upload has completed
 func Finish(c echo.Context) error {
-	uuid, repo, org, err := parsePath(c)
+	repo, org, err := web.GetRepo(c)
 	if err != nil {
 		return err
 	}
+	uuid := c.Param("uuid")
 	digest := c.QueryParam("digest")
-	sz, err := parseLength(c)
+	sz, start, err := web.ParseLengthAndStart(c)
 	if err != nil {
 		return err
 	}
 
 	if sz > 0 {
 		defer c.Request().Body.Close()
-		var start int32
-		start, err = parseRange(c)
-		if err != nil {
-			return err
-		}
-
-		_, err = storeChunk(uuid, c.Request().Body, sz, start)
-		if err != nil {
-			return err
-		}
-
-		_, err = client.CreateChunk(prisma.ChunkCreateInput{
-			RangeStart: start,
-			RangeEnd:   start + sz - 1,
-			Upload: prisma.UploadCreateOneWithoutChunksInput{
-				Connect: &prisma.UploadWhereUniqueInput{Uuid: &uuid},
-			},
-		}).Exec(c.Request().Context())
+		sz, err = createChunk(c.Request().Context(), uuid, c.Request().Body, sz, start)
 		if err != nil {
 			return err
 		}
 	}
 
-	err = finishUpload(digest, uuid, repo, org)
-	if err != nil {
-		return errors.Wrap(err, "error finishing upload")
-	}
-
-	_, err = client.UpdateUpload(prisma.UploadUpdateParams{
-		Where: prisma.UploadWhereUniqueInput{Uuid: &uuid},
-		Data:  prisma.UploadUpdateInput{Done: prisma.Bool(true)},
-	}).Exec(c.Request().Context())
+	err = createBlob(c.Request().Context(), repo, uuid, digest, org.Name)
 	if err != nil {
 		return err
 	}
 
-	repos, err := client.Repositories(&prisma.RepositoriesParams{
-		Where: &prisma.RepositoryWhereInput{
-			Name: &repo,
-			Org:  &prisma.OrganizationWhereInput{Name: &org},
-		},
-	}).Exec(c.Request().Context())
-	if err != nil {
-		return err
-	}
-	_, err = client.CreateBlob(prisma.BlobCreateInput{
-		Digest: digest,
-		Repo: prisma.RepositoryCreateOneWithoutBlobsInput{
-			Connect: &prisma.RepositoryWhereUniqueInput{ID: &repos[0].ID},
-		},
-	}).Exec(c.Request().Context())
-	if err != nil {
-		return err
-	}
-
-	loc := fmt.Sprintf("/v2/%s/%s/blobs/%s", org, repo, digest)
+	loc := fmt.Sprintf("/v2/%s/%s/blobs/%s", org.Name, repo.Name, digest)
 	c.Response().Header().Set(echo.HeaderLocation, loc)
 	c.Response().Header().Set(echo.HeaderContentLength, "0")
 	c.Response().Header().Set(docker.HeaderContentDigest, digest)
@@ -186,11 +131,12 @@ func Finish(c echo.Context) error {
 
 // Cancel cancels a currently running upload
 func Cancel(c echo.Context) error {
-	uuid, _, _, err := parsePath(c)
+	_, _, err := web.GetRepo(c)
 	if err != nil {
 		return err
 	}
 
+	uuid := c.Param("uuid")
 	err = deleteUpload(uuid)
 	if err != nil {
 		return err

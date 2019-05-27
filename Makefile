@@ -50,7 +50,7 @@ $(GOPATH)/bin/golangci-lint:
 lint: $(GOPATH)/bin/golangci-lint
 	@echo "Running golangci-lint"
 	@GO111MODULE=on golangci-lint run ./...
-test: wait-for-it prisma bucket lint
+test: wait-for-it prisma bucket
 	@GO111MODULE=on go test -race -covermode=atomic -coverprofile=coverage.txt github.com/ryantking/marina/pkg/...
 
 # Remove generated files
